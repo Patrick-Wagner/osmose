@@ -1,0 +1,25 @@
+/*******************************************************/
+#Objective Exergy
+/*******************************************************/
+subject to toto30:
+(sum {c in C,sh in Hot[c],k in K[c]} (Qihk[c,sh,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])))-( sum {c in C,sc in Cold[c],k in K[c]}( Qjck[c,sc,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])) ))) >=0;
+
+
+
+var ExergyGiven{c in C};
+subject to toto31{c in C} :
+ExergyGiven[c]=sum {sh in Hot[c]} sum{k in K[c]} (Qihk[c,sh,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])));
+
+var ExergyReceived{c in C};
+subject to toto32{c in C} :
+ExergyReceived[c]=sum {sc in Cold[c]} sum{k in K[c]} (Qjck[c,sc,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])));
+
+
+
+minimize Exergy:
+sum {c in C}(ExergyGiven[c]-ExergyReceived[c]);
+
+#-( sum {c in C,sc in Cold[c]}(sum{k in K[c]}( Qjck[c,sc,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])) )));
+
+
+#printf {c in C,sc in Cold[c]} : "ColdExergy \t %s \t %f \n", sc,( sum {k in K[c]}( Qjck[c,sc,k]*(1-Tamb[c]*log(Tu[c,k]/Tl[c,k])/(Tu[c,k]-Tl[c,k])) )) > /Users/hubert/Documents/EPFL/EDF/Arcelor/osmose/OSMOSE_temp/EnergyIntegration/xrj.out;

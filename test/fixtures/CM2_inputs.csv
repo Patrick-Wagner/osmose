@@ -1,0 +1,12 @@
+prod_1_flow, 3000
+prod_1_cp, 2.11
+prod_1_temp, 60
+prod_1_btemp, 90
+prod_2_flow, 1500
+prod_2_cp, 3.85
+prod_2_temp, 10
+prod_2_btemp, 90
+prod_final_temp, 10
+return_temp, 80
+hrin_1_dtmin, 4
+hrin_2_dtmin, 4

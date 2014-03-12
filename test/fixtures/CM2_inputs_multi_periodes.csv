@@ -1,0 +1,16 @@
+prod_1_flow,kg/h, 3000
+prod_1_flow,kg/h, 4000, 5000
+prod_1_cp, 2.11
+prod_1_cp, 2.56
+cleaning_agent_temp, 20
+cleaning_agent_temp, 30
+prod_1_temp,C, 60
+prod_1_btemp,C, 90
+prod_2_flow, 1500
+prod_2_cp, 3.85
+prod_2_temp, 10
+prod_2_btemp, 90
+prod_final_temp, 10
+return_temp, 80
+hrin_1_dtmin, 4
+hrin_2_dtmin, 4

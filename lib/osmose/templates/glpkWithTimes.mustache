@@ -1,0 +1,178 @@
+set StreamBehaviors := HC_static;
+
+set StreamGroups := qts;
+
+set StreamGroupsOfType[HC_static] := qts;
+
+set Time := {{#times}} {{time}} {{/times}};
+
+##
+## Units, Streams
+##
+
+set Units := {{#units}} {{name}} {{/units}};
+
+set Streams := {{#units}}{{#streams}}{{name}} {{/streams}} {{#massStreams}}{{name}} {{/massStreams}} {{#attr}}{{name}}_{{.}}  {{/attr}}{{/units}};
+
+{{#times}}
+set UnitsOfTime[{{time}}] := {{#units}} {{name}} {{/units}};
+{{/times}}
+
+{{#times}}
+set StreamsOfTime[{{time}}] := {{#units}}{{#streams}}{{name}} {{/streams}}{{#attr}}{{name}}_{{.}}  {{/attr}}{{/units}};
+{{/times}}
+
+{{#units}}
+set StreamsOfUnit[{{name}}] := {{#streams}} {{name}} {{/streams}}{{#attr}} {{name}}_{{.}} {{/attr}};
+{{/units}}
+
+
+{{#units}}
+{{#streams}}set UnitsOfStream[{{name}}] := {{unitName}}; {{/streams}}
+{{#attr}}set UnitsOfStream[{{name}}_{{.}}] := {{name}}; {{/attr}}
+{{/units}}
+
+{{#intervals}}
+set HC_TempIntervals[DefaultHeatCascade, {{project_name}}_def_location, {{time}}] :=  {{#temps}} {{interval}} {{/temps}};
+{{/intervals}}
+
+##
+## Groups
+##
+
+set StreamsOfStreamGroup[qts] := {{#units}}{{#streams}}{{name}} {{/streams}}{{/units}}
+;
+
+##
+## Layers
+##
+
+set LayerTypes := Costing HeatCascade MassBalance;
+
+
+
+set Layers := {{#Layers}}{{.}} {{/Layers}}; 
+
+
+set LayersOfType[HeatCascade] := DefaultHeatCascade ;
+
+set LayersOfType[Costing] :=  osmose_default_model_DefaultImpact osmose_default_model_DefaultMechPower osmose_default_model_DefaultInvCost osmose_default_model_DefaultOpCost ;
+
+set LayersOfType[MassBalance] := {{#massBalanceLayer}} {{.}} {{/massBalanceLayer}} ;
+
+
+
+set UnitsOfLayer[DefaultHeatCascade] := {{#units}}{{name}} {{/units}} ;
+
+set UnitsOfLayer[osmose_default_model_DefaultInvCost] := {{#units}}{{name}} {{/units}} ;
+
+set UnitsOfLayer[osmose_default_model_DefaultMechPower] := {{#units}}{{name}} {{/units}} ;
+
+set UnitsOfLayer[osmose_default_model_DefaultOpCost] := {{#units}}{{name}} {{/units}} ;
+
+set UnitsOfLayer[osmose_default_model_DefaultImpact] := {{#units}}{{name}} {{/units}} ;
+
+{{#UnitsOfLayer}}
+set UnitsOfLayer[{{name}}] := {{#units}}{{name}} {{/units}};
+{{/UnitsLayer}}
+
+set StreamsOfLayer[DefaultHeatCascade] := {{#units}}{{#streams}}{{name}} {{/streams}}{{/units}} 
+;
+
+set StreamsOfLayer[osmose_default_model_DefaultImpact] := {{#units}}{{name}}_Impact {{/units}} 
+;
+
+set StreamsOfLayer[osmose_default_model_DefaultInvCost] := {{#units}}{{name}}_Cinv {{/units}} 
+;
+
+set StreamsOfLayer[osmose_default_model_DefaultMechPower] := {{#units}}{{name}}_Power {{/units}} 
+;
+
+set StreamsOfLayer[osmose_default_model_DefaultOpCost] := {{#units}}{{name}}_Cost {{/units}} 
+;
+
+{{#StreamsOfLayer}}
+set StreamsOfLayer[{{name}}] := {{#streams}}{{name}} {{/streams}};
+{{/StreamsOfLayer}}
+
+##
+## Locations
+##
+
+set Locations := {{#Locations}} {{project_name}}_{{location_name}} {{/Locations}}; 
+
+{{#Locations}}
+set StreamsOfLocation[{{project_name}}_{{location_name}}] := {{#units}}{{#streams}}{{name}} {{/streams}}{{#attr}}{{name}}_{{.}} {{/attr}}{{/units}}
+;
+
+
+{{#Layers}}
+set LocationsOfLayer[{{.}}] := {{project_name}}_{{location_name}};
+{{/Layers}}
+
+set UnitsOfLocation[{{project_name}}_{{location_name}}] := {{#units}}{{name}} {{/units}};
+{{/Locations}}
+
+##
+## Parameters
+##
+
+param cost_elec_in := {{#cost_elec_in}} {{time}} {{value}} {{/cost_elec_in}};
+
+param cost_elec_out := {{#cost_elec_out}} {{time}} {{value}} {{/cost_elec_out}};
+
+param op_time := {{#op_time}} {{time}} {{value}} {{/op_time}};
+
+param cycles := 1.0000;
+
+param Units_ForceUse := {{#times}} {{#units}}{{name}} {{time}} {{force_use}} {{/units}} {{/times}};
+
+param Units_Fmin := {{#units}}{{name}} {{Fmin}} {{/units}} ;
+
+param Units_Fmax := {{#units}}{{name}} {{Fmax}} {{/units}} ;
+
+
+param Streams_Cost1 := 
+{{#times}} {{#units}}{{#Costing}}{{layer}} {{name}}_{{attr}} {{time}} {{Cost1}}
+{{/Costing}}
+{{/units}}{{/times}}
+;
+
+param Streams_Cost2 := 
+{{#times}} {{#units}}{{#Costing}}{{layer}} {{name}}_{{attr}} {{time}} {{Cost2}}
+{{/Costing}}
+{{/units}}{{/times}}
+;
+
+param HC_TI_tl := {{#temps}}
+DefaultHeatCascade {{project_name}}_def_location {{time}} {{interval}} {{temp}}
+{{/temps}}
+;
+
+param Streams_Tin := {{#times}}{{#streams}}
+DefaultHeatCascade {{name}} {{time}} {{Tin_corr}} {{/streams}}{{/times}}
+;
+
+param Streams_Tout := {{#times}}{{#streams}}
+DefaultHeatCascade {{name}} {{time}} {{Tout_corr}} {{/streams}}{{/times}}
+;
+
+param Streams_Hin := {{#times}}{{#streams}}
+DefaultHeatCascade {{name}} {{time}} {{Hin}} {{/streams}}{{/times}}
+;
+
+param Streams_Hout := {{#times}}{{#streams}}
+DefaultHeatCascade {{name}} {{time}} {{Hout}} {{/streams}}{{/times}}
+;
+
+
+
+param Units_flowrate_in :={{#times}}
+{{#flowrateIn}}{{layerName}} {{unitName}} {{time}} {{value}}
+{{/flowrateIn}}{{/times}};
+
+param Units_flowrate_out :={{#times}}
+{{#flowrateOut}}{{layerName}} {{unitName}} {{time}} {{value}}
+{{/flowrateOut}}{{/times}};
+
+end;
