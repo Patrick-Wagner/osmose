@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Model</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+              <h1>Osmose documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Model'><i class='icon-chevron-right'></i> osmose.Model</a></li>
+                        <li><a href='#Model-API'><i class='icon-chevron-right'></i> Model API</a></li>
+                        <li><a href='#Instance-API'><i class='icon-chevron-right'></i> Instance API</a></li>
+                        <li><a href='#Solver-API'><i class='icon-chevron-right'></i> Solver API</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Model'>
+          <h2 class='section'>Model</h2>
+
+                    
+                    <p class='summary'>Use this class to create new models. A model stores the energy technology definitions such as <strong>inputs</strong>, <strong>outputs</strong> and <strong>processes</strong>. A model does not store actual parameter values. The "model" is like a formula. You create instances of the model with specific parameter values to create an experiment.</p>
+                    <p>Model definition example:</p>
+                    <pre class='prettyprint lang-lua'>-- doc:lit
+local osmose = require 'osmose'
+local lib    = <a href='osmose.Model.html'>osmose.Model</a> 'demo.Heater'
+
+lib.inputs = {
+  -- Initial water temperature.
+  start_temp = {default = 20, min = 0, max = 100, unit = 'C'},
+
+  -- Amount of water to heat.
+  mass      = {min = 0, unit = 'kg'}, 
+
+  -- Specific heat of the liquid.
+  specific_heat = {default = 4.1813, min = 0, max = 100, unit = 'kJ/(kg·K)'},
+
+  -- Available energy for heating.
+  heat = {min = 0, unit = 'kJ' },
+}
+
+lib.outputs = {
+  -- Liquid temperature after heating.
+  final_temp = {unit = 'C'},
+}
+
+lib.jobs = {
+  -- Compute final temperature by using:
+  -- [math]Q = C_p \times m \times dT[/math].
+  default = function()
+    final_temp = start_temp + heat / (specific_heat * mass)
+  end,
+}
+
+return lib
+</pre>
+                    <p>Model usage example:</p>
+                    <pre class='prettyprint lang-lua'>local demo = require 'demo'
+
+local heater = <a href='demo.Heater.html'>demo.Heater</a> {
+  start_temp = 10,  -- C
+  mass       = 1,   -- kg
+  heat       = 200, -- KJ
+}
+
+-- Using the output values triggers necessary computations.
+print(heater.final_temp)
+--&gt; 57.83
+</pre>
+                    <h4 class='sub-title'>Model structure</h4>
+                    <p>A model instance is defined as follows:</p>
+                    <pre class='txt ascii'>+------------+     +--------+     +-----------+
+| instance   | --&gt; | Heater | --&gt; | model_api |
+|------------|     +--------+     +-----------+
+| cache      |
++------------+
+</pre>
+                    <p>The <code>cache</code> field contains computed values. The <code>model_api</code> enables functions on instance such as <a href='#set'>set</a>. Heater is an instance of <a href='osmose.Model.html'>osmose.Model</a> with field definitions.</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(modelName)</code></h4>
+          
+                    <p>Creates osmose model class <code>type</code>.</p>
+                              </section>
+                    <section id='Model-API'>
+          <h2 class='section'>Model API</h2>
+
+                    
+                    <h4 class='sub-title'>addUnit(name, type)</h4>
+                    <p>Add units to the model. Must be Process or Utility. It'possible then to add streams to the unit.</p>
+                    <p>For exemple:</p>
+                    <pre class='prettyprint lang-lua'>local lib = <a href='osmose.Model.html'>osmose.Model</a> 'Cip'
+lib:addUnit("CipUnit", {type = 'Process'})
+
+cip["CipUnit"]:addStreams({  
+cleaning_agent= { 'cleaning_agent_temp', 0,'tank_temp','cleaning_agent_load',3, 'water_h'},
+fresh_water   = { 'source_temp', 0,'tank_temp','fresh_water_load', 3,'water_h'},
+discharge     = { 'return_temp','discharge_load','max_temp', 0, 3, 'water_h'},
+})</pre>
+                              
+                    <h4 class='sub-title'>addUnits(units)</h4>
+                    <p>Add mutliples units in one function like this :</p>
+                    <pre class='prettyprint lang-lua'>lib:addUnits {coldproc  = {type='Process', Fmax=1,  Cost2=10},
+            hotproc   = {type='Process', Fmax=1,  Cost2=10},
+            u1        = {type='Utility', Fmax=100,  Cost2=30},
+            u2        = {type='Utility', Fmax=100,  Cost2=30},
+            u3        = {type='Process', Fmax=1,  Cost2=0},
+            u4        = {type='Process', Fmax=1,  Cost2=0}}</pre>
+                              
+                    <h4 class='sub-title'>addLayers(layers)</h4>
+                    <p>Add layers to model :</p>
+                    <pre class='prettyprint lang-lua'>lib:addLayers {electricity = {type='MassBalance', unit='kW'}}</pre>
+                              
+                    <h4 class='sub-title'>addEquations(equations)</h4>
+                    <p>Add equations to model : lib:addEquations {eq_1 = "-1<strong>u2 + 1</strong>u4 &lt;= 0"} or  lib:addEquations {eq_2 = { statement = "-1<strong>u2 + 1</strong>u4 &lt;= 0", addToProblem=1 } }</p>
+                              
+                    <h4 class='sub-title'>Allowed tables</h4>
+                    <pre class='prettyprint lang-lua'>lib.inputs    = {tank_temp = {default = 85, min = 80, max = 90, unit = 'C'}}
+
+lib.outputs   = {raw_water_flow = {unit = 't/h', job = "(raw_water_rate/100) * distributed_water_flow" }}
+
+lib.values    = {air_cp=1.007}
+
+lib.advanced  = {max_temp = {default = 20, min = 0, max = 100, unit = 'C'}}
+</pre>
+                              </section>
+                    <section id='Instance-API'>
+          <h2 class='section'>Instance API</h2>
+
+                    
+                    <p>This method is called to fetch values in the cache or compute them as needed when accessing a model instance:</p>
+                    <pre class='prettyprint lang-lua'>local heater = Heater {...}
+print(heater.final_temp) -- Calls this method to solve value.</pre>
+                                        <h4 id='__newindex' class='entry method'><span>:</span>__newindex <code>(key, value)</code></h4>
+          
+                    <p>When setting a value, store the value in the cache and clear computed output values.</p>
+                                        <h4 id='set' class='entry method'><span>:</span>set <code>(params)</code></h4>
+          
+                    <p>Set new parameters (this clears the cached output values).</p>
+                                        <h4 id='clear' class='entry method'><span>:</span>clear <code>(params)</code></h4>
+          
+                    <p>Clear output parameters (remove values from cache).</p>
+                              </section>
+                    <section id='Solver-API'>
+          <h2 class='section'>Solver API</h2>
+
+                    
+                    <p>Methods used during job execution or cache query.</p>
+                    <p>This is called when trying to access <code>nil</code> keys in the cache. It is the <code>__index</code> method of the cache's metatable.</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='osmose.html'>osmose</a></li>
+            
+                        <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
+                        <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
+                        <li class=''><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class='active'><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.Project.html'>Project</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

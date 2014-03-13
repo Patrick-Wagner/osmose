@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+              <h1>Osmose documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Project'><i class='icon-chevron-right'></i> osmose.Project</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Project'>
+          <h2 class='section'>Project</h2>
+
+                    
+                    <p class='summary'>	Create an Osmose Project that specify an objective, load the ET models 	and indicate the periode and time cycle.</p>
+                                        <h4 id='__index' class='entry function'><span>.</span>__index <code>(table, key)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, objective)</code></h4>
+          
+                    <p> <a href='#Class'>Class</a> methods Create a new <strong>project</strong> with a <code>name</code> and an <code>objective</code> ('MER', 'YOC',...). local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</p>
+                                        <h4 id='getRun' class='entry function'><span>.</span>getRun <code>(projectName)</code></h4>
+          
+                    <p>Returns the current run number of a <code>project name</code>.</p>
+                                        <h4 id='periode' class='entry method'><span>:</span>periode <code>(periode)</code></h4>
+          
+                    <p>	Loads the models for the project and their values file. 	The model must be in the ET directory.</p>
+                    <p>	Exemple :</p>
+                    <p>		project:load( 		{cip = "ET.Cip"}, 		{cm1 = "ET.CookingMixing"}, 		{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} ) ]]-- 	local arg = {...} 	local model, name, modelPath, valuesPath 	for idx,_model in ipairs(arg) do 		for key,value in pairs(_model) do 			if key == 'with' then 				valuesPath = value 			else 				name = key 				modelPath = value 			end 		end 		 		-- Instantiate the model with the name given in the key. 		if type(modelPath) == 'string' then 			model = require(modelPath) (name) 		else 			model = modelPath (name) 		end</p>
+                    <p>		local helper = require 'osmose.helpers.projectHelper' 		helper.loadUndeclaredTags(model)</p>
+                    <p>		-- Get the path of the file that has launched the script. 		if valuesPath then 			local sourcePath = debug.getinfo(2).source:sub(2) 			local sourceFile = sourcePath:match("(%w<strong>%.%w</strong>)")  			local sourceDir  = sourcePath:match("(.*[/\\])") 			self.sourceDir = sourceDir 			model.loadValues(sourceDir..valuesPath) 		end</p>
+                    <p>		table.insert(self.models, model) 	end 	return nil end</p>
+                    <p>--[[ 	Allow to specify periodes and times values.</p>
+                    <p>	Exemple:</p>
+                    <p>		project:periode(1):time(12) 		project:periode(2):time(13) 		project:periode(3):time(11) ]]--</p>
+                    <p>	local periodeTbl = {times=1} 	--setmetatable(periodeTbl,{__call = function(times) return 'toto' end }) 	function periodeTbl:time(times) 		self.times = times 	end</p>
+                    <p>	self.periodes[periode] = periodeTbl 	 	return self.periodes[periode] end</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Project'>Project</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='osmose.html'>osmose</a></li>
+            
+                        <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
+                        <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
+                        <li class=''><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class='active'><a href='osmose.Project.html'>Project</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

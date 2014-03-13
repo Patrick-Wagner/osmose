@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Osmose</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+              <h1>Osmose documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#osmose'><i class='icon-chevron-right'></i> osmose</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='osmose'>
+          <h2 class='section'>Osmose</h2>
+
+                    
+                    <p class='summary'>The osmose directory contains the main classes of the application.</p>
+                    <h4 class='sub-title'>Configuration</h4>
+                    <p>A <code>config.lua</code> file must be created at the root of your projects and must contain the path to the third parties executable.</p>
+                    <p>	Exemple of config.lua file:</p>
+                    <p>	OSMOSE_ENV["GLPSOL_EXE"] 	= 'glpsol' 	OSMOSE_ENV["VALI_EXE"] 		= '"C:\\path\\to\\vali.exe "' 	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'</p>
+                                        <h4 id='-------------' class='entry klass'><a href='osmose.Eiampl.html'>Eiampl</a></h4>
+          
+                    <p class='summary'>	This class is responsible to prepare the ET 	for the solver.</p>
+                                        <h4 id='-----------' class='entry klass'><a href='osmose.Glpk.html'>Glpk</a></h4>
+          
+                    <p class='summary'>This class interfaces with the Glpk solver. It generates the <strong>data</strong>, copy the <strong>mod</strong> files, call the solver executable and parse the results.</p>
+                                        <h4 id='------------' class='entry klass'><a href='osmose.Graph.html'>Graph</a></h4>
+          
+                    <p class='summary'>	Create a Gnuplot graph. Just create new instance to create plain Gnuplot graph.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Graph.html#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Graph.html#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Graph.html#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Graph.html#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='------------' class='entry klass'><a href='osmose.Model.html'>Model</a></h4>
+          
+                    <p class='summary'>Use this class to create new models. A model stores the energy technology definitions such as <strong>inputs</strong>, <strong>outputs</strong> and <strong>processes</strong>. A model does not store actual parameter values. The "model" is like a formula. You create instances of the model with specific parameter values to create an experiment.</p>
+                                        <h4 id='--------------' class='entry klass'><a href='osmose.Project.html'>Project</a></h4>
+          
+                    <p class='summary'>	Create an Osmose Project that specify an objective, load the ET models 	and indicate the periode and time cycle.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Project.html#Project'>Project</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='index.html'><span></span>osmose</a></li>
+            
+                        <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
+                        <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
+                        <li class=''><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.Project.html'>Project</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Graph</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+              <h1>Osmose documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Graph'><i class='icon-chevron-right'></i> osmose.Graph</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Graph'>
+          <h2 class='section'>Graph</h2>
+
+                    
+                    <p class='summary'>	Create a Gnuplot graph. Just create new instance to create plain Gnuplot graph.</p>
+                    <p>	Exemple: 		osmose.Graph(project)</p>
+                    <p>	An output can be specified to created. This to be used for multitimes project.</p>
+                    <p>	Exemple to create SVG files : 		osmose.Graph(project, 'svg') </p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(project, format)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='complete' class='entry function'><span>.</span>complete <code>(hotCurve, coldCurve, gccCurve)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='getCompositeCp' class='entry function'><span>.</span>getCompositeCp <code>(streams,t)</code></h4>
+          
+                    <p>If a temperature is between the Tmin and Tmax of a stream, a cumulative slope is calculated.</p>
+                                        <h4 id='splitHotAndCold' class='entry function'><span>.</span>splitHotAndCold <code>(project, periode, time)</code></h4>
+          
+                    <p>The hot streams and cold streams are dispatched in different arrays and are sorted by their minimal temperature. Tmin and Tmax are defined for each stream.</p>
+                                        <h4 id='getCumulateHeatLoad' class='entry function'><span>.</span>getCumulateHeatLoad <code>(streams,time)</code></h4>
+          
+                    <p>The cumulative Heat Load of the streams is calculated from the Tmin to the Tmax.</p>
+                                        <h4 id='getColdCC' class='entry function'><span>.</span>getColdCC <code>(streams)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='getHotCC' class='entry function'><span>.</span>getHotCC <code>(streams)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='osmose.html'>osmose</a></li>
+            
+                        <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
+                        <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
+                        <li class='active'><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.Project.html'>Project</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+
