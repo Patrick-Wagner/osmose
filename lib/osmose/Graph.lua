@@ -175,35 +175,36 @@ function lib.splitHotAndCold(project, periode, time)
 		local model = unit.model
 		if model then
 			model.periode = periode
-			model.time = 1
+			model.time = time
 		end
 		for i, stream in ipairs(unit.streams) do
+			local graph_stream = {}
 			if stream.draw ~= false then	
-				stream.isHot = stream.isHot(model)
-				stream.Tin_corr = stream.Tin_corr(model)
-				stream.Tout_corr = stream.Tout_corr(model)
-				stream.Hin = stream.Hin(model)
-				stream.Hout = stream.Hout(model)
-				stream.Q = stream.load[time]
+				graph_stream.isHot = stream.isHot(model)
+				graph_stream.Tin_corr = stream.Tin_corr(model)
+				graph_stream.Tout_corr = stream.Tout_corr(model)
+				graph_stream.Hin = stream.Hin(model)
+				graph_stream.Hout = stream.Hout(model)
+				graph_stream.Q = stream.load[time]
 				
 
-				if stream.isHot and stream.Q then
-					if project.objective == 'MER' and delta_hot <= 0.001 and delta_hot >= -0.001 then
-						stream.CP = (stream.Hin - stream.Hout) / (stream.Tin_corr - stream.Tout_corr)
+				if graph_stream.isHot and graph_stream.Q then
+					if project.objective == 'MER' and delta_hot <= 0.01 and delta_hot >= -0.01 then
+						graph_stream.CP = (graph_stream.Hin - graph_stream.Hout) / (graph_stream.Tin_corr - graph_stream.Tout_corr)
 					else
-						stream.CP 	= stream.Q / (stream.Tin_corr - stream.Tout_corr)
+						graph_stream.CP 	= graph_stream.Q / (graph_stream.Tin_corr - graph_stream.Tout_corr)
 					end
-					stream.CP 	= stream.Q / (stream.Tin_corr - stream.Tout_corr)
-					table.insert(hotStreams, stream)
+					--graph_stream.CP 	= graph_stream.Q / (graph_stream.Tin_corr - graph_stream.Tout_corr)
+					table.insert(hotStreams, graph_stream)
 					--print('hot', stream.name, stream.Tin_corr-273, stream.Tout_corr-273, stream.Q, stream.CP)
-				elseif stream.Q then
-					if project.objective == 'MER' and delta_hot <= 0.001 and delta_hot >= -0.001 then
-						stream.CP = (stream.Hin - stream.Hout) / (stream.Tin_corr - stream.Tout_corr)
+				elseif graph_stream.Q then
+					if project.objective == 'MER' and delta_hot <= 0.01 and delta_hot >= -0.01 then
+						graph_stream.CP = (graph_stream.Hin - graph_stream.Hout) / (graph_stream.Tin_corr - graph_stream.Tout_corr)
 					else
-						stream.CP 	= stream.Q / (stream.Tout_corr - stream.Tin_corr)
+						graph_stream.CP 	= graph_stream.Q / (graph_stream.Tout_corr - graph_stream.Tin_corr)
 					end
-					stream.CP 	= stream.Q / (stream.Tout_corr - stream.Tin_corr)
-					table.insert(coldStreams, stream)
+					--graph_stream.CP 	= graph_stream.Q / (graph_stream.Tout_corr - graph_stream.Tin_corr)
+					table.insert(coldStreams, graph_stream)
 				else
 					print('Could not draw graph. No Heat Load for stream', stream.name)
 					os.exit()

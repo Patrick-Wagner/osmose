@@ -1,15 +1,19 @@
 package = "osmose"
 version = "0.1-1"
 source = {
-   url = "...", -- We don't have one yet
-   dir = ""
+   url = "https://github.com/ipese/osmose",
 }
 description = {
-   summary = "Osmose",
+   summary = "OSMOSE : A tool for the design and analysis of integrated energy systems",
    detailed = [[
-      osmose
+      OSMOSE is a tool for the design and the analysis of integrated energy systems.
+
+      The goal of the OSMOSE platform is to enable the integration of flowsheeting tools, process integration and costing tools to realise the study of integrated energy conversion systems.
+
+      One of the major goal of OSMOSE is to allow the integration of different models and to organise the process design methods using process integration techniques and multi-objective thermo-economic optimisation techniques.
    ]],
-   homepage = "http://...", -- We don't have one yet
+   homepage = "https://github.com/ipese/osmose",
+   licence = "proprietary"
 }
 dependencies = {
    "lua >= 5.1, < 5.3",
@@ -37,9 +41,14 @@ build = {
       ['osmose.helpers.projectHelper'] = "lib/osmose/helpers/projectHelper.lua",
 
       ['osmose.eiampl.vendor.lustache'] = "lib/osmose/eiampl/vendor/lustache.lua",
+
       ['lustache.context'] = "lib/osmose/eiampl/vendor/lustache/context.lua",
       ['lustache.scanner'] = "lib/osmose/eiampl/vendor/lustache/scanner.lua",
       ['lustache.renderer'] = "lib/osmose/eiampl/vendor/lustache/renderer.lua",
+
+      ['ET.Cip'] = "ET/Cip.lua",
+      ['ET.CokkingMixing'] = "ET/CookingMixing.lua",
+      ['ET.generic_utilities'] = "ET/generic_utilities.lua"
    },
 
    install = {

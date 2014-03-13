@@ -1,0 +1,13 @@
+meter			| length			| 1
+foot			| length			| 0.304800610
+yard			| length 			| 0.9144
+mile			| length			| 1853.7936
+kg				| mass				| 1           
+pound			| mass				| 0.45359237	
+gr				| mass				| 0.001 kg		
+ounce			| mass				| 28 gr				
+second		| time				| 1 					
+day				| time				| 86400 			
+K					| temperature	| 1         	| 0
+C					| temperature	| 1         	| 273.15
+F 				| temperature | 0.555555555	| 459.67

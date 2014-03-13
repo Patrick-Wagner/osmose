@@ -68,7 +68,7 @@ function lib.new(project, return_solver)
 
 		for i,tbl in ipairs(temps) do
 			project.results.gcc[periode][tbl.time] = project.results.gcc[periode][tbl.time] or {}
-			project.results.gcc[periode][tbl.time][i] = tbl
+			project.results.gcc[periode][tbl.time][tbl.interval] = tbl
 		end
 
 		-- replace default name by project name

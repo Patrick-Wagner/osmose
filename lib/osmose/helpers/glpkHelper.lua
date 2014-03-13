@@ -12,9 +12,10 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 
 		-- Capture the param, domain, value regarding the pattern "param[domaine].val = value"
 		local param, layer, tag, time,int, value = line:match("(.*)%[([%w_]+),([%w_]*),*(%d*),*(%d*)%].*=%s*(%d*.*)")
-		--print(param, layer, tag, time,int, value)
+		
 		-- We need to store the heat load for the Grant Composite Curve (GCC)
 		if param == 'HC_Rk' then
+			--print(param, layer, tag, time,int, value)
 			project.results.gcc[periode][tonumber(time)][tonumber(int)].Q = tonumber(value)
 		end
 

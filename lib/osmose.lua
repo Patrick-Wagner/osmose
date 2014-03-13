@@ -20,6 +20,7 @@
 OSMOSE_ENV={}
 
 package.path = ';./lib/?/?.lua;./lib/?.lua;'..package.path
+package.path = ';./ET/?/?.lua;./ET/?.lua;'..package.path
 
 
 local lfs = require "lfs"
