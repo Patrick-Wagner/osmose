@@ -10,7 +10,7 @@ Osmose is a new implementation of OSMOSE in Lua. Osmose is:
 You may want to check the [wiki](https://github.com/ipese/LuaOsmose/wiki/_pages), the [doc](http://ipese.github.com/LuaOsmose/), our [Domain-specific Langage (DSL)](https://github.com/ipese/LuaOsmose/wiki/Domain-Specific-Language)) or the [Open Issuses](https://github.com/ipese/LuaOsmose/issues?state=open).
 
 ## Documentation
-Please browse the project [generated doc](http://ipese.github.com/LuaOsmose/).
+Please browse the project [generated doc](http://ipese.github.io/osmose/docs/osmose.html).
 
 ## Installation
 
