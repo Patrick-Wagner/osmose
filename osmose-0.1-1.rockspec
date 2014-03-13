@@ -13,7 +13,7 @@ description = {
       One of the major goal of OSMOSE is to allow the integration of different models and to organise the process design methods using process integration techniques and multi-objective thermo-economic optimisation techniques.
    ]],
    homepage = "https://github.com/ipese/osmose",
-   licence = "proprietary"
+   license = "proprietary"
 }
 dependencies = {
    "lua >= 5.1, < 5.3",
@@ -47,7 +47,7 @@ build = {
       ['lustache.renderer'] = "lib/osmose/eiampl/vendor/lustache/renderer.lua",
 
       ['ET.Cip'] = "ET/Cip.lua",
-      ['ET.CokkingMixing'] = "ET/CookingMixing.lua",
+      ['ET.CookingMixing'] = "ET/CookingMixing.lua",
       ['ET.generic_utilities'] = "ET/generic_utilities.lua"
    },
 
