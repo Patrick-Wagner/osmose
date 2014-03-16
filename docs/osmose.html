@@ -44,9 +44,21 @@
                     
                     <p class='summary'>The osmose directory contains the main classes of the application.</p>
                     <h4 class='sub-title'>Configuration</h4>
-                    <p>A <code>config.lua</code> file must be created at the root of your projects and must contain the path to the third parties executable.</p>
+                    <p>A <code>config.lua</code> file must be created at the root of your working directory and must contain the path to the third parties executable.</p>
                     <p>	Exemple of config.lua file:</p>
                     <p>	OSMOSE_ENV["GLPSOL_EXE"] 	= 'glpsol' 	OSMOSE_ENV["VALI_EXE"] 		= '"C:\\path\\to\\vali.exe "' 	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'</p>
+                    <p>	Your working directory must contain the following directory :</p>
+                    <p>	/ET 					<em>folder to store ET models_ 	/projects     <em>folder to store frontends file</em> 	/results      _folder where osmose results will be generated</em></p>
+                    <p>	## Frontend</p>
+                    <p>	A typical frontend will stored in file such as <code>jam.lua</code>  	in the <code>projects</code> directory and will have the following elements :</p>
+                    <p>		local osmose = require 'osmose'</p>
+                    <p>		local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</p>
+                    <p>		project:load( 			{cip = "ET.Cip"}, 		  {utilities = "ET.generic_utilities"}, 			{cm1 = "ET.CookingMixing"}, 			{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} 		)</p>
+                    <p>		local oneRun = <a href='osmose.Eiampl.html'>osmose.Eiampl</a>(project)</p>
+                    <p>		osmose.Glpk(oneRun)</p>
+                    <p>		osmose.Graph(oneRun)</p>
+                    <p>	## ET Models</p>
+                    <p>	You can create you're own ET models and store then in  	a local directory such as 'ET'. Please see the Model 	documentation page.</p>
                                         <h4 id='-------------' class='entry klass'><a href='osmose.Eiampl.html'>Eiampl</a></h4>
           
                     <p class='summary'>	This class is responsible to prepare the ET 	for the solver.</p>
@@ -86,7 +98,7 @@
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-03-16 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

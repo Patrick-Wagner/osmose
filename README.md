@@ -39,7 +39,7 @@ Once Osmose is installed, you need to create a repository to manage osmose proje
 
 config.lua 		_the osmose config file_
 /ET 					_folder to store ET models_
-/project      _folder to store frontends_
+/projects      _folder to store frontends_
 /results      _folder where osmose results will be generated_
 
 ### config.lua
