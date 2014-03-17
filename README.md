@@ -36,7 +36,7 @@ After that you will install Osmose as a rock. Open a command Windows (cmd.exe) a
 
 Osmose can alse be installed as a rock (OSX and Linux):
 
-	luarocks install --only-server=http://ipese.github.io/osmose-install osmose
+	luarocks install --server=http://ipese.github.io/osmose-install osmose
 
 or on Windows :
 
