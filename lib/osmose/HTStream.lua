@@ -1,3 +1,31 @@
+--[[---------------------------------------
+	# HTStream
+
+	Use this class to create HT Stream in your ET model.
+
+	Exemples :
+
+		osmose.HTStream { 
+			1750, -- tin 
+			{300,300,300,300,300,300,300,300,300,300}, -- hin
+			{730,700,650,638,603,570,558,420,385,345}, -- tout
+			{0,0,0,0,0,0,0,0,0,0},  -- hout
+			5 -- dtmin
+		}
+
+	or with key name :
+
+		osmose.HTStream {
+			tin 	= 1750,
+			tout 	= {730,700,650,638,603,570,558,420,385,345}, 
+			hin 	= {300,300,300,300,300,300,300,300,300,300},
+			hout 	= {0,0,0,0,0,0,0,0,0,0},
+			dtmin = 5
+		}
+
+	You can use ht{} as synonyme of osmose.HTSream {}.
+--]]---------------------------------------
+
 local lub = require 'lub'
 local lib = lub.class 'osmose.HTStream'
 local qt   = require('osmose.QTStream')

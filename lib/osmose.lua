@@ -11,8 +11,8 @@
 
 	Exemple of config.lua file:
 
-	OSMOSE_ENV["GLPSOL_EXE"] 	= 'glpsol'
-	OSMOSE_ENV["VALI_EXE"] 		= '"C:\\path\\to\\vali.exe "'
+	OSMOSE_ENV["GLPSOL_EXE"] 	= 'glpsol'<br/>
+	OSMOSE_ENV["VALI_EXE"] 		= '"C:\\path\\to\\vali.exe "'<br/>
 	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'
 
 	Your working directory must contain the following directory :

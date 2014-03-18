@@ -18,6 +18,14 @@ local lub 	= require 'lub'
 local lib 	= lub.class 'osmose.Graph'
 
 
+-- # Class function
+
+-- Draws Composite Curves (CC) and Grand Composites Curves (GCC). You can
+-- specify an format output.
+--
+-- Exemples:
+-- 	 osmose.Graph(project) 
+--   osmose.Graph(project, 'svg') 
 function lib.new(project, format)
 	
 	if OSMOSE_ENV["GNUPLOT_EXE"] == nil then
@@ -93,6 +101,10 @@ function lib.new(project, format)
 
 end
 
+
+-- This function is used to complete the composite curve 
+-- with points from the hot curve to the cold curve
+-- and poits from the cold curve to the hot curve.
 function lib.complete(hotCurve, coldCurve, gccCurve)
 
 	local presentCold = nil
@@ -157,9 +169,6 @@ function lib.getCompositeCp(streams,t)
 	
 	return cp
 end
-
-
-
 
 
 
@@ -235,6 +244,7 @@ function lib.getCumulateHeatLoad(streams,time)
 	return streams
 end
 
+-- Create the composite curve for the cold curve.
 function lib.getColdCC(streams)
 
 	local compositeCP={}
@@ -262,7 +272,7 @@ function lib.getColdCC(streams)
 
 end
 
-
+-- Create the composite curve for the hot curve.
 function lib.getHotCC(streams)
 
 	local compositeCP={}
@@ -290,13 +300,5 @@ function lib.getHotCC(streams)
 	return compositeCurve
 
 end
-
-
-
-
-
-
-
-
 
 return lib

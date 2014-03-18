@@ -3,9 +3,10 @@
   
   # Eiampl
 
-	This class is responsible to prepare the ET
+	This class is responsible to prepare the ET models
 	for the solver.
-
+	
+	local eiampl = osmose.Eiampl(project)
 --]]---------------------------------------
 
 local lub = require 'lub'

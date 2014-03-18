@@ -1,21 +1,32 @@
--- There is 2 ways to initialize QT streams. 
--- 1) With named parameters : tin, hin, tout, hout, dtmin and alpha.
--- 		QTStream  { 
---     -- temperature in
---     tin = 'source_temp',
---     -- enthalpy in
---     hin = 0,
---     -- temperature out
---     tout = 'tank_temp',
---     -- enthalpy out
---     hout = 'fresh_water_load',
---     -- delta t min
---     dtmin = 3,
---     -- alpha
---     alpha = 'water_h',
---   	}
--- 2) With ordered parameters :
---		QTStream { source_temp', 0, 'tank_temp','fresh_water_load',3,'water_h' }
+--[[---------------------------------------
+
+# QTStream
+
+There is 2 ways to initialize QT streams. 
+1) With named parameters : tin, hin, tout, hout, dtmin and alpha.
+	osmose.QTStream  { 
+	  -- temperature in
+	  tin = 'source_temp',
+	  -- enthalpy in
+	  hin = 0,
+	  -- temperature out
+	  tout = 'tank_temp',
+	  -- enthalpy out
+	  hout = 'fresh_water_load',
+	  -- delta t min
+	  dtmin = 3,
+	  -- alpha
+	  alpha = 'water_h',
+	}
+2) With ordered parameters :
+	
+	osmose.QTStream { source_temp', 0, 'tank_temp','fresh_water_load',3,'water_h' }
+
+You can use qt{} as synonyme of osmose.QTStream {}.
+
+QTStream is a special case of HTStream.
+
+--]]---------------------------------------
 
 
 local lub = require 'lub'

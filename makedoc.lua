@@ -8,6 +8,8 @@ lut.Doc.make {
     'lib/osmose/Glpk.lua', 
     'lib/osmose/Graph.lua',
     'lib/osmose/Project.lua',
+    'lib/osmose/HTStream.lua',
+    'lib/osmose/QTStream.lua'
   },
   target = 'docs',
   format = 'html',
