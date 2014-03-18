@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>osmose.Unit</title>
+    <title>Unit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -39,10 +39,54 @@
         <div class='main span7'>
 
                     <section id='Unit'>
-          <h2 class='section'>osmose.Unit</h2>
+          <h2 class='section'>Unit</h2>
 
                     
-                    <p class='summary'></p>
+                    <p class='summary'>Use this class to create Process or Utility in ET models.</p>
+                    <p>Exemple :</p>
+                    <pre class='prettyprint lang-lua'>local osmose = require 'osmose'
+local lib = <a href='osmose.Model.html'>osmose.Model</a> 'CookingMixing'
+
+lib:addUnit("CMUnit", {type = 'Process'})
+
+cip["CMUnit"]:addStreams({  
+  cleaning_agent = qt { 'cleaning_agent_temp', 0,'tank_temp','cleaning_agent_load',3, 'water_h'},
+  fresh_water = qt { 'source_temp', 0,'tank_temp','fresh_water_load', 3,'water_h'},
+})
+</pre>
+                                        <h4 id='addToProblem' class='entry param'><span>.</span>addToProblem <code>= 1</code></h4>
+          
+                    <p>Add by default to problem</p>
+                                        <h4 id='__index' class='entry param'><span>.</span>__index <code>= function(tbl, key)</code></h4>
+          
+                    <p>Metatable function.</p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, args)</code></h4>
+          
+                    <p>Create unit of type Process or Utility.</p>
+                    <p>Exemple :</p>
+                    <pre class='prettyprint lang-lua'>local osmose = require 'osmose'
+
+local u1 = <a href='osmose.Unit.html'>osmose.Unit</a>('unit1',{type='Process'})
+local u2 = <a href='osmose.Unit.html'>osmose.Unit</a>('unit2',{type='Utility'})
+</pre>
+                                        <h4 id='addStreams' class='entry method'><span>:</span>addStreams <code>(tbl)</code></h4>
+          
+                    <p>Add streams to a Unit.</p>
+                    <p>This exemple add a QT stream named 'stream1'</p>
+                    <pre class='prettyprint lang-lua'>local osmose = require 'osmose'
+local u1 = <a href='osmose.Unit.html'>osmose.Unit</a>('unit1',{type='Process'})
+
+u1:addStreams( {stream1 = { 'return_temp','discharge_load','max_temp', 0, 3, 'water_h'}})
+</pre>
+                    <p>This exemple add a HT stream :</p>
+                    <pre class='prettyprint lang-lua'>u1:addStreams({ stream2 = ht{
+  tin   = 1750,
+  tout  = {730,700,650,638,603,570,558,420,385,345}, 
+  hin   = {300,300,300,300,300,300,300,300,300,300},
+  hout  = {0,0,0,0,0,0,0,0,0,0},
+  dtmin = 5}  })
+</pre>
+                    <p>The streams can be QTStream, HTStream or MassStream. By default, it's a QTStream. There is shortcuts for each of one : ht(), ms() and qt()</p>
                               </section>
                   </div>
 
@@ -54,6 +98,7 @@
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class=''><a href='osmose.Graph.html'>Graph</a></li>
                         <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
@@ -66,7 +111,7 @@
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-13 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

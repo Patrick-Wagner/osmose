@@ -33,7 +33,6 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Graph'><i class='icon-chevron-right'></i> osmose.Graph</a></li>
-                        <li><a href='#Class-function'><i class='icon-chevron-right'></i> Class function</a></li>
                       </ul>
         </div>
 
@@ -43,19 +42,21 @@
           <h2 class='section'>Graph</h2>
 
                     
-                    <p class='summary'>	Create a Gnuplot graph. Just create new instance to create plain Gnuplot graph.</p>
-                    <p>	Exemple: 		osmose.Graph(project)</p>
-                    <p>	An output can be specified to created. This to be used for multitimes project.</p>
-                    <p>	Exemple to create SVG files : 		osmose.Graph(project, 'svg') </p>
-                              </section>
-                    <section id='Class-function'>
-          <h2 class='section'>Class function</h2>
-
-                    
+                    <p class='summary'>Create a Gnuplot graph. Just create new instance to create plain Gnuplot graph.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>osmose.Graph(project)
+</pre>
+                    <p>An output can be specified to created. This to be used for multitimes project.</p>
+                    <p>Exemple to create SVG files :</p>
+                    <pre class='prettyprint lang-lua'>osmose.Graph(project, 'svg') 
+</pre>
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(project, format)</code></h4>
           
                     <p>Draws Composite Curves (CC) and Grand Composites Curves (GCC). You can specify an format output.</p>
-                    <p>Exemples: 	 <a href='osmose.Graph.html'>osmose.Graph</a>(project)  <a href='osmose.Graph.html'>osmose.Graph</a>(project, 'svg') </p>
+                    <p>Exemples:</p>
+                    <pre class='prettyprint lang-lua'>osmose.Graph(project) 
+osmose.Graph(project, 'svg') 
+</pre>
                                         <h4 id='complete' class='entry function'><span>.</span>complete <code>(hotCurve, coldCurve, gccCurve)</code></h4>
           
                     <p>This function is used to complete the composite curve  with points from the hot curve to the cold curve and poits from the cold curve to the hot curve.</p>
@@ -85,9 +86,12 @@
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class='active'><a href='osmose.Graph.html'>Graph</a></li>
                         <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
+                        <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.Unit.html'>Unit</a></li>
                       </ul>
         </div>
       </div>

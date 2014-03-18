@@ -9,7 +9,10 @@ lut.Doc.make {
     'lib/osmose/Graph.lua',
     'lib/osmose/Project.lua',
     'lib/osmose/HTStream.lua',
-    'lib/osmose/QTStream.lua'
+    'lib/osmose/QTStream.lua',
+    'lib/osmose/Unit.lua',
+    'lib/osmose/MassStream.lua',
+    'lib/osmose/Layer.lua'
   },
   target = 'docs',
   format = 'html',

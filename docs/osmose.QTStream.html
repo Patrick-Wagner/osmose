@@ -33,7 +33,6 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#QTStream'><i class='icon-chevron-right'></i> osmose.QTStream</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
@@ -43,21 +42,34 @@
           <h2 class='section'>QTStream</h2>
 
                     
-                    <p class='summary'>There is 2 ways to initialize QT streams.  1) With named parameters : tin, hin, tout, hout, dtmin and alpha. 	osmose.QTStream  {  	  -- temperature in 	  tin = 'source_temp', 	  -- enthalpy in 	  hin = 0, 	  -- temperature out 	  tout = 'tank_temp', 	  -- enthalpy out 	  hout = 'fresh_water_load', 	  -- delta t min 	  dtmin = 3, 	  -- alpha 	  alpha = 'water_h', 	} 2) With ordered parameters : 	 	osmose.QTStream { source_temp', 0, 'tank_temp','fresh_water_load',3,'water_h' }</p>
+                    <p class='summary'>Use this class to create HT Stream in your ET model.</p>
+                    <p>There is 2 ways to initialize QT streams.  1) With named parameters : tin, hin, tout, hout, dtmin and alpha.</p>
+                    <pre class='prettyprint lang-lua'>osmose.QTStream  { 
+  -- temperature in
+  tin = 'source_temp',
+  -- enthalpy in
+  hin = 0,
+  -- temperature out
+  tout = 'tank_temp',
+  -- enthalpy out
+  hout = 'fresh_water_load',
+  -- delta t min
+  dtmin = 3,
+  -- alpha
+  alpha = 'water_h',
+}
+</pre>
+                    <p>2) With ordered parameters :</p>
+                    <pre class='prettyprint lang-lua'>osmose.QTStream { source_temp', 0, 'tank_temp','fresh_water_load',3,'water_h' }
+</pre>
                     <p>You can use qt{} as synonyme of <a href='osmose.QTStream.html'>osmose.QTStream</a> {}.</p>
                     <p>QTStream is a special case of HTStream.</p>
                                         <h4 id='new' class='entry param'><span>.</span>new <code>= function(params)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Class function that create QTStream.</p>
                                         <h4 id='initTag' class='entry method'><span>:</span>initTag <code>(model, tag, temp)</code></h4>
           
                     <p>Private function to define a stream value (tin, tout, hin, hout).</p>
-                              </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
-
-                    
-                    <p class='todo'><span class='ref'><a href='#QTStream'>QTStream</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
@@ -69,9 +81,12 @@
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class=''><a href='osmose.Graph.html'>Graph</a></li>
                         <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
+                        <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class='active'><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.Unit.html'>Unit</a></li>
                       </ul>
         </div>
       </div>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>HTStream</title>
+    <title>Layer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -32,45 +32,26 @@
 
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
-                        <li><a href='#HTStream'><i class='icon-chevron-right'></i> osmose.HTStream</a></li>
+                        <li><a href='#Layer'><i class='icon-chevron-right'></i> osmose.Layer</a></li>
                       </ul>
         </div>
 
         <div class='main span7'>
 
-                    <section id='HTStream'>
-          <h2 class='section'>HTStream</h2>
+                    <section id='Layer'>
+          <h2 class='section'>Layer</h2>
 
                     
-                    <p class='summary'>Use this class to create HT Stream in your ET model.</p>
-                                        <h4 id='__index' class='entry function'><span>.</span>__index <code>(table, key)</code></h4>
+                    <p class='summary'>Use this class to create layers in your ET model.</p>
+                    <p>Exemple :</p>
+                    <pre class='prettyprint lang-lua'>lib:addLayers {electricity = {type='MassBalance', unit='kW'}}
+
+local osmose = require 'osmose'
+local lib = <a href='osmose.Model.html'>osmose.Model</a> 'ET'</pre>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(name, args)</code></h4>
           
-                    <p>lib is the metatable</p>
-                                        <h4 id='type' class='entry param'><span>.</span>type <code>= 'HTStream'</code></h4>
-          
-                    <p>HTStream type</p>
-                                        <h4 id='new' class='entry param'><span>.</span>new <code>= function(params)</code></h4>
-          
-                    <p>Class method to create HTStream.</p>
-                    <p>Exemples :</p>
-                    <pre class='prettyprint lang-lua'>osmose.HTStream { 
-  1750, -- tin 
-  {300,300,300,300,300,300,300,300,300,300}, -- hin
-  {730,700,650,638,603,570,558,420,385,345}, -- tout
-  {0,0,0,0,0,0,0,0,0,0},  -- hout
-  5 -- dtmin
-}
-</pre>
-                    <p>or with key name :</p>
-                    <pre class='prettyprint lang-lua'>osmose.HTStream {
-  tin   = 1750,
-  tout  = {730,700,650,638,603,570,558,420,385,345}, 
-  hin   = {300,300,300,300,300,300,300,300,300,300},
-  hout  = {0,0,0,0,0,0,0,0,0,0},
-  dtmin = 5
-}
-</pre>
-                    <p>You can use ht{} as synonyme of <a href='osmose.HTSream.html'>osmose.HTSream</a> {}.</p>
+                    <p>Class function to create Layer.</p>
+                    <p>Use addLayers() methode from <a href='osmose.Model.html'>osmose.Model</a>() class to create layer  in your ET model.</p>
                               </section>
                   </div>
 
@@ -81,8 +62,8 @@
                         <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class=''><a href='osmose.Graph.html'>Graph</a></li>
-                        <li class='active'><a href='osmose.HTStream.html'>HTStream</a></li>
-                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
+                        <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class='active'><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>

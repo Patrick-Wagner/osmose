@@ -33,7 +33,6 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Project'><i class='icon-chevron-right'></i> osmose.Project</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
@@ -43,35 +42,33 @@
           <h2 class='section'>Project</h2>
 
                     
-                    <p class='summary'>	Create an Osmose Project that specify an objective, load the ET models 	and indicate the periode and time cycle.</p>
+                    <p class='summary'>Create an Osmose Project that specify an objective, load the ET models and indicate the periode and time cycle.</p>
                                         <h4 id='__index' class='entry function'><span>.</span>__index <code>(table, key)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Function for metatable.</p>
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(name, objective)</code></h4>
           
-                    <p> <a href='#Class'>Class</a> methods Create a new <strong>project</strong> with a <code>name</code> and an <code>objective</code> ('MER', 'YOC',...). local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</p>
+                    <p>Create a new <strong>project</strong> with a <code>name</code> and an <code>objective</code> ('MER', 'YOC',...).</p>
+                    <p>Exemple :</p>
+                    <pre class='prettyprint lang-lua'>local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</pre>
                                         <h4 id='getRun' class='entry function'><span>.</span>getRun <code>(projectName)</code></h4>
           
                     <p>Returns the current run number of a <code>project name</code>.</p>
+                                        <h4 id='load' class='entry method'><span>:</span>load <code>(...)</code></h4>
+          
+                    <p>Loads the models for the project and their values file. The model must be in the ET directory.</p>
+                    <p>Exemple :</p>
+                    <pre class='prettyprint lang-lua'>project:load(
+{cip = "ET.Cip"},
+{cm1 = "ET.CookingMixing"},
+{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} )</pre>
                                         <h4 id='periode' class='entry method'><span>:</span>periode <code>(periode)</code></h4>
           
-                    <p>	Loads the models for the project and their values file. 	The model must be in the ET directory.</p>
-                    <p>	Exemple :</p>
-                    <p>		project:load( 		{cip = "ET.Cip"}, 		{cm1 = "ET.CookingMixing"}, 		{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} ) ]]-- 	local arg = {...} 	local model, name, modelPath, valuesPath 	for idx,_model in ipairs(arg) do 		for key,value in pairs(_model) do 			if key == 'with' then 				valuesPath = value 			else 				name = key 				modelPath = value 			end 		end 		 		-- Instantiate the model with the name given in the key. 		if type(modelPath) == 'string' then 			model = require(modelPath) (name) 		else 			model = modelPath (name) 		end</p>
-                    <p>		local helper = require 'osmose.helpers.projectHelper' 		helper.loadUndeclaredTags(model)</p>
-                    <p>		-- Get the path of the file that has launched the script. 		if valuesPath then 			local sourcePath = debug.getinfo(2).source:sub(2) 			local sourceFile = sourcePath:match("(%w<strong>%.%w</strong>)")  			local sourceDir  = sourcePath:match("(.*[/\\])") 			self.sourceDir = sourceDir 			model.loadValues(sourceDir..valuesPath) 		end</p>
-                    <p>		table.insert(self.models, model) 	end 	return nil end</p>
-                    <p>--[[ 	Allow to specify periodes and times values.</p>
-                    <p>	Exemple:</p>
-                    <p>		project:periode(1):time(12) 		project:periode(2):time(13) 		project:periode(3):time(11) ]]--</p>
-                    <p>	local periodeTbl = {times=1} 	--setmetatable(periodeTbl,{__call = function(times) return 'toto' end }) 	function periodeTbl:time(times) 		self.times = times 	end</p>
-                    <p>	self.periodes[periode] = periodeTbl 	 	return self.periodes[periode] end</p>
-                              </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
-
-                    
-                    <p class='todo'><span class='ref'><a href='#Project'>Project</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Allow to specify periodes and times values.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>project:periode(1):time(12)
+project:periode(2):time(13)
+project:periode(3):time(11)</pre>
                               </section>
                   </div>
 
@@ -83,9 +80,12 @@
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class=''><a href='osmose.Graph.html'>Graph</a></li>
                         <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
+                        <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class='active'><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.Unit.html'>Unit</a></li>
                       </ul>
         </div>
       </div>
