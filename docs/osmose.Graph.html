@@ -33,7 +33,7 @@
         <div class='span3 local-nav'>
           <ul class='nav nav-tabs nav-stacked affix'>
                         <li><a href='#Graph'><i class='icon-chevron-right'></i> osmose.Graph</a></li>
-                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                        <li><a href='#Class-function'><i class='icon-chevron-right'></i> Class function</a></li>
                       </ul>
         </div>
 
@@ -47,12 +47,18 @@
                     <p>	Exemple: 		osmose.Graph(project)</p>
                     <p>	An output can be specified to created. This to be used for multitimes project.</p>
                     <p>	Exemple to create SVG files : 		osmose.Graph(project, 'svg') </p>
+                              </section>
+                    <section id='Class-function'>
+          <h2 class='section'>Class function</h2>
+
+                    
                                         <h4 id='new' class='entry function'><span>.</span>new <code>(project, format)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Draws Composite Curves (CC) and Grand Composites Curves (GCC). You can specify an format output.</p>
+                    <p>Exemples: 	 <a href='osmose.Graph.html'>osmose.Graph</a>(project)  <a href='osmose.Graph.html'>osmose.Graph</a>(project, 'svg') </p>
                                         <h4 id='complete' class='entry function'><span>.</span>complete <code>(hotCurve, coldCurve, gccCurve)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>This function is used to complete the composite curve  with points from the hot curve to the cold curve and poits from the cold curve to the hot curve.</p>
                                         <h4 id='getCompositeCp' class='entry function'><span>.</span>getCompositeCp <code>(streams,t)</code></h4>
           
                     <p>If a temperature is between the Tmin and Tmax of a stream, a cumulative slope is calculated.</p>
@@ -64,19 +70,10 @@
                     <p>The cumulative Heat Load of the streams is calculated from the Tmin to the Tmax.</p>
                                         <h4 id='getColdCC' class='entry function'><span>.</span>getColdCC <code>(streams)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Create the composite curve for the cold curve.</p>
                                         <h4 id='getHotCC' class='entry function'><span>.</span>getHotCC <code>(streams)</code></h4>
           
-                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
-                              </section>
-                    <section id='TODO'>
-          <h2 class='section'>TODO</h2>
-
-                    
-                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
-                    <p class='todo'><span class='ref'><a href='#Graph'>Graph</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p>Create the composite curve for the hot curve.</p>
                               </section>
                   </div>
 
@@ -87,8 +84,10 @@
                         <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
                         <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
                         <li class='active'><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
+                        <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
                       </ul>
         </div>
       </div>
@@ -96,7 +95,7 @@
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-16 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 
