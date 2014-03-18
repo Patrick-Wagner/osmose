@@ -29,7 +29,7 @@ There is an installation program that you you can [download](https://dl.dropboxu
 
 After that you will install Osmose as a rock. Open a command Windows (cmd.exe) and type : 
 
-	luarocks install --only-from=http://ipese.github.io/osmose-install osmose
+	luarocks install --from=http://ipese.github.io/osmose-install osmose
 
 
 ### Luarocks
@@ -40,7 +40,7 @@ Osmose can alse be installed as a rock (OSX and Linux):
 
 or on Windows :
 
-	luarocks install --only-from=http://ipese.github.io/osmose-install osmose
+	luarocks install --from=http://ipese.github.io/osmose-install osmose
 
 ### Gnuplot
 
