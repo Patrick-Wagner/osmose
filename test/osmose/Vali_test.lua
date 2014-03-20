@@ -27,7 +27,7 @@ end
 function should.execute()
 	local vali = makeVali()
 	local status = vali:execute()
-	assertEqual(0,status)
+	assertEqual(1,status)
 end
 
 function should.generateMeaFile()
