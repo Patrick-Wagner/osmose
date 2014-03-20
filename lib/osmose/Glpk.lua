@@ -12,7 +12,7 @@ local lub 	= require 'lub'
 local lib 	= lub.class 'osmose.Glpk'
 
 -- The directory where mod files are stored.
-lib.mod_directory=lub.path('|')..'/eiampl/mod'
+lib.mod_directory=lub.path('&'):gsub('Glpk.lua','')..'/eiampl/mod'
 -- The filename for the solver.
 lib.run_filename='eiampl.run'
 -- The data filename for the solver.
@@ -113,7 +113,8 @@ end
 function lib.generateDataWithTimes(project, periode)
 
 	-- Load glpk template.
-	local f,err = assert(io.open(lub.path('|')..'/templates/glpkWithTimes.mustache'))
+	--local f,err = assert(io.open(lub.path('|')..'/templates/glpkWithTimes.mustache'))
+	local f,err = assert(io.open(lub.path('&'):gsub('Glpk.lua','')..'templates/glpkWithTimes.mustache'))
 	local template = f:read('*a')
 	f:close()
 
