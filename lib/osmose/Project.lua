@@ -45,7 +45,7 @@ function lib.new(name, objective)
 
   -- Times are vectors inside periode vectors.
   project.periodes = {{times=1}}
-  project.results  = {gcc={}}
+  project.results  = {gcc={}, delta_hot={}, delta_cold={}}
 
   -- Each run has a directory to store the results. Inside the run, each periode has a directory.
   local dirTmp =  (project.dirRun..'/periode_1/tmp/')

@@ -16,6 +16,7 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 		-- We need to store the heat load for the Grant Composite Curve (GCC)
 		if param == 'HC_Rk' then
 			--print(param, layer, tag, time,int, value)
+			--print(time, int, project.results.gcc[periode][tonumber(time)])
 			project.results.gcc[periode][tonumber(time)][tonumber(int)].Q = tonumber(value)
 		end
 
@@ -32,11 +33,12 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 
 			if project.objective == 'MER'  then
 				if tag:find("DHCS_h") then
-					print("DHCS_h = "..value)
-					project.delta_hot = value
+					print("DHCS_h","P="..periode,"T="..time,value)
+					project.results.delta_hot[periode][tonumber(time)] = tonumber(value)
 				elseif tag:find("DHCS_c") then
-					print("DHCS_c = "..value)
-					project.delta_cold = value
+					print("DHCS_c","P="..periode,"T="..time,value)
+					--project.delta_cold = value
+					project.results.delta_cold[periode][tonumber(time)] = tonumber(value)
 				end
 			else
 				project.delta_hot = 0

@@ -64,11 +64,16 @@ function lib.new(project, return_solver)
 
 		-- preparing project to store results
 		project.results.gcc[periode] = {}
+		project.results.delta_hot[periode]={}
+		project.results.delta_cold[periode]={}
 		local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
 
 		for i,tbl in ipairs(temps) do
 			project.results.gcc[periode][tbl.time] = project.results.gcc[periode][tbl.time] or {}
 			project.results.gcc[periode][tbl.time][tbl.interval] = tbl
+			
+			project.results.delta_hot[periode][tbl.time]=nil
+			project.results.delta_cold[periode][tbl.time]=nil
 		end
 
 		-- replace default name by project name
@@ -89,7 +94,8 @@ function lib.new(project, return_solver)
 				' -m '..tmp_dir..lib.run_filename..
 				' -d '..tmp_dir..lib.data_filename..
 				' -o '..tmp_dir..lib.outmsg_filename..
-				' -y '..tmp_dir..lib.result_filename)
+				' -y '..tmp_dir..lib.result_filename..
+				' --log '..tmp_dir..'logs.txt')
 		
 		print(cmd)
 		os.execute(cmd)
