@@ -7,7 +7,7 @@ package.path = './lib/?/init.lua;./lib/?.lua;'..package.path
 local lut    = require 'lut'
 local should = lut.Test 'osmose.Model'
 local osmose = require 'osmose'
-
+local pu = require 'physical.Unit'
 
 local function makeModel()
   -- Simple model definition
@@ -15,13 +15,13 @@ local function makeModel()
 
   lib.inputs = {
     -- Initial water temperature.
-    start_temp = {default = 10, min = 0, max = 100, unit = 'C'},
+    start_temp = {default = 10, min = 0, max = 100, unit = '°C'},
 
     -- Amount of water to heat.
     mass      = {default = 1, min = 0, unit = 'kg'}, 
 
     -- Specific heat of the liquid.
-    specific_heat = {default = 4.1813, min = 0, max = 100, unit = 'kJ/(kg·K)'},
+    specific_heat = {default = 4.1813, min = 0, max = 100, unit = 'kJ/(kg*K)'},
 
     -- Available energy for heating.
     heat = {default = 200, min = 0, unit = 'kJ' },
@@ -30,7 +30,7 @@ local function makeModel()
   lib.outputs = {
     -- Liquid temperature after heating.
     final_temp = {unit = 'C', job = function()
-      return start_temp + heat / (specific_heat * mass)
+      return start_temp * heat / (specific_heat * mass)
     end}
   }
 
@@ -58,22 +58,22 @@ end
 function should.markAsDirtyOnSet()
   local heater = makeModel() ('heater')
 
-  assertEqual(57.83, heater.final_temp(), 0.01)
+  assertEqual(478.3201, heater.final_temp(), 0.01)
 
   heater:set {start_temp = 20 }
 
   assertNil(rawget(heater, 'final_temp'))
-  assertEqual(67.83, heater.final_temp(), 0.01)
+  assertEqual(956.6402, heater.final_temp(), 0.01)
 end
 
 function should.markAsDirtyOnSetParam()
   local heater = makeModel() ('heater')
 
-  assertEqual(57.83, heater.final_temp(), 0.01)
+  assertEqual(478.3201, heater.final_temp(), 0.01)
 
   heater.start_temp = 20 -- C
   assertNil(rawget(heater, 'final_temp'))
-  assertEqual(67.83, heater.final_temp(), 0.01)
+  assertEqual(956.6402, heater.final_temp(), 0.01)
 end
 
 
@@ -82,7 +82,7 @@ function should.cacheValues()
   local heater = makeModel() ('heater')
 
   -- Initial value copied in cache.
-  assertEqual(10, heater.start_temp)
+  assertValueEqual(10, heater.start_temp())
   -- assertEqual(10, rawget(heater._cache, 'start_temp'))
   -- assertNil(rawget(heater._cache, 'final_temp'))
   -- Compute

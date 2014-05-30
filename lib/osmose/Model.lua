@@ -85,6 +85,8 @@ local cache_api = {}
 -- Used for Lua 5.2 compatibility
 local NO_FENV = not rawget(_G, 'setfenv')
 
+local pu=require 'physical.Unit'
+
 -- Creates osmose model class `type`.
 function lib.new(modelName)
   local class = lub.class(modelName)
@@ -237,7 +239,6 @@ function model_api:__index(key)
   local class = getmetatable(self)
   local cache = rawget(self, '_cache')
   local mpt   = rawget(cache,'_mpt')
-
   -- mpt is for Multi Periode and Time. Value is index by periode and time. 
   -- For exemple, value for time 4 in periode 2 is mpt[4][2].
   -- Value are stored in the _mtp table of the cache. 
@@ -390,8 +391,6 @@ function cache_api.__index(cache, key)
     end
   end
 
-
-
   -- if not self._parsed_defaults then
   --   private.parseDefaults(self)
   -- end
@@ -413,7 +412,8 @@ function cache_api.__index(cache, key)
   -- Try to look in inputs params 
   local input = class.inputs[key]
   if input then
-    return input.value or input.default
+    --return input.value or input.default
+    return pu(input.value or input.default, input.unit)
   end
 
   -- Try to look in advenced params
@@ -461,6 +461,8 @@ function cache_api.__index(cache, key)
       ))
     end
   end
+
+  local job_unit = def.unit
   --self._cache[key] = private.executeJob(self, job)
 
   -- variable should now be in cache
@@ -471,7 +473,7 @@ function cache_api.__index(cache, key)
   --   ))
   -- end
 
-  return private.executeJob(self, job)
+  return private.executeJob(self, job, job_unit)
 end
 
 
@@ -479,19 +481,19 @@ end
 
 
 -- Add default values to cache.
-function private:parseDefaults()
-  local cache = self._cache
-  local mpt = cache._mpt
-  for k, def in pairs(self.inputs) do
-    if rawget(cache, k) == nil and rawget(mpt,k) then
-      cache[k] = def.value or def.default
-    end
-  end
-  self._parsed_defaults = true
-end
+-- function private:parseDefaults()
+--   local cache = self._cache
+--   local mpt = cache._mpt
+--   for k, def in pairs(self.inputs) do
+--     if rawget(cache, k) == nil and rawget(mpt,k) then
+--       cache[k] = def.value or def.default
+--     end
+--   end
+--   self._parsed_defaults = true
+-- end
 
 -- Execute a job to solve output values.
-function private:executeJob(job)
+function private:executeJob(job, job_unit)
 
   local cache = self._cache
   cache._in_job  = true
@@ -506,7 +508,11 @@ function private:executeJob(job)
   end
   cache._in_job = false
 
-  return job
+  if type(job()) == 'number' then 
+    return job
+  else
+    return  pu(job().value,job_unit) 
+  end 
 end
 
 return lib

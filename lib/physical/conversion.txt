@@ -1,13 +1,35 @@
-meter			| length			| 1
-foot			| length			| 0.304800610
-yard			| length 			| 0.9144
-mile			| length			| 1853.7936
-kg				| mass				| 1           
-pound			| mass				| 0.45359237	
-gr				| mass				| 0.001 kg		
-ounce			| mass				| 28 gr				
-second		| time				| 1 					
-day				| time				| 86400 			
-K					| temperature	| 1         	| 0
-C					| temperature	| 1         	| 273.15
-F 				| temperature | 0.555555555	| 459.67
+#unit name 					| #symbol		| #class						| #mult						| #offset
+meter								| m 				| length						| 1
+foot								| ft				| length						| 0.304800610*m
+yard								| yd				| length 						| 0.9144
+mile								| 					| length						| 1853.7936
+kilogram						| kg 				| mass							| 1           
+pound								| lg				| mass							| 0.45359237	
+gram								| gr				| mass							| 0.001 kg
+ounce								| oz				| mass							| 28 gr				
+tonne								| t 				| mass 							| 1000 kg
+second							| s					| time							| 1 					
+hour								| h 				| time							| 3600
+day									| d					| time							| 86400 		
+week								| wk 				| time							| 604800
+month								| mo 				| time							| 2592000
+year								| y 				| time							| 31536000
+kelvin							| K					| temperature				| 1         			| 0
+degree Celsius			| °C 				| temperature				| 1         			| 273.15
+degree Farenheit 		| °F				| temperature 			| 0.555555555			| 459.67
+newton							| N 				| force 						| 1
+pascal							| Pa 				| pressure					| N/m*2
+atmosphere					| atm 			| pressure 					| 101325*Pa
+bar 								|						| pressure 					| 100000*Pa
+watt								| W					| power							| J*s 
+kilowatt						| kW 				| power							| 1000*J*s
+joule								| J					| energy						| 1*N*m
+kilojoule						| kJ 				| energy 						| 1000*N*m
+calorie							| cal 			| energy						| 4.1868*J
+coulomb							| C 				| electric charge		| 1
+ampere 							| A 				| electric current  | 1
+volt								| V 				| voltage 					| W/A
+meter per second    | m/s 			| speed 						| m/s
+kilometer per hour  | km/h 			| speed 						| 1/3.6*m/s
+kg/s 								|						| mass flow rate 		| kg/s
+t/h 								| 					| mass flow rate 		| kg/h

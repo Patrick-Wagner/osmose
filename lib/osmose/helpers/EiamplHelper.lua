@@ -57,7 +57,13 @@ function lib.initMassStream(stream,model,unit)
 	if type(value) == 'function' then
 		value = value(model)
 	end
-	stream.value = value
+	if type(value)=='table' and value.type == 'PhysicalUnit' then
+		stream.value = value()
+		stream.unit = value.unit
+	else
+		stream.value = value
+	end
+
 	local layerFound = 0
 	for layerName, layer in pairs(model.layers) do
 		if layerName == stream.layerName then

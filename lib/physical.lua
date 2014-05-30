@@ -1,7 +1,7 @@
 
 local lub = require 'lub'
-local lib = lub.Autoload 'lib.physical'
+local phy = lub.Autoload 'lib.physical'
 
-lib.Unit.loadConversion()
+pu = phy.Unit
 
-return lib
+return phy

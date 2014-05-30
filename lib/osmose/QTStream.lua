@@ -101,8 +101,11 @@ function lib:initTag(model, tag, temp)
     else
       value = self[tag](model)
     end
-    if type(value) == 'table' then
+    if type(value) == 'table' and value.type ~= 'PhysicalUnit'  then
       value = value[1][1]
+    end
+    if type(value) == 'table' and value.type == 'PhysicalUnit'  then
+      value = value()
     end
     return value + delta
   end
