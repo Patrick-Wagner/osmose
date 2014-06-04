@@ -5,23 +5,27 @@ local lib = {}
 
 function lib.initQTStream(stream, model)
 	stream.isHot = function(model)
-		if stream.ftin(model) > stream.ftout(model) and stream.fhin(model) > stream.fhout(model)  then
+		if stream.ftinNoCorr(model) > stream.ftoutNoCorr(model) and stream.fhin(model) > stream.fhout(model)  then
+			stream.ftin = stream.ftinNoCorr
+			stream.ftout = stream.ftoutNoCorr
 			return true
-		elseif stream.ftin(model) < stream.ftout(model) and stream.fhin(model) < stream.fhout(model)  then
+		elseif stream.ftinNoCorr(model) < stream.ftoutNoCorr(model) and stream.fhin(model) < stream.fhout(model)  then
+			stream.ftin = stream.ftinNoCorr
+			stream.ftout = stream.ftoutNoCorr
 			return false
-		elseif (stream.ftin(model) < stream.ftout(model) and stream.fhin(model) > stream.fhout(model)) or (stream.ftin(model) > stream.ftout(model) and stream.fhin(model) < stream.fhout(model)) then
+		elseif (stream.ftinNoCorr(model) < stream.ftoutNoCorr(model) and stream.fhin(model) > stream.fhout(model)) or (stream.ftinNoCorr(model) > stream.ftoutNoCorr(model) and stream.fhin(model) < stream.fhout(model)) then
 			print("The stream " .. stream.shortName .." is inconsistent in enthalpy and temperature.") 
-			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftin(model), stream.ftout(model), stream.fhin(model), stream.fhout(model)))
-		elseif stream.ftin(model) == stream.ftout(model) then
+			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftinNoCorr(model), stream.ftoutNoCorr(model), stream.fhin(model), stream.fhout(model)))
+		elseif stream.ftinNoCorr(model) == stream.ftoutNoCorr(model) then
 			print(string.format("This stream '%s' is a simple dot.", stream.shortName))
-			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftin(model), stream.ftout(model), stream.fhin(model), stream.fhout(model)))
+			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftinNoCorr(model), stream.ftoutNoCorr(model), stream.fhin(model), stream.fhout(model)))
 			if stream.fhin(model) > stream.fhout(model)  then
-				local tin = stream.ftin(model)
-				stream.ftin = function() return tin + 0.0001 end
+				stream.ftin = function(model) return stream.ftinCorr(model) end
+				stream.ftout = stream.ftoutNoCorr
 				return true
 			elseif stream.fhin(model) < stream.fhout(model)  then
-				local tout = stream.ftout(model)
-				stream.ftout = function() return tout + 0.0001 end
+				stream.ftin = stream.ftinNoCorr
+				stream.ftout = function(model) return stream.ftoutCorr(model) end
 				return false
 			else	
 				print(string.format("Can not determine if stream '%s' is hot or cold.", stream.shortName))
@@ -34,20 +38,26 @@ function lib.initQTStream(stream, model)
 		end
 	end
 
-	if stream.isHot(model) then
-		stream.Tin = function(model) return stream.ftin(model) end
-		stream.Tin_corr = function(model) return stream.ftin(model) - stream.fdtmin(model) end 
-		stream.Tout = function(model) return stream.ftout(model) end
-		stream.Tout_corr = function(model) return stream.ftout(model) - stream.fdtmin(model) end
-	else
-		stream.Tin = function(model) return stream.ftin(model) end
-		stream.Tin_corr = function(model) return stream.ftin(model) + stream.fdtmin(model) end
-		stream.Tout = function(model) return stream.ftout(model) end
-		stream.Tout_corr = function(model) return stream.ftout(model) + stream.fdtmin(model) end
-	end
-
+	stream.Tin = function(model) return stream.ftin(model) end
+	stream.Tout = function(model) return stream.ftout(model) end
 	stream.Hin = function(model) return stream.fhin(model) end
 	stream.Hout = function(model) return stream.fhout(model) end 
+
+	stream.Tin_corr = function(model) 
+		if stream.isHot(model) then
+			return stream.ftin(model) - stream.fdtmin(model) 
+		else
+			return stream.ftin(model) + stream.fdtmin(model)
+		end
+	end 
+
+	stream.Tout_corr = function(model) 
+		if stream.isHot(model) then
+			return stream.ftout(model) - stream.fdtmin(model) 
+		else
+			return stream.ftout(model) + stream.fdtmin(model) 
+		end
+	end
 
 	return stream
 end

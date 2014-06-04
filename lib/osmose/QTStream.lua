@@ -63,6 +63,14 @@ lib.new = function(params)
 
   stream.ftout  = stream:initTag(model,'tout','T')
 
+  stream.ftinNoCorr   = stream:initTag(model,'tin','T')
+
+  stream.ftoutNoCorr  = stream:initTag(model,'tout','T')
+
+  stream.ftinCorr = stream:initTag(model,'tin','Tcorr')
+
+  stream.ftoutCorr  = stream:initTag(model,'tout','Tcorr')
+
   stream.fhin   = stream:initTag(model,'hin')
 
   stream.fhout  = stream:initTag(model,'hout')
@@ -84,6 +92,8 @@ function lib:initTag(model, tag, temp)
   local delta = 0
   if temp=='T' then
     delta = 273
+  elseif temp=='Tcorr' then
+    delta = 273.0001
   end
 
   -- iniTag return a function that depend of the model.
