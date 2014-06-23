@@ -27,8 +27,8 @@ lib.get_pre_solve_mod_p= {"eiampl_p.mod", "costing_p.mod", "heat_cascade_base_gl
 -- The post solve mod files that are required for the solver.
 --lib.get_post_solve_mod = {"eiampl_glpsol_postSolve.mod", "costing_postSolve.mod", "heat_cascade_base_postSolve.mod"}
 lib.get_post_solve_mod_p = {"costing_postSolve_p.mod", "heat_cascade_base_postSolve_p.mod", "mass_postSolve_p.mod"}
--- The default solve function used by the solver
-lib.generate_solve_function = "minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost']; solve; \n\n"
+
+
 -- "def_location" is the default location.
 lib.locations={{name='def_location'}}
 -- Default operations costs
@@ -114,7 +114,6 @@ function lib.new(project, return_solver)
 end
 
 -- # Privates methodes
-
 -- This function generate the datas for a `project` on a given `periode`.
 function lib.generateDataWithTimes(project, periode)
 
@@ -422,19 +421,10 @@ function lib.generateModWithTimes(project,return_solver, periode)
 		content = content .."\n\n".. equation
 	end
 
-	if project.objective=='MER' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		content = content .. lib.generate_solve_function
-	elseif project.objective=='OperatingCost' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		content = content .. lib.generate_solve_function
-  elseif project.objective=='YearlyOperatingCost' then
-		content = content .. "# Objective function\n minimize ObjectiveFunction : YearlyOperatingCost; solve;\n\n"
-  else
-    print("Project Objective is not valid: ", project.objective)
-    os.exit()
-	end
-	
+-- Add objective function to the optimisation model (samira.fazlollahi@a3.epfl.ch)
+	local Objective_function_definition = require('osmose.ObjectiveFunction')
+	content = content .. Objective_function_definition(project.objective)
+
 	if return_solver then
 		content = content..return_solver.."\n"
 	else
