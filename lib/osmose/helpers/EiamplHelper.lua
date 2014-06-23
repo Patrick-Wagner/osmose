@@ -102,6 +102,7 @@ function lib.initProcess(unit, model)
 	unit.streams = {}
 	unit.massStreams = {}
 	unit.layers = {}
+
 	for key,tbl in pairs(unit.rawStreams) do
 		local stream={}
 		if type(tbl)=='table' then

@@ -214,6 +214,7 @@ function lib.new(modelName)
   class.outputs = {}
   class.values = {}
   class.advanced = {}
+  class.models = {}
 
 
   class.set = model_api.set
@@ -383,6 +384,7 @@ function cache_api.__index(cache, key)
 
   local self = rawget(cache, '_self')
   local mpt = cache._mpt
+  local job
 
   if mpt[key] then
     if mpt[key][self.periode] then
@@ -410,10 +412,10 @@ function cache_api.__index(cache, key)
     return value
   end
 
-  -- Try to look in inputs params 
-  local input = class.inputs[key]
-  if input then
-    return input.value or input.default
+    -- Try to look in models
+  local model = class.models[key]
+  if model then
+    return model
   end
 
   -- Try to look in advenced params
@@ -422,7 +424,22 @@ function cache_api.__index(cache, key)
     return advanced.value or advanced.default
   end
 
-  local job = class.jobs[key]
+
+  -- Try to look in inputs params 
+  local input = class.inputs[key]
+  if input then
+    if input.inlet and type(input.inlet) == 'string' then 
+      local fct = string.format("return %s ", input.inlet)
+      job = assert(loadstring(fct))
+      return private.executeJob(self, job)
+
+    else
+      return input.value or input.default
+    end
+  end
+
+
+  job = class.jobs[key]
   if type(job) == 'number' then
     return function() return job end
   elseif type(job) == 'string' then
@@ -441,7 +458,7 @@ function cache_api.__index(cache, key)
     -- ))
   end
 
-  local job = def.job
+  job = def.job
 
   if type(job) == 'string' then
     --job = class.jobs[job]
