@@ -90,7 +90,7 @@ function lib.initProcess(unit, model)
 	unit.Fmax = unit.Fmax or 1
 	unit.Cost1 = unit.Cost1 or 0
 	unit.Cost2 = unit.Cost2 or 0
-	-- unit.costing1 = {Cost= (unit.Cost1 or 0), Cinv= (unit.Cinv1 or 0), Power=(unit.Power1 or 0), Impact=(unit.Impact1 or 0)}
+    -- unit.costing1 = {Cost= (unit.Cost1 or 0), Cinv= (unit.Cinv1 or 0), Power=(unit.Power1 or 0), Impact=(unit.Impact1 or 0)}
 	-- unit.costing2 = {Cost= (unit.Cost2 or 0), Cinv= (unit.Cinv2 or 0), Power=(unit.Power2 or 0), Impact=(unit.Impact2 or 0)}
 
 	-- unit.cost_value1 = function(this) 

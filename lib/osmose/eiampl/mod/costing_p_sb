@@ -17,51 +17,51 @@ set Costs :=  {l in LayersOfType["Costing"]} within Layers;
 param Streams_Cost1{l in Costs, s in StreamsOfLayer[l],t in Time};
 param Streams_Cost2{l in Costs, s in StreamsOfLayer[l],t in Time};
 
-param Streams_Cost1_inv{l in Costs, s in StreamsOfLayer[l]:l='osmose_default_model_DefaultInvCost'}:= max{t in Time:s in StreamsOfTime[t]}Streams_Cost1[l,s,t];
-param Streams_Cost2_inv{l in Costs, s in StreamsOfLayer[l]:l='osmose_default_model_DefaultInvCost'}:= max{t in Time:s in StreamsOfTime[t]}Streams_Cost2[l,s,t];
+param Streams_Cost1_inv{l in Costs, s in StreamsOfLayer[l]:l='DefaultInvCost'}:= max{t in Time:s in StreamsOfTime[t]}Streams_Cost1[l,s,t];
+param Streams_Cost2_inv{l in Costs, s in StreamsOfLayer[l]:l='DefaultInvCost'}:= max{t in Time:s in StreamsOfTime[t]}Streams_Cost2[l,s,t];
 
 
 
 # Computing cost for each stream in each time: investment cost is for whole period and does not have any meaning for each time
 var Streams_Cost_t{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s],t in Time} ; 
-subject to streams_cost_t{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s],t in Time:s in StreamsOfTime[t] and l <>'osmose_default_model_DefaultInvCost'}:
+subject to streams_cost_t{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s],t in Time:s in StreamsOfTime[t] and l <>'DefaultInvCost'}:
 	Streams_Cost_t[l,s,u,t] = Units_Use_t[u,t]*Streams_Cost1[l,s,t]+Units_Mult_t[u,t]*Streams_Cost2[l,s,t]*op_time[t] ; 
 
 # Computing cost for each stream during whole period
 var Streams_Cost{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s]} ; 
-subject to streams_cost{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s]:l <>'osmose_default_model_DefaultInvCost'}:
+subject to streams_cost{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s]:l <>'DefaultInvCost'}:
 	Streams_Cost[l,s,u] = sum {t in Time:s in StreamsOfTime[t]} Streams_Cost_t[l,s,u,t] ; 
 
 
 # Computing cost for each unit, summing by stream in each time
 var Units_Cost_t{l in Costs, u in UnitsOfLayer[l],t in Time};
-subject to unit_cost_t{l in Costs, u in UnitsOfLayer[l],t in Time:u in UnitsOfTime[t] and l <>'osmose_default_model_DefaultInvCost'} :
+subject to unit_cost_t{l in Costs, u in UnitsOfLayer[l],t in Time:u in UnitsOfTime[t] and l <>'DefaultInvCost'} :
 	Units_Cost_t[l,u,t] = sum {s in StreamsOfUnit[u]: s in StreamsOfLayer[l]} Streams_Cost_t[l,s,u,t];
 
 # Computing cost for each unit, summing by stream during whole period
 var Units_Cost{l in Costs, u in UnitsOfLayer[l]};
-subject to unit_cost{l in Costs, u in UnitsOfLayer[l]:l <>'osmose_default_model_DefaultInvCost'} :
+subject to unit_cost{l in Costs, u in UnitsOfLayer[l]:l <>'DefaultInvCost'} :
 	Units_Cost[l,u] = sum {t in Time:u in UnitsOfTime[t]} Units_Cost_t[l,u,t] ;
 
 
 # Computing cost for each location in each time
 var Locations_Cost_t{l in Costs, loc in LocationsOfLayer[l],t in Time};
-subject to locations_cost_t{l in Costs, loc in LocationsOfLayer[l],t in Time:l <>'osmose_default_model_DefaultInvCost'}:
+subject to locations_cost_t{l in Costs, loc in LocationsOfLayer[l],t in Time:l <>'DefaultInvCost'}:
 	Locations_Cost_t[l,loc,t] =  sum { u in UnitsOfLocation[loc], s in StreamsOfUnit[u]: s in StreamsOfLayer[l] and s in StreamsOfTime[t]} Streams_Cost_t[l,s,u,t];
 
 # Computing overall cost of layer
 var Costs_Cost_t{l in Costs,t in Time} ;
-subject to costs_cost_t{l in Costs,t in Time:l <>'osmose_default_model_DefaultInvCost'}:
+subject to costs_cost_t{l in Costs,t in Time:l <>'DefaultInvCost'}:
 	Costs_Cost_t[l,t] = sum {u in UnitsOfLayer[l]:u in UnitsOfTime[t]} Units_Cost_t[l,u,t];
 
 #Investment cost:-----------------------------------------------------------------------
 
 # Computing cost for each Inv stream
-subject to streams_cost_inv{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s]:l='osmose_default_model_DefaultInvCost'}:
+subject to streams_cost_inv{l in Costs, s in StreamsOfLayer[l], u in UnitsOfStream[s]:l='DefaultInvCost'}:
 	Streams_Cost[l,s,u] =  Units_Use[u]*Streams_Cost1_inv[l,s]+Units_Mult[u]*Streams_Cost2_inv[l,s] ; 
 
 # Computing cost for each unit, summing by stream
-subject to unit_cost_inv{l in Costs, u in UnitsOfLayer[l]:l='osmose_default_model_DefaultInvCost'} :
+subject to unit_cost_inv{l in Costs, u in UnitsOfLayer[l]:l='DefaultInvCost'} :
 	Units_Cost[l,u] = sum {s in StreamsOfUnit[u]: s in StreamsOfLayer[l]} Streams_Cost[l,s,u];
 #-----------------------------------------------------------------------
 
@@ -93,13 +93,13 @@ var Elec_sell >= 0;
 var YearlyOperatingCost;  # Euro/years 
 
 
-subject to const_elec1_t{l in Costs, t in Time:l='osmose_default_model_DefaultMechPower'}:
+subject to const_elec1_t{l in Costs, t in Time:l='DefaultMechPower'}:
 	Costs_Cost_t[l,t] - Elec_buy_t[t]+ Elec_sell_t[t] = 0 ;
 
-subject to const_elec2_t{l in Costs, t in Time:l='osmose_default_model_DefaultMechPower'}:
+subject to const_elec2_t{l in Costs, t in Time:l='DefaultMechPower'}:
 	Costs_Cost_t[l,t] - Elec_buy_t[t]  <= 0;
 
-subject to new_opcost_t{l in Costs, t in Time:l='osmose_default_model_DefaultOpCost'}:
+subject to new_opcost_t{l in Costs, t in Time:l='DefaultOpCost'}:
 	YearlyOperatingCost_t[t] = cycles*((cost_elec_in[t] * Elec_buy_t[t] * op_time[t] * 3600 / 1000000)  - ( cost_elec_out[t] * Elec_sell_t[t] * op_time[t] * 3600 / 1000000) + 
 	( op_time[t] * 3600 * Costs_Cost_t[l,t])) ;
 

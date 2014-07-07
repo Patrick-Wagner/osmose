@@ -56,7 +56,7 @@ set Layers := {{#Layers}}{{.}} {{/Layers}};
 
 set LayersOfType[HeatCascade] := DefaultHeatCascade ;
 
-set LayersOfType[Costing] :=  osmose_default_model_DefaultImpact osmose_default_model_DefaultMechPower osmose_default_model_DefaultInvCost osmose_default_model_DefaultOpCost ;
+set LayersOfType[Costing] :=  DefaultImpact DefaultMechPower DefaultInvCost DefaultOpCost ;
 
 set LayersOfType[MassBalance] := {{#massBalanceLayer}} {{.}} {{/massBalanceLayer}} ;
 
@@ -64,13 +64,13 @@ set LayersOfType[MassBalance] := {{#massBalanceLayer}} {{.}} {{/massBalanceLayer
 
 set UnitsOfLayer[DefaultHeatCascade] := {{#units}}{{name}} {{/units}} ;
 
-set UnitsOfLayer[osmose_default_model_DefaultInvCost] := {{#units}}{{name}} {{/units}} ;
+set UnitsOfLayer[DefaultInvCost] := {{#units}}{{name}} {{/units}} ;
 
-set UnitsOfLayer[osmose_default_model_DefaultMechPower] := {{#units}}{{name}} {{/units}} ;
+set UnitsOfLayer[DefaultMechPower] := {{#units}}{{name}} {{/units}} ;
 
-set UnitsOfLayer[osmose_default_model_DefaultOpCost] := {{#units}}{{name}} {{/units}} ;
+set UnitsOfLayer[DefaultOpCost] := {{#units}}{{name}} {{/units}} ;
 
-set UnitsOfLayer[osmose_default_model_DefaultImpact] := {{#units}}{{name}} {{/units}} ;
+set UnitsOfLayer[DefaultImpact] := {{#units}}{{name}} {{/units}} ;
 
 {{#UnitsOfLayer}}
 set UnitsOfLayer[{{name}}] := {{#units}}{{name}} {{/units}};
@@ -79,16 +79,16 @@ set UnitsOfLayer[{{name}}] := {{#units}}{{name}} {{/units}};
 set StreamsOfLayer[DefaultHeatCascade] := {{#units}}{{#streams}}{{name}} {{/streams}}{{/units}} 
 ;
 
-set StreamsOfLayer[osmose_default_model_DefaultImpact] := {{#units}}{{name}}_Impact {{/units}} 
+set StreamsOfLayer[DefaultImpact] := {{#units}}{{name}}_Impact {{/units}} 
 ;
 
-set StreamsOfLayer[osmose_default_model_DefaultInvCost] := {{#units}}{{name}}_Cinv {{/units}} 
+set StreamsOfLayer[DefaultInvCost] := {{#units}}{{name}}_Cinv {{/units}} 
 ;
 
-set StreamsOfLayer[osmose_default_model_DefaultMechPower] := {{#units}}{{name}}_Power {{/units}} 
+set StreamsOfLayer[DefaultMechPower] := {{#units}}{{name}}_Power {{/units}} 
 ;
 
-set StreamsOfLayer[osmose_default_model_DefaultOpCost] := {{#units}}{{name}}_Cost {{/units}} 
+set StreamsOfLayer[DefaultOpCost] := {{#units}}{{name}}_Cost {{/units}} 
 ;
 
 {{#StreamsOfLayer}}
