@@ -71,6 +71,7 @@ local lib = lub.Autoload 'osmose'
 qt = lib.QTStream
 ht = lib.HTStream
 ms = lib.MassStream
+rs = lib.ResourceStream
 
 
 return lib

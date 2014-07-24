@@ -31,11 +31,11 @@ local lib 	= lub.class 'osmose.ObjectiveFunction'
 
 function lib.new(objective)
 	if objective=='MER' then
-		
+		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
 		objective_function = "minimize ObjectiveFunction : Costs_Cost['DefaultOpCost']; solve; \n\n"
     
 	elseif objective=='OperatingCost' then
-		
+		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
 		objective_function = "minimize ObjectiveFunction : Costs_Cost['DefaultOpCost']; solve; \n\n"
     
   elseif objective=='InvestmentCost' then

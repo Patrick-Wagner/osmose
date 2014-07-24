@@ -1,7 +1,7 @@
 local lub = require 'lub'
 local lib = {}
 
-local lustache = require "osmose.eiampl.vendor.lustache"
+local lustache = require "lib.osmose.eiampl.vendor.lustache"
 
 function lib.writeGnuplotDataFile(filepath, curve)
 	local f = io.open(filepath,"w")
@@ -42,20 +42,36 @@ function lib.writeScriptPlot(dir, periode, time, format, datas, title)
 	local script = ""
 	if format then
 		script = [[
-set terminal {{format}}
+set terminal {{format}}  
+set font 'Verdana,14'  
 set output "{{dir}}{{graphTitle}}{{time}}.{{format}}"
 	]]
 	end
 
 	script = script .. [[
-set title "{{graphTitle}} for Periode {{periode}} and Time {{time}}"
-set xlabel "Heat Load [kW]"
+ set title "{{graphTitle}} for Periode {{periode}} and Time {{time}}"
+ set font '"Verdana",10'  
+set xlabel "Heat Load [MW]"
 set ylabel "Temperature [C]"
 set xrange [{{minX}}:{{maxX}}]
 set yrange [{{minY}}:{{maxY}}]
-set mouse zoomcoordinates
-plot {{#datas}}"{{dir}}{{file}}" title "{{title}}" w lp lc {{lc}},{{/datas}}
+# define grid
+set style line 12 lc rgb '#808080' lt 0 lw 1
+set grid back ls 12
+plot {{#datas}}"{{dir}}{{file}}" title "{{title}}" w lp lc {{lc}} pt 0 ps 0.3,{{/datas}}
 ]]
+--set xlabel "Heat Load [MW]"
+--set ylabel "Temperature [C]"
+--set xrange [{{minX}}:{{maxX}}]
+--set yrange [{{minY}}:{{maxY}}]
+--set mouse zoomcoordinates
+--set mxtics
+--set mytics
+--set style line 13 lc rgb '#707070' lt 1 lw 0.5
+--set grid xtics mxtics ytics mytics back ls 13
+--
+--plot {{#datas}}"{{dir}}{{file}}" title "{{title}}" w l lw 2 lc {{lc}},{{/datas}}
+
 
 	local values = {	
 						format = format, 

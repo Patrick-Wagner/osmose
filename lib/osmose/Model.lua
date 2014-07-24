@@ -76,6 +76,9 @@
 --]]------------------------------------------------------
 local lub = require 'lub'
 local lib = lub.class 'osmose.Model'
+--??????????????????????????????????????????????????
+local layer = require('osmose.Layer')
+
 local private   = {}
 -- Methods on model instances.
 local model_api = {}
@@ -84,7 +87,6 @@ local cache_api = {}
 
 -- Used for Lua 5.2 compatibility
 local NO_FENV = not rawget(_G, 'setfenv')
-
 -- Creates osmose model class `type`.
 function lib.new(modelName)
   local class = lub.class(modelName)
@@ -93,7 +95,13 @@ function lib.new(modelName)
   class.processes = {}
   class.software  = {}
   class.jobs      = {}
-  class.layers    = {}
+  
+  -- Add default layers of Costing (operating cost, Investment cost, Impact and power)
+  -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)??????????????????????????????????????????
+  class.layers    = {DefaultOpCost = layer('DefaultOpCost',{type='Costing'}), 
+                     DefaultInvCost = layer('DefaultInvCost',{type='Costing'}),
+                     DefaultMechPower = layer('DefaultMechPower',{type='Costing'}),
+                     DefaultImpact = layer('DefaultImpact',{type='Costing'})}
   class.equations = {}
 
   -- All public methods in model API are set here.
@@ -160,6 +168,7 @@ function lib.new(modelName)
   Add layers to model :
 
     lib:addLayers {electricity = {type='MassBalance', unit='kW'}}
+    lib:addLayers {gas = {type='ResourceBalance', unit='kW'}}
 --]]
   function class:addLayers(layers)
     local layer = require('osmose.Layer')

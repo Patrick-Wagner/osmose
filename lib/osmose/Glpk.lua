@@ -23,10 +23,10 @@ lib.outmsg_filename='GlpkOutMsg.txt'
 lib.result_filename='eiamplAll.out'
 -- The pre solve mod files that are required for the solver.
 --lib.get_pre_solve_mod= {"eiampl.mod", "costing.mod", "heat_cascade_base_glpsol.mod", "heat_cascade_no_restrictions.mod"}
-lib.get_pre_solve_mod_p= {"eiampl_p.mod", "costing_p.mod", "heat_cascade_base_glpsol_p.mod", "heat_cascade_no_restrictions_p.mod", "mass_p.mod"}
+lib.get_pre_solve_mod_p= {"eiampl_p.mod", "costing_p.mod", "heat_cascade_base_glpsol_p.mod", "heat_cascade_no_restrictions_p.mod", "mass_p.mod", "resource_p.mod"}
 -- The post solve mod files that are required for the solver.
 --lib.get_post_solve_mod = {"eiampl_glpsol_postSolve.mod", "costing_postSolve.mod", "heat_cascade_base_postSolve.mod"}
-lib.get_post_solve_mod_p = {"costing_postSolve_p.mod", "heat_cascade_base_postSolve_p.mod", "mass_postSolve_p.mod"}
+lib.get_post_solve_mod_p = {"costing_postSolve_p.mod", "heat_cascade_base_postSolve_p.mod", "mass_postSolve_p.mod", "resource_postSolve_p.mod"}
 
 
 -- "def_location" is the default location.
@@ -96,8 +96,13 @@ function lib.new(project, return_solver)
 				' -o '..tmp_dir..lib.outmsg_filename..
 				' -y '..tmp_dir..lib.result_filename..
 				' --log '..tmp_dir..'logs.txt')
+      
+		 print('-------------------------------------------------------------------------------------------')
+     print('Executing Command line:')
+     print('-----------------------')
+     print(cmd)
+		 print('-------------------------------------------------------------------------------------------')
 		
-		print(cmd)
 		os.execute(cmd)
 					
 		if return_solver then
@@ -108,7 +113,13 @@ function lib.new(project, return_solver)
 		else
 			helper.parseResultGlpkFile(project, tmp_dir, periode)
 		end
-
+  print('-------------------------------------------------------------------------------------------')
+  print('Warning message;')
+  print(" 1-There is no FEASIBLE SOLUTION if the project has a layer with only 'in' process stream(s) or only 'out' process stream(s)") 
+  print(" 2-Temperature of the hot utility is not high enough to close the heat cascade balance")
+  print(" 3-Temperature of the cold utility is not low enough to close the heat cascade balance")
+  print(" 4-In and Out mass/resource streams cannot be defined simultaneously for a given unit")
+  print(" 5-To help the solver, try to avoid large value for the Fmax of units.")
 	end -- for periodes loop
 	return project
 end
@@ -125,7 +136,9 @@ function lib.generateDataWithTimes(project, periode)
 
 	-- Create Default Heatcascade Units if objective is MER.
 	if project.objective == 'MER' or project.objective == nil then
-		print('MER Objective')
+		print('-------------------------------------------------------------------------------------------')
+    print('MER Objective')
+		print('-------------------------------------------------------------------------------------------')
 		project.units[periode] = lib.addMerUnits(project.units[periode], project.name)
 	end
 
@@ -133,13 +146,29 @@ function lib.generateDataWithTimes(project, periode)
 	local timesValues = {}
 	for t=1,project.periodes[periode].times do
 		table.insert(timesValues, t)
-		local streams={}
+    
+		local streams = {}
+    local coststreams = {}
+    local massstreams = {}
+    local resourcestreams = {}
+    local forceUseUnits = {}
+    
 		for iu, unit in ipairs(project.units[periode]) do
+      
 			local model = unit.model
 			if model then
 				model.periode = periode 
 				model.time = t
 			end
+      
+      -- recover the unit forceUse in each time step
+      -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)??????????????????????????????????????????
+      local forceUse={}
+      forceUse.forceValue=unit.force_use
+      forceUse.forceUnitName=unit.name
+      table.insert(forceUseUnits, forceUse)
+      
+      -- recover the qt streams' value in each time step
 			for is,s in ipairs(unit.streams) do
 				local stream = {}
 				stream.time = t
@@ -150,26 +179,77 @@ function lib.generateDataWithTimes(project, periode)
 				stream.Hout = s.Hout(model)
 				table.insert(streams, stream)
 			end
+      -- recover the cost streams' value (Power, Impact, Cost, Cin) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)??????????????????????????????????????????
+      for isc, Scoststream in ipairs(unit.costStreams) do
+        local coststream = {}
+        coststream.time=t
+        coststream.name=Scoststream.name
+        coststream.layerName =Scoststream.layerName
+        coststream.coefficient1=Scoststream.coefficient1(model, layerName, unit)
+        coststream.coefficient2=Scoststream.coefficient2(model, layerName, unit)
+        table.insert(coststreams, coststream)
+       end
+      -- recover the mass streams' value (flowrate in and flowrate out) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)??????????????????????????????????????????
+      for ism, Smassstream in ipairs(unit.massStreams) do
+        local massstream = {}
+        massstream.time=t
+        massstream.name=Smassstream.name
+        massstream.unitName=unit.name
+        massstream.layerName ='layers_'..Smassstream.layerName
+        if Smassstream.inOut == 'in' then
+          massstream.flowrateIn=Smassstream.Flow(model)
+          massstream.flowrateOut=0
+        elseif Smassstream.inOut == 'out' then
+          massstream.flowrateIn=0
+          massstream.flowrateOut=Smassstream.Flow(model)
+        end
+        table.insert(massstreams, massstream)        
+      end
+      -- recover the resource streams' value (flowrate_r in and flowrate_r out) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)??????????????????????????????????????????     
+      for isr, Sresourcestream in ipairs(unit.resourceStreams) do
+        local resourcestream = {}
+        resourcestream.time=t
+        resourcestream.name=Sresourcestream.name
+        resourcestream.unitName=unit.name
+        resourcestream.layerName ='layers_'..Sresourcestream.layerName
+        if Sresourcestream.inOut == 'in' then
+          resourcestream.flowrateIn_r=Sresourcestream.Flow_r(model)
+          resourcestream.flowrateOut_r=0
+        elseif Sresourcestream.inOut == 'out' then
+          resourcestream.flowrateIn_r=0
+          resourcestream.flowrateOut_r=Sresourcestream.Flow_r(model)
+        end
+        table.insert(resourcestreams, resourcestream)        
+      end
 		end
 
-		table.insert(times, {time = t, streams = streams })
+		table.insert(times, {time = t, streams = streams, coststreams = coststreams, massstreams = massstreams, resourcestreams = resourcestreams, forceUseUnits = forceUseUnits})
+    
 	end
 
-	local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
 
-	local layers = {'DefaultHeatCascade',
-	'DefaultImpact',	
-	'DefaultMechPower',
-	'DefaultInvCost',
-	'DefaultOpCost'}
+	local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
+  ---????? Modify????????????????????????????????????????????????????????????????
+	local layers = {'DefaultHeatCascade'}
 
 	local massBalanceLayer = {}
-
-
+  local resourceBalanceLayer = {}
+  local costingLayer={}
   local modelLayers={}
+  
+
 	for m, model in ipairs(project.models) do
 		for layerName, layer in pairs(model.layers) do
-			local fullName =  'layers_'..layerName
+      ---add costing Layers (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????
+      local fullName
+      if layer ~= nil and layer.type == 'Costing' then
+			  fullName = layerName
+      else
+        fullName =  'layers_'..layerName
+      end
 			local layerFound = 0
 			for i,l in ipairs(layers) do
 				if l==fullName then
@@ -181,9 +261,15 @@ function lib.generateDataWithTimes(project, periode)
 
 				if layer.type == 'MassBalance' then
 					table.insert(massBalanceLayer, fullName)
+          ---add ResourceBalance Layers (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????
+        elseif layer.type == 'ResourceBalance' then
+					table.insert(resourceBalanceLayer, fullName)
+          ---add costing Layers (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????
+        elseif layer.type == 'Costing' then
+          table.insert(costingLayer, fullName)
 				else
 					print(string.format("Layer of type '%s' is not recognized.", layer.type))
-					print("Valid layer types are : Costing, HeatCascade, MassBalance")
+					print("Valid layer types are : Costing, HeatCascade, MassBalance, ResourceBalance")
 					os.exit()
 				end
 				modelLayers[layerName] = {units={}, name=fullName, streams={}}
@@ -192,27 +278,33 @@ function lib.generateDataWithTimes(project, periode)
 			end
 		end
 	end
-
-	local streamLayers = {}
-	local flowrateIn = {}
-	local flowrateOut = {}
+	
 	for i,unit in ipairs(project.units[periode]) do
 		for layerName, layer in pairs(unit.layers) do
-			table.insert(modelLayers[layerName].units, {name = unit.name})
-			for is, stream in ipairs(unit.massStreams) do
-				if stream.layerName == layerName then 
-					table.insert(modelLayers[layerName].streams, {name = stream.name})
-					if stream.inOut == 'in' then
-						table.insert(flowrateIn, {layerName='layers_'..layerName, unitName=unit.name, value=stream.value })
-					elseif stream.inOut == 'out' then
-						table.insert(flowrateOut, {layerName='layers_'..layerName, unitName=unit.name, value=stream.value })
-					end
-				end
-			end
+     table.insert(modelLayers[layerName].units, {name = unit.name})
+      if layer ~= nil and layer.type == 'MassBalance' then
+        for is, stream in ipairs(unit.massStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+      -- recover ResourceBalance Layers' units and streams (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????  
+      elseif layer ~= nil and layer.type == 'ResourceBalance' then
+        for is, stream in ipairs(unit.resourceStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+      -- recover costing Layers' units and streams (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????
+      elseif layer ~= nil and layer.type == 'Costing' then
+        for is, stream in ipairs(unit.costStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+      end
 		end
 	end
-
-
 
 	local unitLayers = {}
 	local streamLayers = {}
@@ -220,8 +312,9 @@ function lib.generateDataWithTimes(project, periode)
 		table.insert(unitLayers, {name = layer.name, units=layer.units })
 		table.insert(streamLayers, {name = layer.name, streams=layer.streams })
 	end
-
-	-- load file if type is string
+   
+  -- recover cost_elec_in, cost_elec_out and op_time
+  -- from project.operationalCosts
 	local loadedValues = {}
 	if type(project.operationalCosts) == 'string' then
 		local path = project.sourceDir .. project.operationalCosts
@@ -239,8 +332,9 @@ function lib.generateDataWithTimes(project, periode)
   	for key, val in pairs(lib.defaultOperationalCosts) do
   		loadedValues[key] = {{val}}
   	end
-  elseif project.objective == 'OperatingCost' and project.operationalCosts == nil then
-  	print("Operation costs must be defined as the project's objective is 'OperationCost'.")
+    -- ???????????????????????????????????
+  elseif project.objective == 'YearlyOperatingCost' and project.operationalCosts == nil then
+  	print("Operation costs must be defined as the project's objective is 'YearlyOperatingCost'.")
   	print("Exemple in fronted : ")
   	print("  project.operationalCosts = {cost_elec_in = 17.19, cost_elec_out = 16.9, op_time=8000.0}")
   	os.exit()
@@ -258,6 +352,7 @@ function lib.generateDataWithTimes(project, periode)
 
 
 	-- Create output text with given values.
+  ---updated by adding costing Layers (samira.fazlollahi@a3.epfl.ch) ????????????????????????????????????????????????????????????????????
 	return lustache:render(template, {
 		times 				= times,
 		timesValues		= timesValues,
@@ -267,32 +362,16 @@ function lib.generateDataWithTimes(project, periode)
 		cost_elec_out = operationalCosts.cost_elec_out,
 		op_time				= operationalCosts.op_time,
 		units 				= project.units[periode], 
-		attr 					= {"Cinv", "Cost", "Impact", "Power","HC"}, 
 		intervals			= intervals,
 		temps 				= temps,
-		CostGroups 	  = {"Cost1", "Cost2"},
-
 		massBalanceLayer 	= massBalanceLayer,
-
-		Layers 				= layers,
+    resourceBalanceLayer = resourceBalanceLayer,
+    costingLayer = costingLayer,
+    Layers 				= layers,
 		UnitsOfLayer   = unitLayers,
 		StreamsOfLayer	= streamLayers,
-		Costing 			= {{layer='DefaultImpact',			attr='Impact'},
-										 {layer='DefaultMechPower',		attr='Power'},
-										 {layer='DefaultInvCost',			attr='Cinv'},
-										 {layer='DefaultOpCost',			attr='Cost'},
-										},
 
-		-- Layers 				= {
-		-- 	Costing 			= {	{layer='DefaultOpCost', 		cost='Cost'}, 
-		-- 										{layer='DefaultInvCost', 		cost='Cinv'},
-		-- 										{layer='DefaultMechPower', 	cost='Power'},
-		-- 										{layer='DefaultImpact', 		cost='Impact'} },
-		-- 	HeatCascade   = { {layer='DefaultHeatCascade' }}
-		-- },
 		Locations 		= {{location_name = 'def_location'}},
-		flowrateIn 		= flowrateIn,
-		flowrateOut 	= flowrateOut
 	})
 
 end
@@ -302,20 +381,17 @@ end
 -- This function add 2 Units to solve the MER Objective : Default HeatCascade Unit Hot (DHCU_h) and
 -- Default HeatCascade Unit Cold (DHCU_c). Each of them has 1 stream, hot and cold.
 function lib.addMerUnits(units, project_name)
-	table.insert(units,{ name="DHCU_h", force_use=1, 
+	table.insert(units,{ name="DHCU_h", force_use=0, 
 		Fmin=0, 
 		Fmax=100000, 
-		Cost1=1000,
-		Cost2=1000,
-		layers={},
-		-- cost_value1 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
-		-- cost_value2 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
+		--Cost1=1000,
+		--Cost2=1000,
+    massStreams={},
+		layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"}},
+
 		streams={{name="DHCS_h", unitName="DHCU_h",
 					Tin				=function() return 99999 end, 
 					Tout			=function() return 99998 end, 
@@ -325,23 +401,35 @@ function lib.addMerUnits(units, project_name)
 					Hout 			=function() return 0 end, 
 					isHot			=function() return true end,
 					load 			={},
-					draw			=false }}
+					draw			=false }},
+     costStreams={
+       {layerName = "DefaultOpCost", name = "DHCS_h_Cost", unitName="DHCU_h",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = "DHCS_h_Cinv", unitName="DHCU_h",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = "DHCS_h_Power", unitName="DHCU_h",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = "DHCS_h_Impact", unitName="DHCU_h",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+
 		})
 
-	table.insert(units,{name="DHCU_c", force_use=1, 
+
+	table.insert(units,{name="DHCU_c", force_use=0, 
 		Fmin=0, 
 		Fmax=100000, 
-		Cost1 = 1000,
-		Cost2 = 1000,
-		layers={},
-	 --  cost_value1 = function(this) 
-	 --  	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-	 --  	return costing[this.cost]	
-	 --  end,
-	 --  cost_value2 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
+		--Cost1 = 1000,
+		--Cost2 = 1000,
+    massStreams ={},
+		layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"}},
+
 		streams={{name="DHCS_c", unitName="DHCU_c",  
 					Tin 			=function() return 100 end, 
 					Tout 			=function() return 105 end, 
@@ -351,7 +439,23 @@ function lib.addMerUnits(units, project_name)
 					Hout 			=function() return 1000 end, 
 					isHot			=function() return false end,
 					load 			={},
-					draw			=false }}
+					draw			=false }},
+    
+    costStreams={
+       {layerName = "DefaultOpCost", name = "DHCS_c_Cost", unitName="DHCU_c",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = "DHCS_c_Cinv", unitName="DHCU_c",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = "DHCS_c_Power", unitName="DHCU_c",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = "DHCS_c_Impact", unitName="DHCU_c",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+      
+     
 		})
 
 	return units
