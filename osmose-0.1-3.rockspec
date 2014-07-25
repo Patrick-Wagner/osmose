@@ -1,7 +1,7 @@
 package = "osmose"
 version = "0.1-3"
 source = {
-   url = "https://github.com/ipese/osmose",
+   url = "http://ipese.github.io/osmose-install/",
 }
 description = {
    summary = "OSMOSE : A tool for the design and analysis of integrated energy systems",
@@ -12,12 +12,12 @@ description = {
 
       One of the major goal of OSMOSE is to allow the integration of different models and to organise the process design methods using process integration techniques and multi-objective thermo-economic optimisation techniques.
    ]],
-   homepage = "https://github.com/ipese/osmose",
+   homepage = "http://ipese.github.io/osmose/docs/osmose.html",
    license = "proprietary"
 }
 dependencies = {
    "lua >= 5.1, < 5.3",
-   "lub >= 1.0.3, < 1.1",
+   "lub >= 1.0.7, <1.1",
 }
 build = {
    type = "builtin",
