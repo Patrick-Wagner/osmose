@@ -1,8 +1,8 @@
 --[[---------------------------------------
   
-  # PenHEX
+  # PostCompute
   
-  Allows to list penalising heat exchangers for each period. 
+  PostCompute exemple
 --]]---------------------------------------
 
 local lub   = require 'lub'
@@ -10,16 +10,6 @@ local lib   = lub.class 'osmose.PostCompute'
 
 
 
---[[
-  Draws Composite Curves (CC) and Grand Composites Curves (GCC). You can
-  specify an format output.
-
-  Exemples:
-
-    osmose.Graph(project) 
-    osmose.Graph(project, 'svg') 
-  -- careful for utilties and periods. Must multiply loads for utls. 
---]]
 function lib.new(project)
   local model = project.models[1]
   local streams
