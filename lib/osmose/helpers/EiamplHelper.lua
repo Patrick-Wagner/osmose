@@ -67,6 +67,9 @@ function lib.initMassStream(stream,model,unit)
   -- stream.Flow is used by Glpk.lua to update the flowrate in each time step
   -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
   stream.value = function(model) return stream.fFlow(model) end
+  if type(stream.value) == 'function' then
+		stream.value = stream.value(model)
+	end
   stream.Flow=function(model) return stream.fFlow(model) end
 	
   
@@ -94,6 +97,9 @@ function lib.initResourceStream(stream,model,unit)
   -- stream.Flow is used by Glpk.lua to update the flowrate in each time step
   -- author: Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
   stream.value = function(model) return stream.fFlow_r(model) end
+  if type(stream.value) == 'function' then
+		stream.value = stream.value(model)
+	end
   stream.Flow_r=function(model) return stream.fFlow_r(model) end
 	
   
