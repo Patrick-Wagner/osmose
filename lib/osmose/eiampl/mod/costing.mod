@@ -40,12 +40,12 @@ var Elec_buy >= 0;
 var Elec_sell >= 0;  
 var YearlyOperatingCost ; # Euro/years 
 subject to const_elec1:
-	Costs_Cost["osmose_default_model_DefaultMechPower"] - Elec_buy + Elec_sell = 0 ;
+	Costs_Cost["DefaultMechPower"] - Elec_buy + Elec_sell = 0 ;
 subject to const_elec2:
-	Costs_Cost["osmose_default_model_DefaultMechPower"] - Elec_buy  <= 0;
+	Costs_Cost["DefaultMechPower"] - Elec_buy  <= 0;
 subject to new_opcost:
 	YearlyOperatingCost = (cost_elec_in * Elec_buy * op_time * 3600 / 1000000)  - ( cost_elec_out * Elec_sell * op_time * 3600 / 1000000) + 
-	( op_time * 3600 * Costs_Cost["osmose_default_model_DefaultOpCost"]) ;
+	( op_time * 3600 * Costs_Cost["DefaultOpCost"]) ;
 
 # Generated Streams
 #-------------------------------------------------------------------------

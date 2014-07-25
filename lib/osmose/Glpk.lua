@@ -158,10 +158,10 @@ function lib.generateDataWithTimes(project, periode)
 	local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
 
 	local layers = {'DefaultHeatCascade',
-	'osmose_default_model_DefaultImpact',	
-	'osmose_default_model_DefaultMechPower',
-	'osmose_default_model_DefaultInvCost',
-	'osmose_default_model_DefaultOpCost'}
+	'DefaultImpact',	
+	'DefaultMechPower',
+	'DefaultInvCost',
+	'DefaultOpCost'}
 
 	local massBalanceLayer = {}
 
@@ -277,10 +277,10 @@ function lib.generateDataWithTimes(project, periode)
 		Layers 				= layers,
 		UnitsOfLayer   = unitLayers,
 		StreamsOfLayer	= streamLayers,
-		Costing 			= {{layer='osmose_default_model_DefaultImpact',			attr='Impact'},
-										 {layer='osmose_default_model_DefaultMechPower',		attr='Power'},
-										 {layer='osmose_default_model_DefaultInvCost',			attr='Cinv'},
-										 {layer='osmose_default_model_DefaultOpCost',			attr='Cost'},
+		Costing 			= {{layer='DefaultImpact',			attr='Impact'},
+										 {layer='DefaultMechPower',		attr='Power'},
+										 {layer='DefaultInvCost',			attr='Cinv'},
+										 {layer='DefaultOpCost',			attr='Cost'},
 										},
 
 		-- Layers 				= {
@@ -304,7 +304,7 @@ end
 function lib.addMerUnits(units, project_name)
 	table.insert(units,{ name="DHCU_h", force_use=1, 
 		Fmin=0, 
-		Fmax=10000000000, 
+		Fmax=100000, 
 		Cost1=1000,
 		Cost2=1000,
 		layers={},
@@ -330,7 +330,7 @@ function lib.addMerUnits(units, project_name)
 
 	table.insert(units,{name="DHCU_c", force_use=1, 
 		Fmin=0, 
-		Fmax=10000000000, 
+		Fmax=100000, 
 		Cost1 = 1000,
 		Cost2 = 1000,
 		layers={},

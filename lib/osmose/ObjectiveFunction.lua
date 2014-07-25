@@ -13,11 +13,11 @@
 -- @status _proposed
 
 -- The general type of objective functions are; 
--- MER: Costs_Cost['osmose_default_model_DefaultOpCost'] 
--- InvestmentCost: Costs_Cost['osmose_default_model_DefaultInvCost']
--- OperatingCost: Costs_Cost['osmose_default_model_DefaultOpCost'] 
--- MechanicalPower: Costs_Cost['osmose_default_model_DefaultMechPower']
--- Impact: Costs_Cost['osmose_default_model_DefaultImpact']
+-- MER: Costs_Cost['DefaultOpCost'] 
+-- InvestmentCost: Costs_Cost['DefaultInvCost']
+-- OperatingCost: Costs_Cost['DefaultOpCost'] 
+-- MechanicalPower: Costs_Cost['DefaultMechPower']
+-- Impact: Costs_Cost['DefaultImpact']
 -- TotalCost: InvestmentCost+OperatingCost 
 -- OpCostWithImpact: OperatingCost+Impact
 -- TotalCostWithPower: InvestmentCost+OperatingCost+ MechanicalPower
@@ -31,36 +31,36 @@ local lib 	= lub.class 'osmose.ObjectiveFunction'
 
 function lib.new(objective)
 	if objective=='MER' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		objective_function = "minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost']; solve; \n\n"
+		
+		objective_function = "minimize ObjectiveFunction : Costs_Cost['DefaultOpCost']; solve; \n\n"
     
 	elseif objective=='OperatingCost' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		objective_function = "minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost']; solve; \n\n"
+		
+		objective_function = "minimize ObjectiveFunction : Costs_Cost['DefaultOpCost']; solve; \n\n"
     
   elseif objective=='InvestmentCost' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultInvCost']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultInvCost']; solve; \n\n"
     
   elseif objective=='MechanicalPower' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultMechPower']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultMechPower']; solve; \n\n"
     
   elseif objective=='Impact' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultImpact']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultImpact']; solve; \n\n"
     
   elseif objective=='TotalCost' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost'] + Costs_Cost['osmose_default_model_DefaultInvCost']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultOpCost'] + Costs_Cost['DefaultInvCost']; solve; \n\n"
    
   elseif objective=='OpCostWithImpact' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost'] + Costs_Cost['osmose_default_model_DefaultImpact']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultOpCost'] + Costs_Cost['DefaultImpact']; solve; \n\n"
     
   elseif objective=='TotalCostWithPower' then
-        objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost'] + Costs_Cost['osmose_default_model_DefaultInvCost'] + Costs_Cost['osmose_default_model_DefaultMechPower']; solve; \n\n"
+        objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultOpCost'] + Costs_Cost['DefaultInvCost'] + Costs_Cost['DefaultMechPower']; solve; \n\n"
         
   elseif objective=='TotalCostWithImpact' then
-        objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost'] + Costs_Cost['osmose_default_model_DefaultInvCost'] + Costs_Cost['osmose_default_model_DefaultImpact']; solve; \n\n" 
+        objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultOpCost'] + Costs_Cost['DefaultInvCost'] + Costs_Cost['DefaultImpact']; solve; \n\n" 
         
   elseif objective=='TotalCostWithImpactAndPower' then
-    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost'] + Costs_Cost['osmose_default_model_DefaultInvCost'] + Costs_Cost['osmose_default_model_DefaultMechPower'] + Costs_Cost['osmose_default_model_DefaultImpact']; solve; \n\n"
+    objective_function = "# Objective function\n minimize ObjectiveFunction : Costs_Cost['DefaultOpCost'] + Costs_Cost['DefaultInvCost'] + Costs_Cost['DefaultMechPower'] + Costs_Cost['DefaultImpact']; solve; \n\n"
     
   elseif objective=='YearlyOperatingCost' then
 		objective_function = "# Objective function\n minimize ObjectiveFunction : YearlyOperatingCost; solve;\n\n"
