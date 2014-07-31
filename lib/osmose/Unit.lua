@@ -19,6 +19,7 @@
 --]]------------------------------------------------------
 local lub   = require 'lub'
 local lib   = lub.class 'osmose.Unit'
+local helper = require 'osmose.helpers.tagHelper'
 
 -- Add by default to problem
 lib.addToProblem = 1
@@ -54,6 +55,16 @@ function lib.new(name, args)
   for key, val in pairs(args) do
     unit[key]=val
   end
+
+  -- Fmin and Fmax are equal to the unit.Mult If the user defines the unit.Mult
+  -- for a process in project definition, otherwise they are equal to 1
+
+  unit.Fmin = unit.Fmin or 1
+  unit.Fmax = unit.Fmax or unit.Mult or 10000
+
+  unit.fFmax   = helper.initTag(unit,model,'Fmax')
+  unit.fFmin   = helper.initTag(unit,model,'Fmin')
+
   return unit
 end
 

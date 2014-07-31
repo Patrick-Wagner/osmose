@@ -21,8 +21,8 @@ local lib 	= lub.class 'osmose.AddMerUnits'
 
 function lib.new(units, project_name)
 		table.insert(units,{ name="DHCU_h", force_use=0, 
-		Fmin=0, 
-		Fmax=100000, 
+    fFmin = function() return 0 end,
+    fFmax = function() return 100000 end,
 		--Cost1=1000,
 		--Cost2=1000,
     massStreams={},
@@ -60,8 +60,8 @@ function lib.new(units, project_name)
 
 
 	table.insert(units,{name="DHCU_c", force_use=0, 
-		Fmin=0, 
-		Fmax=100000, 
+    fFmin = function() return 0 end,
+    fFmax = function() return 100000 end,
 		--Cost1 = 1000,
 		--Cost2 = 1000,
     massStreams ={},

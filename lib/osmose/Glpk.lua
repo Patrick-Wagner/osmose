@@ -163,6 +163,9 @@ function lib.generateDataWithTimes(project, periode)
 				model.periode = periode 
 				model.time = t
 			end
+			
+			unit.Fmin =  unit.fFmin(model)
+			unit.Fmax =  unit.fFmax(model)
       
       -- recover the unit forceUse in each time step
       -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)

@@ -125,22 +125,7 @@ function lib.initProcess(unit, model)
 	unit.model = model
 	unit.type = 'Process'
 	unit.force_use = unit.force_use or 1 
-  
-  -- Fmin and Fmax are equal to the unit.Mult If the user defines the unit.Mult
-  -- for a process in project definition, otherwise they are equal to 1
-  -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
-	unit.Fmin = unit.Mult or 1
-	unit.Fmax = unit.Mult or 1
 
-  -- unit.costing1 = {Cost= (unit.Cost1 or 0), Cinv= (unit.Cinv1 or 0), Power=(unit.Power1 or 0), Impact=(unit.Impact1 or 0)}
-	-- unit.costing2 = {Cost= (unit.Cost2 or 0), Cinv= (unit.Cinv2 or 0), Power=(unit.Power2 or 0), Impact=(unit.Impact2 or 0)}
-
-	-- unit.cost_value1 = function(this) 
-	-- 	return unit.costing1.Cost
-	-- end
-	-- unit.cost_value2 = function(this) 
-	-- 	return unit.costing2.Cost
-	-- end
 	unit.streams = {}
 	unit.massStreams = {}
   unit.resourceStreams = {}
@@ -196,18 +181,7 @@ function lib.initUtility(unit, model)
 	unit.model = model
 	unit.type	= 'Utility'
 	unit.force_use = unit.force_use or 0
-	unit.Fmin = unit.Fmin or 0
-	unit.Fmax = unit.Fmax or 10000
 
-	-- unit.costing1 = {Cost= (unit.Cost1 or 0), Cinv= (unit.Cinv1 or 0), Power=(unit.Power1 or 0), Impact=(unit.Impact1 or 0)}
-	-- unit.costing2 = {Cost= (unit.Cost2 or 0), Cinv= (unit.Cinv2 or 0), Power=(unit.Power2 or 0), Impact=(unit.Impact2 or 0)}
-	
-	-- unit.cost_value1 = function(this) 
-	-- 	return unit.costing1[this.Cost]
-	-- end
-	-- unit.cost_value2 = function(this) 
-	-- 	return unit.costing2[this.Cost]
-	-- end
 	unit.streams={}
 	unit.massStreams = {}
   unit.resourceStreams = {}

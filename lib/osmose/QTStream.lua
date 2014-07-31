@@ -35,6 +35,7 @@
 
 local lub = require 'lub'
 local lib = lub.class 'osmose.QTStream'
+local helper = require 'osmose.helpers.tagHelper'
 
 -- The private functions are stored here.
 local private={}
@@ -47,7 +48,6 @@ lib.new = function(params)
 
   -- self in the QTStream instance.
   local stream= lub.class('QTStream')
-  setmetatable(stream, lib)
 
   if params then
     for k,v in pairs(params) do
@@ -59,25 +59,25 @@ lib.new = function(params)
     end
   end
 
-  stream.ftin   = stream:initTag(model,'tin','T')
+  stream.ftin   = helper.initTag(stream,model,'tin','T')
 
-  stream.ftout  = stream:initTag(model,'tout','T')
+  stream.ftout  = helper.initTag(stream,model,'tout','T')
 
-  stream.ftinNoCorr   = stream:initTag(model,'tin','T')
+  stream.ftinNoCorr   = helper.initTag(stream,model,'tin','T')
 
-  stream.ftoutNoCorr  = stream:initTag(model,'tout','T')
+  stream.ftoutNoCorr  = helper.initTag(stream,model,'tout','T')
 
-  stream.ftinCorr = stream:initTag(model,'tin','Tcorr')
+  stream.ftinCorr = helper.initTag(stream,model,'tin','Tcorr')
 
-  stream.ftoutCorr  = stream:initTag(model,'tout','Tcorr')
+  stream.ftoutCorr  = helper.initTag(stream,model,'tout','Tcorr')
 
-  stream.fhin   = stream:initTag(model,'hin')
+  stream.fhin   = helper.initTag(stream,model,'hin')
 
-  stream.fhout  = stream:initTag(model,'hout')
+  stream.fhout  = helper.initTag(stream,model,'hout')
 
-  stream.fdtmin = stream:initTag(model,'dtmin')
+  stream.fdtmin = helper.initTag(stream,model,'dtmin')
 
-  stream.falpha = stream:initTag(model,'alpha')
+  stream.falpha = helper.initTag(stream,model,'alpha')
 
   stream.addToProblem = 1
 
@@ -85,40 +85,6 @@ lib.new = function(params)
 end
 
 
-
--- Private function to define a stream value (tin, tout, hin, hout).
-function lib:initTag(model, tag, temp) 
-  -- If the tag is a Temperature (temp=='T') then we add 273 automatically, 0 otherwise.
-  local delta = 0
-  if temp=='T' then
-    delta = 273
-  elseif temp=='Tcorr' then
-    delta = 273.0001
-  end
-
-  -- iniTag return a function that depend of the model.
-  local fct = function(model)
-    local value = 0
-    if type(self[tag]) == 'string' then
-      local res = model[self[tag]]
-      if type(res) == 'function' then
-        value = res()
-      else
-        value = res
-      end
-    elseif type(self[tag]) == 'number' then
-      value = self[tag]
-    else
-      value = self[tag](model)
-    end
-    if type(value) == 'table' then
-      value = value[1][1]
-    end
-    return value + delta
-  end
-
-  return fct
-end
 
 private.validParam = function(element)
   for _, value in pairs(validParamTable) do
