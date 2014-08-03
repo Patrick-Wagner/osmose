@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li><strong>GIS-LuaSql-test/GisDataHandler.lua</strong></li>
+	
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>GIS-LuaSql-test/GisDataHandler.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.fill_data">gis.fill_data</a>&nbsp;(data_table, ndx, dataline)</td>
+	<td class="summary">fill_data </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.fromCSV">gis.fromCSV</a>&nbsp;(s)</td>
+	<td class="summary">Convert from CSV string to table (converts a single line of a CSV file).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.get_buildingvalue">gis.get_buildingvalue</a>&nbsp;(dataline, keystr)</td>
+	<td class="summary">retrieve the corresponding data value according to a given key string and return the found data </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.get_lineCSV">gis.get_lineCSV</a>&nbsp;(s)</td>
+	<td class="summary">retrieve one line of data from a given CSV file </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.printAll">gis.printAll</a>&nbsp;()</td>
+	<td class="summary">Print All table elements created from this test module.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.readcsv">gis.readcsv</a>&nbsp;(filename)</td>
+	<td class="summary">Convert from CSV string to table (converts a single line of a CSV file).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.rows">gis.rows</a>&nbsp;(connection, sql_statement, filename)</td>
+	<td class="summary">Convert from CSV string to table (converts a single line of a CSV file).</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#gis.show_buildinginfo">gis.show_buildinginfo</a>&nbsp;(buildingdata)</td>
+	<td class="summary">Retrieve the required data element and print it </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="gis.fill_data"></a><strong>gis.fill_data</strong>&nbsp;(data_table, ndx, dataline)</dt>
+<dd>
+fill_data
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  data_table: the data which should be modified
+	</li>
+	
+	<li>
+	  ndx: index number in data_table
+	</li>
+	
+	<li>
+	  dataline: the data value used to update
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+data_table with the updated information
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.fromCSV"></a><strong>gis.fromCSV</strong>&nbsp;(s)</dt>
+<dd>
+Convert from CSV string to table (converts a single line of a CSV file).
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  s: text file name which contains some GIS data. The first line of this text data will be used as column index names of the remaining data lines.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+t table which contains all fields value included in s csv format file
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.get_buildingvalue"></a><strong>gis.get_buildingvalue</strong>&nbsp;(dataline, keystr)</dt>
+<dd>
+retrieve the corresponding data value according to a given key string and return the found data
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  dataline: the line of data to be searched
+	</li>
+	
+	<li>
+	  keystr: the key string value
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+val the found value
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.get_lineCSV"></a><strong>gis.get_lineCSV</strong>&nbsp;(s)</dt>
+<dd>
+retrieve one line of data from a given CSV file
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  s: text file name which contains some GIS data. The first line of this text data will be used as column index names of the remaining data lines.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+table data
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.printAll"></a><strong>gis.printAll</strong>&nbsp;()</dt>
+<dd>
+Print All table elements created from this test module.
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.readcsv"></a><strong>gis.readcsv</strong>&nbsp;(filename)</dt>
+<dd>
+Convert from CSV string to table (converts a single line of a CSV file).
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  filename: CSV format file within which some GIS data is written.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+citytable a line of data parsed from the input file in csv format
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.rows"></a><strong>gis.rows</strong>&nbsp;(connection, sql_statement, filename)</dt>
+<dd>
+Convert from CSV string to table (converts a single line of a CSV file).
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  connection: 
+	</li>
+	
+	<li>
+	  sql_statement: 
+	</li>
+	
+	<li>
+	  filename: CSV format file within which some GIS data is written.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+citytable a line of data parsed from the input file in csv format
+
+
+
+</dd>
+
+
+
+
+<dt><a name="gis.show_buildinginfo"></a><strong>gis.show_buildinginfo</strong>&nbsp;(buildingdata)</dt>
+<dd>
+Retrieve the required data element and print it
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  buildingdata: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+true if print ok
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

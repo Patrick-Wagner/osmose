@@ -18,10 +18,10 @@ variables,
 
 
 interface,
-        system analysis_driver = ‘lua_project_driver.sh'
+        system analysis_driver = 'stream_model_dakota.sh'
         parameters_file = 'params.in'
         results_file = 'results.out'
-        work_directory named 'results’ directory_tag
+        work_directory named 'stream_model' directory_tag
         file_save directory_save
 
 responses,
