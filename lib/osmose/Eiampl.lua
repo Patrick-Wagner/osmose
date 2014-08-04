@@ -29,6 +29,7 @@ local helper = require "osmose.helpers.EiamplHelper"
 --   )
 --   local eiampl = osmose.Eiampl(project)
 function lib.new(project)
+
 	for periode in ipairs(project.periodes) do
 
 		-- All project units (processes and utilities) will be stored in this table.

@@ -32,5 +32,13 @@ function should.loadTimes()
 	assertEqual(6, p1.periodes[3].times)
 end
 
+function should.solve()
+	local p1 = osmose.Project('LuaJam', 'MER')
+	p1:load({cip = "ET.Cip"})
+	local solution = p1:solve()
+
+	assertEqual(p1, solution)
+end
+
 
 should:test()

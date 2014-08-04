@@ -121,6 +121,9 @@ function lib.new(project, return_solver)
   print(" 4-In and Out mass/resource streams cannot be defined simultaneously for a given unit")
   print(" 5-To help the solver, try to avoid large value for the Fmax of units.")
 	end -- for periodes loop
+
+	project.solved = true
+	
 	return project
 end
 

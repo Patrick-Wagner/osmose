@@ -149,5 +149,44 @@ function lib:periode(periode)
   return self.periodes[periode]
 end
 
+--[[
+  Solve the project with Glpk by default and do graphs.
+
+    local p1 = osmose.Project('LuaJam', 'MER')
+    p1:load({cip = "ET.Cip"})
+    p1:solve()
+
+  To skip the graph generation :
+
+    p1:solve({graph=false})
+
+  To specify graph format :
+
+    p1:solve({graph={format='svg'}})
+
+
+--]]
+function lib:solve(args)
+  local args = args or {}
+  local Eiampl = require 'osmose.Eiampl'
+  local Glpk   = require 'osmose.Glpk'
+  local Graph  = require 'osmose.Graph'
+
+  local self = Eiampl(self)
+
+  if args.solver=='GLPK' or args.solver==nil then
+    Glpk(self)
+  end
+
+  if args.graph~=false and self.solved==true then
+    local format = nil
+    if args.graph then
+      format = args.graph.format
+    end
+    Graph(self,format)
+  end
+
+  return self
+end
 
 return lib
