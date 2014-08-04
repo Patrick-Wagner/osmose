@@ -66,20 +66,23 @@ function lib.new(project, format, options)
 
       -- Split of hot and cold streams.
       local hotStreams, coldStreams = lib.splitHotAndCold(project,periode,time,options)
-
-      if hotStreams==nil and coldStreams==nil then
-        print('Could not draw graph')
-        os.exit()
+      
+      -- skip plotting Composite Curves (CC) and Grand Composites Curves (GCC), if there is no hot or cold stream
+      -- (samira.fazlollahi@a3.epfl.ch)
+      if hotStreams[1]==nil and coldStreams[1]==nil then
+        print('There is no hot and cold streams, Could not draw graph')
+        -- os.exit()
+        do return end
       end
 
       -- Cumulation of streams Heat Load
       local hotStreams  = lib.getCumulateHeatLoad(hotStreams,time)
       local coldStreams = lib.getCumulateHeatLoad(coldStreams,time)
 
-      -- Composite Curve creation
+      -- Composite Curve creation 
       local hotCC  = lib.getHotCC(hotStreams)
       local coldCC = lib.getColdCC(coldStreams)
-
+  
 
       -- We translate the cold curve according the solver result 
       if project.objective == 'MER' then

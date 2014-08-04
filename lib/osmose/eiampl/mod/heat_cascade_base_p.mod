@@ -38,7 +38,7 @@ set HC_Hot {ly in HeatCascades,t in Time} within {st in Streams: st in StreamsOf
 set HC_Hot_loc {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time} within {st in Streams: st in StreamsOfTime[t]}  :=
 {s in HC_Hot[ly,t] : s in StreamsOfTime[t] and s in StreamsOfLocation[lc]};
 
-check {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time}: card(HC_Hot_loc[ly,lc,t]) > 0;
+check {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time: card(StreamsOfLayer[ly]) > 0}: card(HC_Hot_loc[ly,lc,t]) > 0;
 
 
 # Cold streams
@@ -48,7 +48,7 @@ set HC_Cold {ly in HeatCascades,t in Time} within Streams :=
 set HC_Cold_loc {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time} within Streams :=
 {s in HC_Cold[ly,t] : s in StreamsOfTime[t] and s in StreamsOfLocation[lc]};
 
-check {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time}: card(HC_Cold_loc[ly,lc,t]) > 0;	
+check {ly in HeatCascades, lc in LocationsOfLayer[ly],t in Time: card(StreamsOfLayer[ly]) > 0}: card(HC_Cold_loc[ly,lc,t]) > 0;	
 
 
 
