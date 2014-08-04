@@ -97,12 +97,15 @@ function lib.new(modelName)
   class.jobs      = {}
   
   -- Add default layers of Costing (operating cost, Investment cost, Impact and power)
-  -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+   -- Add default layers of HeatCascade (DefaultHeatCascade)
+ -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
   class.layers    = {DefaultOpCost = layer('DefaultOpCost',{type='Costing'}), 
                      DefaultInvCost = layer('DefaultInvCost',{type='Costing'}),
                      DefaultMechPower = layer('DefaultMechPower',{type='Costing'}),
-                     DefaultImpact = layer('DefaultImpact',{type='Costing'})}
+                     DefaultImpact = layer('DefaultImpact',{type='Costing'}),
+                     DefaultHeatCascade = layer('DefaultHeatCascade',{type='HeatCascade'})}
   class.equations = {}
+
 
   -- All public methods in model API are set here.
   class.__index    = model_api.__index

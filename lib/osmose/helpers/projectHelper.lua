@@ -7,7 +7,7 @@ function lib.loadUndeclaredTags(model)
 		for streamName, streamTable in pairs(unitTable.streams) do
 			for k,v in pairs(streamTable) do
 				local present = false
-				if type(v)=='string' and k~='type' and k~='inOut' then
+				if type(v)=='string' and k~='type' and k~='inOut' and k~='layerName' then
 					--if pcall(function() return model[v] end) then
 					if model.present(v) then
 						-- do noting... 

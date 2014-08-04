@@ -37,8 +37,9 @@ set StreamsOfUnit[{{name}}] := {{#streams}} {{name}} {{/streams}}{{#massStreams}
 {{/costStreams}}
 {{/units}}
 
+
 {{#intervals}}
-set HC_TempIntervals[DefaultHeatCascade, {{project_name}}_def_location, {{time}}] :=  {{#temps}} {{interval}} {{/temps}};
+set HC_TempIntervals[{{layerName}}, {{project_name}}_def_location, {{time}}] :=  {{#temps}} {{interval}} {{/temps}};
 {{/intervals}}
 
 ##
@@ -55,11 +56,10 @@ set StreamsOfStreamGroup[qts] := {{#units}}{{#streams}} {{name}} {{/streams}}{{/
 set LayerTypes := Costing HeatCascade MassBalance ResourceBalance;
 
 
-
 set Layers := {{#Layers}}{{.}} {{/Layers}}; 
 
 
-set LayersOfType[HeatCascade] := DefaultHeatCascade ;
+set LayersOfType[HeatCascade] := {{#heatCascadeLayer}} {{.}} {{/heatCascadeLayer}}  ;
 
 set LayersOfType[MassBalance] := {{#massBalanceLayer}} {{.}} {{/massBalanceLayer}} ;
 
@@ -67,15 +67,10 @@ set LayersOfType[ResourceBalance] := {{#resourceBalanceLayer}} {{.}} {{/resource
 
 set LayersOfType[Costing] := {{#costingLayer}} {{.}} {{/costingLayer}} ;
 
-
-set UnitsOfLayer[DefaultHeatCascade] := {{#units}}{{name}} {{/units}} ;
-
 {{#UnitsOfLayer}}
 set UnitsOfLayer[{{name}}] := {{#units}}{{name}} {{/units}};
 {{/UnitsLayer}}
 
-set StreamsOfLayer[DefaultHeatCascade] := {{#units}}{{#streams}}{{name}} {{/streams}}{{/units}} 
-;
 
 {{#StreamsOfLayer}}
 set StreamsOfLayer[{{name}}] := {{#streams}}{{name}} {{/streams}};
@@ -130,24 +125,24 @@ param Streams_Cost2 :=
 ;
 
 param HC_TI_tl := {{#temps}}
-DefaultHeatCascade {{project_name}}_def_location {{time}} {{interval}} {{temp}}
+{{layerName}} {{project_name}}_def_location {{time}} {{interval}} {{temp}}
 {{/temps}}
 ;
 
 param Streams_Tin := {{#times}}{{#streams}}
-DefaultHeatCascade {{name}} {{time}} {{Tin_corr}} {{/streams}}{{/times}}
+{{layerName}} {{name}} {{time}} {{Tin_corr}} {{/streams}}{{/times}}
 ;
 
 param Streams_Tout := {{#times}}{{#streams}}
-DefaultHeatCascade {{name}} {{time}} {{Tout_corr}} {{/streams}}{{/times}}
+{{layerName}} {{name}} {{time}} {{Tout_corr}} {{/streams}}{{/times}}
 ;
 
 param Streams_Hin := {{#times}}{{#streams}}
-DefaultHeatCascade {{name}} {{time}} {{Hin}} {{/streams}}{{/times}}
+{{layerName}} {{name}} {{time}} {{Hin}} {{/streams}}{{/times}}
 ;
 
 param Streams_Hout := {{#times}}{{#streams}}
-DefaultHeatCascade {{name}} {{time}} {{Hout}} {{/streams}}{{/times}}
+{{layerName}} {{name}} {{time}} {{Hout}} {{/streams}}{{/times}}
 ;
 
 param Units_flowrate_in :={{#times}}

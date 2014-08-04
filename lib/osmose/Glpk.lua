@@ -184,6 +184,8 @@ function lib.generateDataWithTimes(project, periode)
 				stream.Tout_corr = s.Tout_corr(model)
 				stream.Hin = s.Hin(model)
 				stream.Hout = s.Hout(model)
+				-- add a heat cascade layer's name of each hot/cold stream
+				stream.layerName =s.layerName
 				table.insert(streams, stream)
 			end
       -- recover the cost streams' value (Power, Impact, Cost, Cin) in each time step
@@ -238,10 +240,10 @@ function lib.generateDataWithTimes(project, periode)
 	end
 
 
-	local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
-  
-	local layers = {'DefaultHeatCascade'}
-
+ 
+	local layers = {}
+  -- Recover all heat cascade layers
+  local heatCascadeLayer = {}
 	local massBalanceLayer = {}
   local resourceBalanceLayer = {}
   local costingLayer={}
@@ -253,6 +255,8 @@ function lib.generateDataWithTimes(project, periode)
       ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
       local fullName
       if layer ~= nil and layer.type == 'Costing' then
+			  fullName = layerName
+	  elseif layer ~= nil and layer.type == 'HeatCascade' then
 			  fullName = layerName
       else
         fullName =  'layers_'..layerName
@@ -274,6 +278,10 @@ function lib.generateDataWithTimes(project, periode)
           ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
         elseif layer.type == 'Costing' then
           table.insert(costingLayer, fullName)
+          ---add HeatCascade Layers (samira.fazlollahi@a3.epfl.ch) 
+         elseif layer.type == 'HeatCascade' then
+          table.insert(heatCascadeLayer, fullName) 
+           
 				else
 					print(string.format("Layer of type '%s' is not recognized.", layer.type))
 					print("Valid layer types are : Costing, HeatCascade, MassBalance, ResourceBalance")
@@ -302,6 +310,15 @@ function lib.generateDataWithTimes(project, periode)
             table.insert(modelLayers[layerName].streams, {name = stream.name})
           end
         end
+       
+      -- recover HeatCascade Layers' units and streams (samira.fazlollahi@a3.epfl.ch) 
+      elseif layer ~= nil and layer.type == 'HeatCascade' then
+        for is, stream in ipairs(unit.streams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+ 
       -- recover costing Layers' units and streams (samira.fazlollahi@a3.epfl.ch) 
       elseif layer ~= nil and layer.type == 'Costing' then
         for is, stream in ipairs(unit.costStreams) do
@@ -312,6 +329,9 @@ function lib.generateDataWithTimes(project, periode)
       end
 		end
 	end
+
+--- recover intervals and temps for each layer of heat cascading (samira.fazlollahi@a3.epfl.ch)
+local intervals, temps = lib.streamsTinWithTimesForHClayer(project.units[periode], periode, project.periodes[periode].times, heatCascadeLayer)
 
 	local unitLayers = {}
 	local streamLayers = {}
@@ -372,6 +392,7 @@ function lib.generateDataWithTimes(project, periode)
 		intervals			= intervals,
 		temps 				= temps,
 		massBalanceLayer 	= massBalanceLayer,
+		heatCascadeLayer = heatCascadeLayer,
     resourceBalanceLayer = resourceBalanceLayer,
     costingLayer = costingLayer,
     Layers 				= layers,
@@ -382,6 +403,64 @@ function lib.generateDataWithTimes(project, periode)
 	})
 
 end
+
+function lib.streamsTinWithTimesForHClayer(units, periode, times,HClayers)
+	local streams_temp_in = {}
+	local intervals = {}
+	for time=1, times do 
+		local uniq_tin = {}
+    
+    -- Define intervals and streams_temp_in for each layer of heat cascading 
+    -- updated by adding heat cascade  Layers (samira.fazlollahi@a3.epfl.ch)
+    
+    for eachlayerName, layer in pairs(HClayers) do
+      
+      for iu, unit in pairs(units) do
+        local model = unit.model
+        if model then
+          model.periode = periode
+          model.time = time
+        end
+        for is, stream in pairs(unit.streams) do
+          if stream.layerName == layer then
+            if stream.Tin_corr then 
+              local Tin_corr = stream.Tin_corr(model)
+              local Tout_corr = stream.Tout_corr(model)
+              local tbl = {	Tin_corr = stream.Tin_corr(model), 
+                          Tout_corr = stream.Tout_corr(model), 
+                          Hin = stream.Hin(model),
+                          Hout = stream.Hout(model),
+                          isHot=stream.isHot(model),
+                        layerName=stream.layerName}
+              uniq_tin[Tin_corr] = tbl
+              uniq_tin[Tout_corr] = tbl
+            end
+          end
+        end
+      end
+		
+
+      local temps = {}
+      for t, tbl in pairs(uniq_tin) do 
+        table.insert( temps, {layerName=tbl.layerName, T=t, temp=t, time=time, Hin=tbl.Hin, Hout=tbl.Hout, Tin_corr=tbl.Tin_corr, Tout_corr = tbl.Tout_corr, isHot = tbl.isHot }) 
+      end
+
+      table.sort(temps, function(a,b) return a.T<b.T  end)
+    
+        
+        for i,t in pairs(temps) do
+            t.interval = i
+            table.insert(streams_temp_in, t)
+        end
+      
+  
+      table.insert(intervals, {time=time, temps=temps, layerName=layer})
+    end -- times loop
+	end
+  
+	return intervals, streams_temp_in
+end
+
 
 -- This function return all the mininum streams of the *units* and sort them ascendingly.
 function lib.streamsTinWithTimes(units, periode, times)
