@@ -115,11 +115,12 @@ function lib.new(project, return_solver)
 		end
   print('-------------------------------------------------------------------------------------------')
   print('Warning message;')
-  print(" 1-There is no FEASIBLE SOLUTION if the project has a layer with only 'in' process stream(s) or only 'out' process stream(s)") 
-  print(" 2-Temperature of the hot utility is not high enough to close the heat cascade balance")
-  print(" 3-Temperature of the cold utility is not low enough to close the heat cascade balance")
-  print(" 4-In and Out mass/resource streams cannot be defined simultaneously for a given unit")
-  print(" 5-To help the solver, try to avoid large value for the Fmax of units.")
+  print(" 1-There is no FEASIBLE SOLUTION if;")
+  print("     The project has a layer with only 'in' process stream(s) or only 'out' process stream(s)") 
+  print("     Temperature of the hot utility is not high enough to close the heat cascade balance")
+  print("     Temperature of the cold utility is not low enough to close the heat cascade balance")
+  print(" 2-In and Out mass/resource streams cannot be defined simultaneously for a given unit")
+  print(" 3-To help the solver, try to avoid large value for the Fmax of units.")
 	end -- for periodes loop
 	return project
 end
