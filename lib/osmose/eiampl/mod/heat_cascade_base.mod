@@ -38,7 +38,7 @@ set HC_Hot {ly in HeatCascades} within Streams :=
 set HC_Hot_loc {ly in HeatCascades, lc in LocationsOfLayer[ly]} within Streams :=
 {s in HC_Hot[ly] : s in StreamsOfLocation[lc]};
 
-check {ly in HeatCascades, lc in LocationsOfLayer[ly]}: card(HC_Hot_loc[ly,lc]) > 0;
+check {ly in HeatCascades, lc in LocationsOfLayer[ly]: card(StreamsOfLayer[ly]) > 0}: card(HC_Hot_loc[ly,lc]) > 0;
 
 
 # Cold streams
@@ -48,7 +48,7 @@ set HC_Cold {ly in HeatCascades} within Streams :=
 set HC_Cold_loc {ly in HeatCascades, lc in LocationsOfLayer[ly]} within Streams :=
 {s in HC_Cold[ly] : s in StreamsOfLocation[lc]};
 
-check {ly in HeatCascades, lc in LocationsOfLayer[ly]}: card(HC_Cold_loc[ly,lc]) > 0;	
+check {ly in HeatCascades, lc in LocationsOfLayer[ly]: card(StreamsOfLayer[ly]) > 0}: card(HC_Cold_loc[ly,lc]) > 0;	
 
 
 

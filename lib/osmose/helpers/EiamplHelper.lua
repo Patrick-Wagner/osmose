@@ -3,7 +3,7 @@ local lib = {}
 
 
 
-function lib.initQTStream(stream, model)
+function lib.initQTStream(stream, model,unit)
 	stream.isHot = function(model)
 		if stream.ftinNoCorr(model) > stream.ftoutNoCorr(model) and stream.fhin(model) > stream.fhout(model)  then
 			stream.ftin = stream.ftinNoCorr
@@ -59,6 +59,35 @@ function lib.initQTStream(stream, model)
 		end
 	end
 
+  
+  -- add HeatCascade layer name to each qt stream
+  -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+  if stream.layerName ~= nil then
+    stream.layerName = stream.layerName[1]
+  else
+    stream.layerName = 'DefaultHeatCascade'
+  end
+  
+  -- add HeatCascade layer to each unit
+  -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+
+	local layerFound = 0
+	for layerName, layer in pairs(model.layers) do
+		if layerName == stream.layerName then
+			if layer.type =='HeatCascade' then
+        unit.layers[layerName] = layer
+        layerFound = 1
+      else
+        print(string.format("The stream %s is a qt stream, while its layer %s is not HeatCascade layer", stream.shortName, stream.layerName))
+        os.exit()
+      end
+		end
+	end
+	if layerFound == 0 then			
+		print(string.format("The layer %s of stream %s is not found.", stream.layerName , stream.shortName))
+		os.exit()
+	end
+  
 	return stream
 end
 
@@ -145,13 +174,13 @@ function lib.initProcess(unit, model)
 				end
 			end
       if stream.tin ~= nil and tbl.hin ~= nil then
-				local streamInit = lib.initQTStream(stream, model)
+				local streamInit = lib.initQTStream(stream, model, unit)
 				table.insert(unit.streams, streamInit)
 			elseif stream.layerName ~= nil and stream.type == 'MassStream' then
-				local streamInit = lib.initMassStream(stream, model,unit) ---????
+				local streamInit = lib.initMassStream(stream, model,unit) 
 				table.insert(unit.massStreams, streamInit)
       elseif stream.layerName ~= nil and stream.type == 'ResourceStream' then
-				local streamInit = lib.initResourceStream(stream, model,unit) ---????
+				local streamInit = lib.initResourceStream(stream, model,unit)
 				table.insert(unit.resourceStreams, streamInit)
         
 			else
@@ -204,7 +233,7 @@ function lib.initUtility(unit, model)
 				stream[key] = value
 			end
 			if stream.tin ~= nil and tbl.hin ~= nil then
-				local streamInit = lib.initQTStream(stream, model)
+				local streamInit = lib.initQTStream(stream, model, unit)
 				table.insert(unit.streams, streamInit)
 			elseif stream.layerName ~= nil and stream.type == 'MassStream' then
 				local streamInit = lib.initMassStream(stream, model,unit) 

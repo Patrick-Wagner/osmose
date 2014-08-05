@@ -5,9 +5,9 @@ local lustache = require "lib.osmose.eiampl.vendor.lustache"
 
 function lib.writeGnuplotDataFile(filepath, curve)
 	local f = io.open(filepath,"w")
-	for i,cc in ipairs(curve) do
-		f:write(cc.Q.." "..(cc.T-273).."\n")
-	end
+    for i,cc in ipairs(curve) do
+      f:write(cc.Q.." "..(cc.T-273).."\n")
+    end
 	f:close()
 end
 
@@ -17,20 +17,22 @@ function lib.writeScriptPlot(dir, periode, time, format, datas, title)
 	local minX,maxX,minY,maxY= 100000,0,100000,0
 
 	for d,data in ipairs(datas) do
-		for c, point in ipairs(data.curve) do
-			if point.T < minY then
-				minY = point.T
-			end
-			if point.T > maxY then
-				maxY = point.T
-			end
-			if point.Q < minX then
-				minX = point.Q
-			end
-			if point.Q > maxX then
-				maxX = point.Q
-			end
-		end
+    if data.curve ~= nil then
+      for c, point in ipairs(data.curve) do
+        if point.T < minY then
+          minY = point.T
+        end
+        if point.T > maxY then
+          maxY = point.T
+        end
+        if point.Q < minX then
+          minX = point.Q
+        end
+        if point.Q > maxX then
+          maxX = point.Q
+        end
+      end
+    end
 	end
 
 	minX=(minX )
@@ -109,7 +111,9 @@ end
 function lib.plotCurves(dir, periode, time, format, datas, title)
 	
 	for i, data in ipairs(datas) do
-		lib.writeGnuplotDataFile(dir..data.file, data.curve)
+    if data.curve ~= nil then
+      lib.writeGnuplotDataFile(dir..data.file, data.curve)
+    end
 	end
 	local script = lib.writeScriptPlot(dir,periode,time,format, datas, title)
 
