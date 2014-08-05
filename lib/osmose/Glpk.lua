@@ -142,7 +142,7 @@ function lib.generateDataWithTimes(project, periode)
 		print('-------------------------------------------------------------------------------------------')
     
     local add_MER_units = require('osmose.AddMerUnits')
-		project.units[periode] = add_MER_units(project.units[periode], project.name)
+		project.units[periode] = add_MER_units(project, project.units[periode])
     
 	end
 
