@@ -58,9 +58,13 @@ function lib.new(name, args)
 
   -- Fmin and Fmax are equal to the unit.Mult If the user defines the unit.Mult
   -- for a process in project definition, otherwise they are equal to 1
-
-  unit.Fmin = unit.Fmin or 1
-  unit.Fmax = unit.Fmax or unit.Mult or 10000
+  if unit.type == 'Process' then
+    unit.Fmin = unit.Mult or 1
+    unit.Fmax = unit.Mult or 1
+  else
+    unit.Fmin = unit.Fmin or 0
+    unit.Fmax = unit.Fmax or 10000
+  end
 
   unit.fFmax   = helper.initTag(unit,model,'Fmax')
   unit.fFmin   = helper.initTag(unit,model,'Fmin')
