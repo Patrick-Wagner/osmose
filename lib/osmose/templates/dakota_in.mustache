@@ -1,0 +1,24 @@
+# Demonstrate DAKOTA script interface to Lua analysis (Rosenbrock)
+
+method,						
+	{{method}}
+
+variables,					
+	continuous_design = 2			
+	  cdv_initial_point  -1.0  1.0		
+	  cdv_lower_bounds   -2.0 -2.0		
+	  cdv_upper_bounds    2.0  2.0		
+	  cdv_descriptor      'x1' 'x2'
+
+interface,							
+	fork							
+	  analysis_drivers = {{#objectives}}'lua {{&.}}', {{/objectives}}
+	parameters_file = 'params.in'
+	results_file = 'results.out'
+
+responses,				
+	num_objective_functions = {{objectives_size}}
+	numerical_gradients			
+		fd_gradient_step_size = .000001	
+	no_hessians
+

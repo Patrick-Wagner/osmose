@@ -1,0 +1,28 @@
+#!/usr/bin/env lua
+--
+
+-- setup for params in pattern matching
+local rTag = '[%w_:]+'
+local rValue = '%d*.*'
+
+-- open DAKOTA parameters file for reading
+local f = assert(io.open(arg[1],"r"))
+
+-- extract the parameters and store them in the params table
+local params = {}
+for line in f:lines() do
+	local value,tag = line:match('^%s*('..rValue..')%s+('..rTag..')$')
+	if tag then 
+		params[tag] = value
+	end
+end
+
+-- calculate rosenbrock function
+require '{{{objective_path}}}'
+local result = {{objective}}(params)
+
+-- store result in output file
+local f = assert(io.open(arg[2],"w"))
+f:write(tostring(result)..'/n')
+f:close()
+
