@@ -373,7 +373,14 @@ local intervals, temps = lib.streamsTinWithTimesForHClayer(project.units[periode
 	local operationalCosts = {}
 	for costLabel,costValues in pairs(loadedValues) do
 		local timesValues = {}
-		for i,value in ipairs(costValues[periode]) do
+
+		-- Get cost values for the periode. If not found, look in precedent periode.
+		local p = periode
+		while costValues[p]==nil and p>1 do
+			p = p-1
+		end		
+
+		for i,value in ipairs(costValues[p]) do
 			table.insert(timesValues, {time=i, value=value})
 		end
 		operationalCosts[costLabel] = timesValues
