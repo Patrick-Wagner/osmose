@@ -111,10 +111,10 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 
 			if project.objective == 'MER'  then
 				if tag:find("DHCS_h") then
-					print("DHCS_h","P="..periode,"T="..time,value)
+					print(tag,"P="..periode,"T="..time,value)
 					project.results.delta_hot[periode][tonumber(time)] = tonumber(value)
 				elseif tag:find("DHCS_c") then
-					print("DHCS_c","P="..periode,"T="..time,value)
+					print(tag,"P="..periode,"T="..time,value)
 					--project.delta_cold = value
 					project.results.delta_cold[periode][tonumber(time)] = tonumber(value)
 				end
