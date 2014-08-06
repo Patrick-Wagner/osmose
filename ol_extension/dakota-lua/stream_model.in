@@ -1,0 +1,35 @@
+
+strategy,
+	graphics
+	single_method
+
+
+method,				
+	conmin_mfd,				
+	max_iterations = 60,
+	convergence_tolerance = 1e-3
+
+variables,
+	continuous_design = 3
+	  initial_point    10     10         10	
+	  upper_bounds     300     350      200
+	  lower_bounds     10      10        10
+	  descriptors      'x1'     'x2'    'x3’
+
+
+interface,
+        system analysis_driver = 'stream_model_dakota.sh'
+        parameters_file = 'params.in'
+        results_file = 'results.out'
+        work_directory named 'stream_model' directory_tag
+        file_save directory_save
+
+responses,
+	num_objective_functions = 2
+	num_nonlinear_inequality_constraints = 2
+	numerical_gradients
+	  method_source dakota
+	  interval_type central
+	  fd_gradient_step_size = 1.e-4
+	no_hessians
+
