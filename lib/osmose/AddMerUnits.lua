@@ -26,7 +26,7 @@ function lib.new(project,units)
   local heatCascadeLayer = {}
 	local massBalanceLayer = {}
   local resourceBalanceLayer = {}
-  local costingLayer={}
+
 
   
 
@@ -34,13 +34,16 @@ function lib.new(project,units)
 		for layerName, layer in pairs(model.layers) do
       ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
       local fullName
-      if layer ~= nil and layer.type == 'Costing' then
+      if layer ~= nil then
 			  fullName = layerName
-	  elseif layer ~= nil and layer.type == 'HeatCascade' then
+      end
+      --[[
+      if layer ~= nil and layer.type == 'HeatCascade' then
 			  fullName = layerName
       else
         fullName =  'layers_'..layerName
       end
+      --]]
 			local layerFound = 0
 			for i,l in ipairs(layersAll) do
 				if l==fullName then
@@ -56,16 +59,9 @@ function lib.new(project,units)
         elseif layer.type == 'ResourceBalance' then
 					table.insert(resourceBalanceLayer, fullName)
           ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
-        elseif layer.type == 'Costing' then
-          table.insert(costingLayer, fullName)
-          ---add HeatCascade Layers (samira.fazlollahi@a3.epfl.ch) 
-         elseif layer.type == 'HeatCascade' then
+        elseif layer.type == 'HeatCascade' then
           table.insert(heatCascadeLayer, fullName) 
-           
-				else
-					print(string.format("Layer of type '%s' is not recognized.", layer.type))
-					print("Valid layer types are : Costing, HeatCascade, MassBalance, ResourceBalance")
-					os.exit()
+
 				end
 			end
 		end
@@ -118,8 +114,8 @@ function lib.new(project,units)
   })
 
 
-  -- add cold utility
-	table.insert(units,{name=layer.."_DHCU_c", force_use=0, 
+    -- add cold utility
+    table.insert(units,{name=layer.."_DHCU_c", force_use=0, 
     fFmin = function() return 0 end,
     fFmax = function() return 100000 end,
 		--Cost1 = 1000,
@@ -161,6 +157,172 @@ function lib.new(project,units)
 
 		})
   
+  
+  end
+
+
+
+
+
+  for eachlayerName, layer in pairs(massBalanceLayer) do 
+    
+    -- add in mass utility   
+		table.insert(units,{name=layer.."_DHCU_mi", force_use=0, 
+    fFmin = function() return 0 end,
+    fFmax = function() return 100000 end,
+		--Cost1=1000,
+		--Cost2=1000,
+    streams={},
+    resourceStreams = {},
+    
+		layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"},
+      [layer] = {name = layer, type = "MassBalance"}},      
+    
+		massStreams={{name=layer.."_DHCS_mi", unitName=layer.."_DHCU_mi",
+					inOut ="in", 
+					Flow = function() return 10 end,
+				  layerName = layer,
+          AddToProblem = 1,
+					load 			={}
+          }},
+     costStreams={
+       {layerName = "DefaultOpCost", name = layer.."_DHCS_mi_Cost", unitName=layer.."_DHCU_mi",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = layer.."_DHCS_mi_Cinv", unitName=layer.."_DHCU_mi",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = layer.."_DHCS_mi_Power", unitName=layer.."_DHCU_mi",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = layer.."_DHCS_mi_Impact", unitName=layer.."_DHCU_mi",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+
+    })
+
+
+    -- add out mass utility
+    table.insert(units,{name=layer.."_DHCU_mo", force_use=0, 
+      fFmin = function() return 0 end,
+      fFmax = function() return 100000 end,
+      --Cost1 = 1000,
+      --Cost2 = 1000,
+      streams={},
+      resourceStreams = {},
+		  
+      layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"},
+      [layer] = {name = layer, type = "MassBalance"}},
+      
+      massStreams={{name=layer.."_DHCS_mo", unitName=layer.."_DHCU_mo",  
+					inOut ="out", 
+					Flow = function() return 10 end ,
+				  layerName = layer,
+          AddToProblem = 1,
+					load 			={}
+          }},
+    
+      costStreams={
+       {layerName = "DefaultOpCost", name = layer.."_DHCS_mo_Cost", unitName=layer.."_DHCU_mo",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = layer.."_DHCS_mo_Cinv", unitName=layer.."_DHCU_mo",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = layer.."_DHCS_mo_Power", unitName=layer.."_DHCU_mo",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = layer.."_DHCS_mo_Impact", unitName=layer.."_DHCU_mo",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+
+     })
+  
+   for eachlayerName, layer in pairs(resourceBalanceLayer) do 
+    
+    -- add in mass utility   
+		table.insert(units,{name=layer.."_DHCU_ri", force_use=0, 
+    fFmin = function() return 0 end,
+    fFmax = function() return 100000 end,
+		--Cost1=1000,
+		--Cost2=1000,
+    streams={},
+    resourceStreams = {},
+    
+		layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"},
+      [layer] = {name = layer, type = "ResourceBalance"}},      
+    
+		massStreams={{name=layer.."_DHCS_ri", unitName=layer.."_DHCU_ri",
+					inOut ="in", 
+					Flow_r = function() return 10 end,
+				  layerName = layer,
+          AddToProblem = 1,
+					load 			={}
+          }},
+     costStreams={
+       {layerName = "DefaultOpCost", name = layer.."_DHCS_ri_Cost", unitName=layer.."_DHCU_ri",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = layer.."_DHCS_ri_Cinv", unitName=layer.."_DHCU_ri",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = layer.."_DHCS_ri_Power", unitName=layer.."_DHCU_ri",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = layer.."_DHCS_ri_Impact", unitName=layer.."_DHCU_ri",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+
+    })
+
+
+    -- add out mass utility
+    table.insert(units,{name=layer.."_DHCU_ro", force_use=0, 
+      fFmin = function() return 0 end,
+      fFmax = function() return 100000 end,
+      --Cost1 = 1000,
+      --Cost2 = 1000,
+      streams={},
+      resourceStreams = {},
+		  
+      layers={DefaultImpact={name = "DefaultImpact", type = "Costing"},
+      DefaultOpCost={name = "DefaultOpCost", type = "Costing"},
+      DefaultInvCost={name = "DefaultInvCost", type = "Costing"},
+      DefaultMechPower={name = "DefaultMechPower", type = "Costing"},
+      [layer] = {name = layer, type = "ResourceBalance"}},
+      
+      massStreams={{name=layer.."_DHCS_ro", unitName=layer.."_DHCU_ro",  
+					inOut ="out", 
+					Flow_r = function() return 10 end ,
+				  layerName = layer,
+          AddToProblem = 1,
+					load 			={}
+          }},
+    
+      costStreams={
+       {layerName = "DefaultOpCost", name = layer.."_DHCS_ro_Cost", unitName=layer.."_DHCU_ro",
+         coefficient1 = function() return 100 end, 
+         coefficient2 = function() return 100 end},
+       {layerName = "DefaultInvCost", name = layer.."_DHCS_ro_Cinv", unitName=layer.."_DHCU_ro",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultMechPower", name = layer.."_DHCS_ro_Power", unitName=layer.."_DHCU_ro",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end},
+       {layerName = "DefaultImpact", name = layer.."_DHCS_ro_Impact", unitName=layer.."_DHCU_ro",
+         coefficient1 = function() return 0 end, 
+         coefficient2 = function() return 0 end}}
+
+     })
   
   end
   
