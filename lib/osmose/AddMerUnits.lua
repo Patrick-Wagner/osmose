@@ -242,7 +242,8 @@ function lib.new(project,units)
          coefficient1 = function() return 0 end, 
          coefficient2 = function() return 0 end}}
 
-     })
+   })
+ end
   
    for eachlayerName, layer in pairs(resourceBalanceLayer) do 
     
