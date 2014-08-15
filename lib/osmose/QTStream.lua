@@ -43,11 +43,15 @@ local private={}
 -- This is the valid params of QTStream initialization.
 local validParamTable = {'tin', 'hin','tout','hout','dtmin','alpha'}
 
+
 -- Class function that create QTStream.
 lib.new = function(params)
 
   -- self in the QTStream instance.
-  local stream= lub.class('QTStream')
+  --local stream= lub.class('QTStream')
+  local stream = {}
+  setmetatable(stream, lib)
+  stream.type = 'QTStream'
 
   if params then
     for k,v in pairs(params) do
@@ -59,31 +63,30 @@ lib.new = function(params)
     end
   end
 
-  stream.ftin   = helper.initTag(stream,model,'tin','T')
+  stream.ftin   = helper.initTag(stream,'tin','T')
 
-  stream.ftout  = helper.initTag(stream,model,'tout','T')
+  stream.ftout  = helper.initTag(stream,'tout','T')
 
-  stream.ftinNoCorr   = helper.initTag(stream,model,'tin','T')
+  stream.ftinNoCorr   = helper.initTag(stream,'tin','T')
 
-  stream.ftoutNoCorr  = helper.initTag(stream,model,'tout','T')
+  stream.ftoutNoCorr  = helper.initTag(stream,'tout','T')
 
-  stream.ftinCorr = helper.initTag(stream,model,'tin','Tcorr')
+  stream.ftinCorr = helper.initTag(stream,'tin','Tcorr')
 
-  stream.ftoutCorr  = helper.initTag(stream,model,'tout','Tcorr')
+  stream.ftoutCorr  = helper.initTag(stream,'tout','Tcorr')
 
-  stream.fhin   = helper.initTag(stream,model,'hin')
+  stream.fhin   = helper.initTag(stream,'hin')
 
-  stream.fhout  = helper.initTag(stream,model,'hout')
+  stream.fhout  = helper.initTag(stream,'hout')
 
-  stream.fdtmin = helper.initTag(stream,model,'dtmin')
+  stream.fdtmin = helper.initTag(stream,'dtmin')
 
-  stream.falpha = helper.initTag(stream,model,'alpha')
+  stream.falpha = helper.initTag(stream,'alpha')
 
   stream.addToProblem = 1
 
   return stream
 end
-
 
 
 private.validParam = function(element)

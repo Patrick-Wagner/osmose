@@ -2,7 +2,7 @@ local lub = require 'lub'
 local lib = {}
 
 -- Look for the value of the tag
-function lib.initTag(self, model, tag, temp) 
+function lib.initTag(self, tag, temp) 
   -- If the tag is a Temperature (temp=='T') then we add 273 automatically, 0 otherwise.
   local delta = 0
   if temp=='T' then

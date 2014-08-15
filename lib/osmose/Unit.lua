@@ -66,8 +66,8 @@ function lib.new(name, args)
     unit.Fmax = unit.Fmax or 10000
   end
 
-  unit.fFmax   = helper.initTag(unit,model,'Fmax')
-  unit.fFmin   = helper.initTag(unit,model,'Fmin')
+  unit.fFmax   = helper.initTag(unit,'Fmax')
+  unit.fFmin   = helper.initTag(unit,'Fmin')
 
   return unit
 end
