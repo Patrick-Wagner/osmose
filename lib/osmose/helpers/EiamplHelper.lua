@@ -17,8 +17,8 @@ function lib.initQTStream(stream, model,unit)
 			print("The stream " .. stream.shortName .." is inconsistent in enthalpy and temperature.") 
 			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftinNoCorr(model), stream.ftoutNoCorr(model), stream.fhin(model), stream.fhout(model)))
 		elseif stream.ftinNoCorr(model) == stream.ftoutNoCorr(model) then
-			print(string.format("This stream '%s' is a simple dot.", stream.shortName))
-			print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftinNoCorr(model), stream.ftoutNoCorr(model), stream.fhin(model), stream.fhout(model)))
+			--print(string.format("This stream '%s' is a simple dot.", stream.shortName))
+			--print(string.format("TIN=%s, TOUT=%s, HIN=%s, HOUT=%s",stream.ftinNoCorr(model), stream.ftoutNoCorr(model), stream.fhin(model), stream.fhout(model)))
 			if stream.fhin(model) > stream.fhout(model)  then
 				stream.ftin = function(model) return stream.ftinCorr(model) end
 				stream.ftout = stream.ftoutNoCorr
