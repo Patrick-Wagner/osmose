@@ -263,7 +263,8 @@ function lib:solve(args)
 
   -- solve project
   if args.solver=='GLPK' or args.solver==nil then
-    Glpk(self)
+    self = Glpk(self)
+    setmetatable(self, lib)
   end
 
   -- write graph if necessary
@@ -274,7 +275,6 @@ function lib:solve(args)
     end
     Graph(self,format)
   end
-
   return self
 end
 
