@@ -152,6 +152,16 @@ function lib:periode(periode)
   return self.periodes[periode]
 end
 
+
+--[[
+  Return the unit corresponding to the name given
+  and the periode, which is 1 by default.
+
+  Exemple:
+
+    project:getUnit('unit_name')
+    project:getUnit('unit_name',2)
+--]]--
 function lib:getUnit(name, periode)
   local periode = periode or 1
   for i,u in ipairs(self.units[periode] or {}) do    
@@ -161,6 +171,15 @@ function lib:getUnit(name, periode)
   end
 end
 
+--[[
+  Return the stream corresponding to the name given
+  and the periode, which is 1 by default.
+
+  Exemple:
+
+    project:getStream('stream_name')
+    project:getStream('stream_name',2)
+--]]--
 function lib:getStream(name, periode)
   local periode = periode or 1
   for i,u in ipairs(self.units[periode] or {}) do
@@ -172,6 +191,16 @@ function lib:getStream(name, periode)
   end
 end
 
+
+--[[
+  Return the tag value corresponding to the name, periode
+  and time given.
+
+  Exemple:
+
+    project:getTag('stream_name')
+    project:getTag('stream_name',2,2)
+--]]--
 function lib:getTag(name, periode, time)
   local periode = periode or 1
   local time = time or 1
@@ -185,6 +214,16 @@ function lib:getTag(name, periode, time)
   end
 end
 
+
+--[[
+  Set the tag value corresponding to the name, periode
+  and time given.
+
+  Exemple:
+
+    project:setTag('tank_temp',85)
+    project:getTag('tank_temp',85,2,2)
+--]]--
 function lib:setTag(name, value, periode, time)
   local periode = periode or 1
   local time = time or 1
@@ -199,33 +238,7 @@ function lib:setTag(name, value, periode, time)
   end
 end
 
-function lib:call(str)
-  if str==nil or str=='' then return nil end
-  local str = lub.strip(str)
-  local args = lub.split(str,',')
-  
-  local fct = lub.strip(args[1])
-  if fct == 'getTag' then
-    if table.getn(args) <=1 then return nil end
-    local name = args[2]
-    local periode = tonumber(args[3] or '1')
-    local time = tonumber(args[4] or '1')
-    --return self[fct](self, name, periode, time)
-    return lib.getTag(self,name, periode, time)
-  elseif fct == 'setTag' then
-    local name = args[2]
-    local value = tonumber(args[3]) or args[3]
-    local periode = tonumber(args[4] or '1')
-    local time = tonumber(args[5] or '1')
-    return lib.setTag(self,name, value, periode, time)
-  elseif fct == 'solve' then
-    Glpk(self)
-    return true
-    --Graph(self, {format='svg'})
-  else
-    return nil
-  end
-end
+
 
 --[[
   Solve the project with Glpk by default and do graphs.
@@ -241,8 +254,6 @@ end
   To specify graph format :
 
     p1:solve({graph={format='svg'}})
-
-
 --]]
 function lib:solve(args)
   local args = args or {}
@@ -267,6 +278,22 @@ function lib:solve(args)
   return self
 end
 
+--[[
+  Launch mutlti objectives optimization.
+
+  Exemple :
+
+    project:optimize {
+    software='dakota',
+    precomputes={'jam_precompute'},
+    objectives={'jam_rosenbrock'},
+    -- variables={x1={model='cm1', tag='prod_2_flow', lower_bound='1800', uper_bound='2200', initial='2100'},
+    --           x2={model='cm1', tag='prod_1_flow', lower_bound='800', uper_bound='1200', initial='900'}},
+    variables={x1={lower_bound='-2', uper_bound='2', initial='-1'},
+               x2={lower_bound='-2', uper_bound='2', initial='1'}},
+    method='conmin_frcg',
+    }
+--]]
 function lib:optimize(args)
   
   local sourceDir = self.sourceDir
@@ -333,7 +360,17 @@ function lib:optimize(args)
 
 end
 
+--[[
+  Lauch post compute function, which must writen in a lua file 
+  with the same name.
 
+  Exemple:
+    fonction:  jam_postcompute
+    file: jam_postcomplute.lua
+
+    project:postCompute('jam_postcompute') 
+
+--]]
 function lib:postCompute(name)
   if self.sourceDir == nil then
     local sourcePath = debug.getinfo(2).source:sub(2)
@@ -350,7 +387,34 @@ function lib:postCompute(name)
   return _G[name](self)
 end
 
-
+-- Private method.
+function lib:call(str)
+  if str==nil or str=='' then return nil end
+  local str = lub.strip(str)
+  local args = lub.split(str,',')
+  
+  local fct = lub.strip(args[1])
+  if fct == 'getTag' then
+    if table.getn(args) <=1 then return nil end
+    local name = args[2]
+    local periode = tonumber(args[3] or '1')
+    local time = tonumber(args[4] or '1')
+    --return self[fct](self, name, periode, time)
+    return lib.getTag(self,name, periode, time)
+  elseif fct == 'setTag' then
+    local name = args[2]
+    local value = tonumber(args[3]) or args[3]
+    local periode = tonumber(args[4] or '1')
+    local time = tonumber(args[5] or '1')
+    return lib.setTag(self,name, value, periode, time)
+  elseif fct == 'solve' then
+    Glpk(self)
+    return true
+    --Graph(self, {format='svg'})
+  else
+    return nil
+  end
+end
 
 
 return lib
