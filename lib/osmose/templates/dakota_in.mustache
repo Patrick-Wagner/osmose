@@ -11,10 +11,12 @@ variables,
 	  cdv_descriptor      'x1' 'x2'
 
 interface,							
-	fork							
+	fork		
+		input_filter =  {{#precomputes}}'lua {{&.}}', {{/precomputes}}			
 	  analysis_drivers = {{#objectives}}'lua {{&.}}', {{/objectives}}
-	parameters_file = 'params.in'
-	results_file = 'results.out'
+	parameters_file = '{{&params_in}}'
+	results_file = '{{&results_out}}'
+	file_tag
 
 responses,				
 	num_objective_functions = {{objectives_size}}

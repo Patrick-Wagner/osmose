@@ -2,6 +2,78 @@ local lib={}
 local lustache = require "osmose.eiampl.vendor.lustache"
 local lub = require 'lub'
 
+lib.stop = [[
+local host, port = "127.0.0.1", 3333
+local socket = require("socket")
+local tcp = assert(socket.tcp())
+tcp:connect(host, port);
+tcp:send("stop\n");
+tcp:close()
+]]
+
+lib.connectOsmose = [[
+
+function solve()
+	local host, port = "127.0.0.1", 3333
+	local socket = require("socket")
+	local tcp = assert(socket.tcp())
+	tcp:connect(host, port)
+	tcp:send("solve,".."\n")
+	local s, status, partial
+	while true do
+	  s, status, partial = tcp:receive("*l")
+	  if status == "closed" or status=="timeout" then break end
+	end
+	tcp:close()
+	return s
+end
+
+function getTag(tag)
+	if tag==nil then return nil end
+
+	local host, port = "127.0.0.1", 3333
+	local socket = require("socket")
+	local tcp = assert(socket.tcp())
+	tcp:connect(host, port);
+	tcp:send("getTag,"..tag.."\n")
+	local s, status, partial
+	while true do
+	  s, status, partial = tcp:receive("*l")
+	  if status == "closed" or status=="timeout" then 
+	  	break 
+	  else
+	  	tcp:close()
+	  	return(tonumber(s) or s)
+	  end
+	end
+	tcp:close()
+	return(tonumber(s) or s)
+end
+
+function setTag(tag,value)
+	if tag==nil then return nil end
+
+	local host, port = "127.0.0.1", 3333
+	local socket = require("socket")
+	local tcp = assert(socket.tcp())
+	tcp:connect(host, port);
+	tcp:send("setTag,"..tag..","..value.. "\n")
+	local s, status, partial
+	while true do
+	  s, status, partial = tcp:receive("*l")
+	  if status == "closed" or status=="timeout" then 
+	  	break 
+	  else
+	  	tcp:close()
+	  	return(tonumber(s) or s)
+	  end
+	end
+	tcp:close()
+	return(tonumber(s) or s)
+end
+]]
+
+
 lib.readParams = [[
 -- setup for params in pattern matching
 local rTag = '[%w_:]+'
@@ -22,11 +94,11 @@ end
 ]]
 
 lib.writeResult = [[
-
 -- store result in output file
 local f = assert(io.open(arg[2],"w"))
 f:write(tostring(result)..'/n')
 f:close()
+
 ]]
 
 lib.objectives_path={}	
@@ -55,17 +127,11 @@ function lib.preparePreCompute(tmpDir, sourceDir, args)
 		-- write objective wrapper
 		f = io.open(tmpDir..'/'..obj..'_wrapper.lua',"w")
 		f:write(lib.readParams )
-
-		-- write code to load project
-		f:write("local serpent = require 'serpent'")
-		f:write(string.format("local f = io.open('%s/project.dump','r')", tmpDir))
-		f:write("local dump = f:read('*a')")
-		f:write("f:close()")
-		f:write("local ok, project = serpent.load(dump)")
+		f:write(lib.connectOsmose)
 
 		-- write code to call function
-		f:write(string.format("require '%s/%s'", tmpDir, obj))
-		f:write(string.format("local result = %s(params)", obj))
+		f:write(string.format("\nrequire '%s/%s'", tmpDir, obj))
+		f:write(string.format("\nlocal result = %s(params)", obj))
 		f:close()
 
 	end
@@ -85,17 +151,11 @@ function lib.prepareObjective(tmpDir,sourceDir, args)
 		-- write objective wrapper
 		f = io.open(tmpDir..'/'..obj..'_wrapper.lua',"w")
 		f:write(lib.readParams )
-
-		-- write code to load project
-		f:write("local serpent = require 'serpent'")
-		f:write(string.format("local f = io.open('%s/project.dump','r')", tmpDir))
-		f:write("local dump = f:read('*a')")
-		f:write("f:close()")
-		f:write("local ok, project = serpent.load(dump)")
+		f:write(lib.connectOsmose)
 
 		-- write code to call function
-		f:write(string.format("require '%s/%s'", tmpDir, obj))
-		f:write(string.format("local result = %s(project,params)", obj))
+		f:write(string.format("\nrequire '%s/%s'", tmpDir, obj))
+		f:write(string.format("\nlocal result = %s(params)", obj))
 		f:write(lib.writeResult)
 		f:close()
 
@@ -117,7 +177,10 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	local dakota = lustache:render(dakota_template, 
 		{method=args['method'],
 		objectives=lib.objectives_path,
+		precomputes = lib.precomputes_path,
 		objectives_size=table.getn(args['objectives']),
+		params_in = tmpDir..'/params.in',
+		results_out = tmpDir..'/results.out',
 		})
 
 	-- store the template in dakota.in file
@@ -126,7 +189,18 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	f:write(dakota)
 	f:close()
 
-	return 'dakota -i '.. dakota_in
+	-- create stop.lua file
+	f = io.open(tmpDir..'/stop.lua',"w")
+	f:write(lib.stop)
+	f:close()
+
+	local dakota_out = tmpDir..'/dakota.out'
+	local dakota_err = tmpDir..'/dakota.err'
+
+	return 	'dakota'.. 
+					' -i '..dakota_in..
+					' -o '..dakota_out..
+					' -e '..dakota_err
 
 end
 
