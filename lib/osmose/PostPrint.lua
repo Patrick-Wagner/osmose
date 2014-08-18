@@ -1,12 +1,12 @@
 --[[---------------------------------------
   
-  # PostCompute
+  #PostPrint
   
-  PostCompute exemple
+  PostPrint exemple
 --]]---------------------------------------
 
 local lub   = require 'lub'
-local lib   = lub.class 'osmose.PostCompute'
+local lib   = lub.class 'osmose.PostPrint'
 
 
 
