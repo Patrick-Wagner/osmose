@@ -14,7 +14,7 @@ local helper = require 'osmose.helpers.projectHelper'
 local Eiampl = require 'osmose.Eiampl'
 local Glpk   = require 'osmose.Glpk'
 local Graph  = require 'osmose.Graph'
-
+local PostPrint  = require 'osmose.PostPrint'
 
 
 -- Function for metatable.
@@ -240,6 +240,7 @@ end
 
 
 
+
 --[[
   Solve the project with Glpk by default and do graphs.
 
@@ -275,6 +276,12 @@ function lib:solve(args)
     end
     Graph(self,format)
   end
+  
+  -- Print the results
+  if self.solved==true then
+    PostPrint(self)
+  end
+  
   return self
 end
 
