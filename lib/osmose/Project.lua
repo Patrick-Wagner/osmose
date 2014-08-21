@@ -424,6 +424,7 @@ function lib:call(str)
   local name = args[2]
 
   local result = nil
+  --print('FCT', fct)
 
   -- Call the function and return result in string for socket communication.
   if fct == 'getTag' then
@@ -453,10 +454,12 @@ function lib:call(str)
       result = unit:freeze(periode,time)
     end
   elseif fct == 'solve' then
-    print('Solving with GLPK...')
     Glpk(self)
     result = true
     --Graph(self, {format='svg'})
+  elseif fct == 'getResults' then
+    print('GET RESULTS')
+    result = self.results
   else
     result =  nil
   end

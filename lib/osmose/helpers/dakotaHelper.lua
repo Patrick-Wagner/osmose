@@ -61,6 +61,10 @@ function getUnit(name, periode, time)
 	return get('Unit', name, periode, time)
 end
 
+function getResults()
+	return get('Results',"")
+end
+
 function setTag(tag,value,periode,time)
 	local periode = periode or 1
 	local time = time or 1

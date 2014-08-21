@@ -146,6 +146,15 @@ function should.callWithNilValue()
 	assertNil(loadstring(val)())
 end
 
+function should.callResults()
+	local p1=initProject()
+	p1:solve({graph=false})
+
+	local val = p1:call("getResults")
+	local results = loadstring(val)()
+	assertEqual(927.5,results.delta_hot[1][1],1)
+end
+
 function should.optimize()
 	local p1 = initProject()
 
