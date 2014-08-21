@@ -87,6 +87,10 @@ function lib.initQTStream(stream, model,unit)
 		print(string.format("The layer %s of stream %s is not found.", stream.layerName , stream.shortName))
 		os.exit()
 	end
+
+	stream.model = model
+
+	stream.freeze = lib.freezeStream
   
 	return stream
 end
@@ -118,6 +122,11 @@ function lib.initMassStream(stream,model,unit)
 		print(string.format("The layer %s of stream %s is not found.", stream.layerName , stream.shortName))
 		os.exit()
 	end
+
+	stream.model = model
+
+	stream.freeze = lib.freezeStream
+
 	return stream
 end
 
@@ -129,8 +138,8 @@ function lib.initResourceStream(stream,model,unit)
   if type(stream.value) == 'function' then
 		stream.value = stream.value(model)
 	end
+
   stream.Flow_r=function(model) return stream.fFlow_r(model) end
-	
   
 	local layerFound = 0
 	for layerName, layer in pairs(model.layers) do
@@ -148,8 +157,14 @@ function lib.initResourceStream(stream,model,unit)
 		print(string.format("The layer %s of stream %s is not found.", stream.layerName , stream.shortName))
 		os.exit()
 	end
+
+	stream.model = model
+
+	stream.freeze = lib.freezeStream
+
 	return stream
 end
+
 function lib.initProcess(unit, model)
 	unit.model = model
 	unit.type = 'Process'
@@ -198,10 +213,8 @@ function lib.initProcess(unit, model)
 			unit.layers[layerName] = layer
       local coststream=lib.initCostStream(layerName,unit, model)
       table.insert(unit.costStreams,coststream)
-      
 		end
 	end
-
   
 	return unit
 end
@@ -241,7 +254,6 @@ function lib.initUtility(unit, model)
       elseif stream.layerName ~= nil and stream.type == 'ResourceStream' then
 				local streamInit = lib.initResourceStream(stream, model,unit) 
 				table.insert(unit.resourceStreams, streamInit)
-        
 			else
 				print(string.format("Stream %s can't be initialized",stream.shortName))
 				os.exit()
@@ -261,7 +273,6 @@ function lib.initUtility(unit, model)
 		end
 	end
   
-  
 	return unit
 end
 
@@ -278,32 +289,63 @@ end
 --]]
 function lib.initCostStream(layerName,unit, model)
       
-      local coststream={}
-      
-      if layerName=='DefaultOpCost' then
-        coststream.shortName= 'OpCost'
-        coststream.name=unit.name..'_Cost' 
-      elseif layerName=='DefaultInvCost' then
-        coststream.shortName='InvCost'
-        coststream.name=unit.name..'_Cinv'
-      elseif layerName=='DefaultMechPower' then
-        coststream.shortName='Power'
-        coststream.name=unit.name..'_Power'
-      else
-        coststream.shortName='Impact'
-        coststream.name=unit.name..'_Impact'
-      end
-      
-      coststream.unitName= unit.name
-      coststream.layerName=layerName
-      
+  local coststream={}
+  
+  if layerName=='DefaultOpCost' then
+    coststream.shortName= 'OpCost'
+    coststream.name=unit.name..'_Cost' 
+  elseif layerName=='DefaultInvCost' then
+    coststream.shortName='InvCost'
+    coststream.name=unit.name..'_Cinv'
+  elseif layerName=='DefaultMechPower' then
+    coststream.shortName='Power'
+    coststream.name=unit.name..'_Power'
+  else
+    coststream.shortName='Impact'
+    coststream.name=unit.name..'_Impact'
+  end
+  
+  coststream.unitName= unit.name
+  coststream.layerName=layerName
+  
 
-      local coststreamFunction = require('osmose.CostStream')
-      coststream.coefficient1= function(model) return coststreamFunction(model, layerName, unit).fcoefficient1 end
-      coststream.coefficient2= function(model) return coststreamFunction(model, layerName, unit).fcoefficient2 end
+  local coststreamFunction = require('osmose.CostStream')
+  coststream.coefficient1= function(model) return coststreamFunction(model, layerName, unit).fcoefficient1 end
+  coststream.coefficient2= function(model) return coststreamFunction(model, layerName, unit).fcoefficient2 end
 
+  coststream.model = model
+
+  coststream.freeze = lib.freezeStream
     
 	return coststream
 end
+
+function lib.freezeStream(self, periode, time)
+	local freeze = {}
+	local ok = nil
+  local model = self.model
+  model.periode = periode or 1
+  model.time = time or 1
+  freeze.frozen = true
+  freeze.shortName = self.shortName
+  freeze.name = self.name
+  freeze.type = self.type
+  freeze.layerName = self.layerName
+  ok,freeze.value = pcall(self.value, model)
+  ok,freeze.flow = pcall(self.fFlow,model)
+  ok,freeze.flow_r = pcall(self.fFlow_r,model)
+  ok,freeze.tin = pcall(self.ftin,model)
+  ok,freeze.tout = pcall(self.ftout,model)
+  ok,freeze.hin = pcall(self.fhin,model)
+  ok,freeze.hout = pcall(self.fhout,model)
+  ok,freeze.dtmin = pcall(self.fdtmin,model)
+  ok,freeze.alpha = pcall(self.falpha,model)
+  ok,freeze.coefficient1 = pcall(self.coefficient1, model)
+  ok,freeze.coefficient2 = pcall(self.coefficient2, model)
+
+	return freeze
+end
+
+
 
 return lib

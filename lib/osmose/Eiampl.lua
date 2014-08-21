@@ -13,6 +13,7 @@ local lub = require 'lub'
 local lib = lub.class 'osmose.Eiampl'
 local helper = require "osmose.helpers.EiamplHelper"
 
+
 -- # Class function
 
 -- Initialize a `project` for the eiampl solver.
@@ -87,6 +88,7 @@ function lib.new(project)
 					end
 					-- Process initialization.
 					local unitInit = helper.initProcess(unit, model)
+					unitInit.freeze = lib.freezeUnit
 					table.insert(project.units[periode], unitInit)
 				end
 			end 
@@ -110,6 +112,7 @@ function lib.new(project)
 							end
 						end
 						local unitInit = helper.initUtility(unit, model)
+						unitInit.freeze = lib.freezeUnit
 						table.insert(project.units[periode], unitInit)
 					end
 				end
@@ -145,6 +148,23 @@ function lib.new(project)
   return project
 end
 
+function lib.freezeUnit(self, periode, time)
 
+	local freeze = {}
+  local model = self.model
+  model.periode = periode or 1
+  model.time = time or 1
+  freeze.frozen = true
+  freeze.shortName = self.shortName
+  freeze.name = self.name
+  freeze.type = self.type
+  freeze.model = self.model
+  freeze.streams = {}
+  for i,s in ipairs(self.streams) do
+  	table.insert(freeze.streams, s:freeze(periode, time) )
+  end
+  return freeze
+
+end
 
 return lib

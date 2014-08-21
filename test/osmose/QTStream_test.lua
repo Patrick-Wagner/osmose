@@ -62,13 +62,5 @@ function should.addToProblem()
   assertEqual(0, qt2.addToProblem)
 end
 
-function should.freeze()
-  local qt1 = osmose.QTStream { 'cleaning_agent_temp', 0,'tank_temp','cleaning_agent_load',3, 'water_h'}
-  local model = require "ET.Cip" ('cip')
-  
-  local freeze=qt1:freeze(model)
-  assertEqual(283, freeze.tin)
-end
-
 should:test()
 

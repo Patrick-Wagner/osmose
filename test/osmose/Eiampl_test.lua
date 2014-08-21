@@ -207,4 +207,35 @@ function should.evalAddToProblem()
 	assertEqual(2, table.getn(eiampl.units[1]))
 end
 
+function should.freezeStream()
+	local lib = osmose.Model 'TEST'
+	lib:addUnit("unit", {type = 'Process'})
+	lib["unit"]:addStreams({  
+  	stream1 =  { 20, 0, 80,800,3,1},
+	})
+	local p=osmose.Project('project')
+	p:load({test = lib})
+
+	local eiampl = osmose.Eiampl(p)
+	local stream1 = eiampl.units[1][1].streams[1]
+
+	assertEqual(293, stream1:freeze().tin)
+end
+
+function should.freezeUnit()
+	local lib = osmose.Model 'TEST'
+	lib:addUnit("unit", {type = 'Process'})
+	lib["unit"]:addStreams({  
+  	stream1 =  { 20, 0, 80,800,3,1},
+	})
+	local p=osmose.Project('project')
+	p:load({test = lib})
+
+	local eiampl = osmose.Eiampl(p)
+	local unit = eiampl.units[1][1]
+
+	assertEqual('unit',unit:freeze().shortName)
+	assertEqual(293,unit:freeze().streams[1].tin)
+end
+
 should:test()

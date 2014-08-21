@@ -88,19 +88,6 @@ lib.new = function(params)
   return stream
 end
 
-function lib:freeze(model)
-  local freeze = {}
-  freeze.frozene = true
-  freeze.type = self.type
-  freeze.tin = self.ftin(model)
-  freeze.tout = self.ftout(model)
-  freeze.hin = self.fhin(model)
-  freeze.hout = self.fhout(model)
-  freeze.dtmin = self.fdtmin(model)
-  freeze.alpha = self.falpha(model)
-  freeze.load = self.load
-  return freeze
-end
 
 
 private.validParam = function(element)
