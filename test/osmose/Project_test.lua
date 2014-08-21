@@ -98,34 +98,52 @@ function should.setTag()
 	assertNil(tag)
 end
 
-function should.call()
+function should.callGetTag()
 	local p1=initProject()
 
 	local val = p1:call("getTag,tank_temp")
-	assertEqual(85, val)
+	assertEqual(85, loadstring(val)())
 
 	val = p1:call("getTag,raw_water_flow")
-	assertEqual(5, val())
+	assertEqual(5, loadstring(val)())
+end
 
-	val = p1:call("setTag,tank_temp, 70")
-	assertEqual(70, val)
+function should.callSetTag()
+	local p1=initProject()
+	local val = p1:call("setTag,tank_temp, 70")
+	assertEqual(70, loadstring(val)())
+end
+
+function should.callGetStream()
+	local p1=initProject()
+	local val = p1:call("getStream,cleaning_agent")
+	local stream = loadstring(val)()
+	assertEqual("cleaning_agent", stream.shortName)
+	assertEqual(283, stream.tin)
+end
+
+function should.callGetUnit()
+	local p1=initProject()
+	local val = p1:call("getUnit,CipUnit")
+	local unit = loadstring(val)()
+	assertEqual("CipUnit", unit.shortName)
 end
 
 function should.callWithNilValue()
 	local p1=initProject()
 
 	local val = p1:call("")
-	assertNil(val)
+	assertNil(loadstring(val)() )
 
 	val=p1:call()
-	assertNil(val)
+	assertNil(loadstring(val)() )
 
 	val=p1:call("getTag")
-	assertNil(val)
+	assertNil(loadstring(val)() )
 
 
 	val=p1:call("getTag,foo")
-	assertNil(val)
+	assertNil(loadstring(val)())
 end
 
 function should.optimize()

@@ -14,7 +14,7 @@ local helper = require 'osmose.helpers.projectHelper'
 local Eiampl = require 'osmose.Eiampl'
 local Glpk   = require 'osmose.Glpk'
 local Graph  = require 'osmose.Graph'
-local socket = require("socket")
+
 
 
 -- Function for metatable.
@@ -295,7 +295,14 @@ end
     }
 --]]
 function lib:optimize(args)
-  
+
+  local ok, socket = pcall(require,"socket")
+  if ok==false then
+    print('Lua socket is not installed. Please install with this command :')
+    print('luarocks install socket')
+    os.exit()
+  end
+
   local sourceDir = self.sourceDir
   local software = args['software']
   local cmd = ''
@@ -341,13 +348,11 @@ function lib:optimize(args)
       server:close()
       return "stop"
     end
+    --print('LINE',line)
     local rslt = lib.call(project,line)
-    if type(rslt) == 'function' then
-      rslt = rslt()
-    end
     --print('result', rslt)
     if rslt then 
-      client:send(tostring(rslt).."\n")
+      client:send(rslt.."\n")
       client:close()
     else
       client:close()
@@ -389,31 +394,67 @@ end
 
 -- Private method.
 function lib:call(str)
-  if str==nil or str=='' then return nil end
+  --print('CALL',str)
+  -- Serpent is used for serializing results
+  local ok, serpent = pcall(require ,'serpent')
+  if ok==false then 
+    print('serpent is not installed. Please install it :')
+    print('luarocks install serpent')
+    os.exit()
+  end
+
+  if str==nil or str=='' then return serpent.dump(nil) end
+
+
+  -- Split arguments between comma (',')
   local str = lub.strip(str)
   local args = lub.split(str,',')
-  
+  --if table.getn(args) <=1 then return serpent.dump(nil)  end
+
+  -- First arg is the project function (getTag, getUnit, getStream,...)
   local fct = lub.strip(args[1])
+  -- Second arg is the name of the object (tag, unit, stream,...)
+  local name = args[2]
+
+  local result = nil
+
+  -- Call the function and return result in string for socket communication.
   if fct == 'getTag' then
-    if table.getn(args) <=1 then return nil end
-    local name = args[2]
     local periode = tonumber(args[3] or '1')
     local time = tonumber(args[4] or '1')
-    --return self[fct](self, name, periode, time)
-    return lib.getTag(self,name, periode, time)
+    result = lib.getTag(self,name, periode, time)
+    if type(result) == 'function' then
+      result = result()
+    end
   elseif fct == 'setTag' then
-    local name = args[2]
     local value = tonumber(args[3]) or args[3]
     local periode = tonumber(args[4] or '1')
     local time = tonumber(args[5] or '1')
-    return lib.setTag(self,name, value, periode, time)
+    result = lib.setTag(self,name, value, periode, time)
+  elseif fct == 'getStream' then
+    local periode = tonumber(args[3] or '1')
+    local time = tonumber(args[4] or '1')
+    local stream = lib.getStream(self, name, periode, time)
+    if stream then
+      result = stream:freeze(periode,time)
+    end
+  elseif fct == 'getUnit' then
+    local periode = tonumber(args[3] or '1')
+    local time = tonumber(args[4] or '1')
+    local unit = lib.getUnit(self, name, periode, time)
+    if unit then
+      result = unit:freeze(periode,time)
+    end
   elseif fct == 'solve' then
+    print('Solving with GLPK...')
     Glpk(self)
-    return true
+    result = true
     --Graph(self, {format='svg'})
   else
-    return nil
+    result =  nil
   end
+
+  return serpent.dump(result)
 end
 
 

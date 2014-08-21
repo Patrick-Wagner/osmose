@@ -13,9 +13,10 @@ tcp:close()
 
 lib.connectOsmose = [[
 
+local host, port = "127.0.0.1", 3333
+local socket = require("socket")
+
 function solve()
-	local host, port = "127.0.0.1", 3333
-	local socket = require("socket")
 	local tcp = assert(socket.tcp())
 	tcp:connect(host, port)
 	tcp:send("solve,".."\n")
@@ -28,14 +29,12 @@ function solve()
 	return s
 end
 
-function getTag(tag)
-	if tag==nil then return nil end
-
-	local host, port = "127.0.0.1", 3333
-	local socket = require("socket")
+function get(type,name,periode,time)
+	local periode = periode or 1
+	local time = time or 1
 	local tcp = assert(socket.tcp())
 	tcp:connect(host, port);
-	tcp:send("getTag,"..tag.."\n")
+	tcp:send("get"..type..","..name..","..tostring(periode)..","..tostring(time).."\n")
 	local s, status, partial
 	while true do
 	  s, status, partial = tcp:receive("*l")
@@ -43,21 +42,23 @@ function getTag(tag)
 	  	break 
 	  else
 	  	tcp:close()
-	  	return(tonumber(s) or s)
+	  	return(loadstring(s)())
 	  end
 	end
 	tcp:close()
-	return(tonumber(s) or s)
+	return(loadstring(s)())
 end
 
-function setTag(tag,value)
-	if tag==nil then return nil end
+function getTag(name, periode, time)
+	return get('Tag', name, periode, time)
+end
 
-	local host, port = "127.0.0.1", 3333
-	local socket = require("socket")
+function setTag(tag,value,periode,time)
+	local periode = periode or 1
+	local time = time or 1
 	local tcp = assert(socket.tcp())
 	tcp:connect(host, port);
-	tcp:send("setTag,"..tag..","..value.. "\n")
+	tcp:send("setTag,"..tag..","..value..","..periode..","..time.."\n")
 	local s, status, partial
 	while true do
 	  s, status, partial = tcp:receive("*l")
@@ -65,12 +66,13 @@ function setTag(tag,value)
 	  	break 
 	  else
 	  	tcp:close()
-	  	return(tonumber(s) or s)
+	  	return(loadstring(s)())
 	  end
 	end
 	tcp:close()
-	return(tonumber(s) or s)
+	return(loadstring(s)())
 end
+
 ]]
 
 
