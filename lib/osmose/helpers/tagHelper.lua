@@ -23,8 +23,10 @@ function lib.initTag(self, tag, temp)
       end
     elseif type(self[tag]) == 'number' then
       value = self[tag]
-    else
+    elseif self[tag] then
       value = self[tag](model)
+    else
+      return nil
     end
     if type(value) == 'table' then
       value = value[1][1]
