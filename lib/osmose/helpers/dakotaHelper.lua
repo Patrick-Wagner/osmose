@@ -53,6 +53,14 @@ function getTag(name, periode, time)
 	return get('Tag', name, periode, time)
 end
 
+function getStream(name, periode, time)
+	return get('Stream', name, periode, time)
+end
+
+function getUnit(name, periode, time)
+	return get('Unit', name, periode, time)
+end
+
 function setTag(tag,value,periode,time)
 	local periode = periode or 1
 	local time = time or 1
