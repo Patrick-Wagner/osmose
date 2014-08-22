@@ -310,7 +310,13 @@ function lib:optimize(args)
     os.exit()
   end
 
+  if self.sourceDir == nil then
+    local sourcePath = debug.getinfo(2).source:sub(2)
+    self.sourceDir = sourcePath:match("(.*[/\\])")
+  end
   local sourceDir = self.sourceDir
+
+
   local software = args['software']
   local cmd = ''
   local tmpDire = ''
