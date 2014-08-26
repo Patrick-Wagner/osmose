@@ -201,9 +201,13 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	local dakota_template = f:read('*a')
 	f:close()
 
+	local method = args['method']
+	method.max_iterations = method.max_iterations or 50
+
+
 	-- fill the dakota template
 	local dakota = lustache:render(dakota_template, 
-		{method=args['method'],
+		{method=method,
 		objectives=lib.objectives_path,
 		objectives_size=table.getn(args['objectives']),
 		precomputes = lib.precomputes_path,
