@@ -202,14 +202,25 @@ end
     project:getTag('stream_name',2,2)
 --]]--
 function lib:getTag(name, periode, time)
+  if name==nil then return nil end
   local periode = periode or 1
   local time = time or 1
+  local tag_name = nil
+  local model_name = nil
+
+  local splited = lub.split(name,'%.')
+  if table.getn(splited) == 2 then
+    model_name = splited[1]
+    tag_name = splited[2]
+  else
+    tag_name = name
+  end
 
   for i,m in ipairs(self.models or {}) do
-    if m.present(name) then
+    if (model_name==nil or m.name==model_name) and m.present(tag_name) then
       m.periode = periode
       m.time = time
-      return m[name]
+      return m[tag_name]
     end
   end
 end
@@ -225,17 +236,32 @@ end
     project:getTag('tank_temp',85,2,2)
 --]]--
 function lib:setTag(name, value, periode, time)
+  if name==nil or value==nil then return nil end
+
   local periode = periode or 1
   local time = time or 1
+  local tag_name = nil
+  local model_name = nil
 
+  local splited = lub.split(name,'%.')
+  print('split', name, splited, table.getn(splited), splited[1], splited[2])
+  if (model_name==nil or m.name==model_name) and table.getn(splited) == 2 then
+    model_name = splited[1]
+    tag_name = splited[2]
+  else
+    tag_name = name
+  end
+
+  local found = false
   for i,m in ipairs(self.models or {}) do
-    if m.present(name) then
+    if (model_name==nil or m.name==model_name) and m.present(tag_name) then
       m.periode = periode
       m.time = time
-      m[name] = value
-      return m[name]
+      m[tag_name] = value
+      found = true
     end
   end
+  if found then return value end
 end
 
 

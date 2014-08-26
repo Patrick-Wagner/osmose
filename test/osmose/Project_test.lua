@@ -85,6 +85,15 @@ function should.getTag()
 	assertEqual(85, p1.getTag(p1, 'tank_temp'))
 end
 
+function should.getTagWithModelName()
+	local p1=initProject()
+
+	local tag = p1:getTag('cip.tank_temp')
+	assertEqual(85, tag)
+
+	local tag = p1:getTag('foo.tank_temp')
+	assertNil(tag)
+end
 
 
 
@@ -95,6 +104,16 @@ function should.setTag()
 	assertEqual(75, tag)
 
 	tag = p1:setTag('foo', 1)
+	assertNil(tag)
+end
+
+function should.setTagWithModelName()
+	local p1=initProject()
+
+	local tag = p1:setTag('cip.tank_temp', 75)
+	assertEqual(75, tag)
+
+	local tag = p1:setTag('foo.tank_temp', 75)
 	assertNil(tag)
 end
 
