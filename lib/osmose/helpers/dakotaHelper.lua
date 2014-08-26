@@ -118,6 +118,7 @@ f:close()
 lib.objectives_path={}	
 lib.precomputes_path={}
 lib.postcomputes_path={}
+lib.variables={}
 
 function lib.copyFile(name, sourceDir, tmpDir)
 		f = assert(io.open(sourceDir..name..'.lua','r'))
@@ -176,11 +177,24 @@ function lib.prepareObjective(tmpDir,sourceDir, args)
 	end
 end
 
+function lib.prepareVariables(variables)
+	for name, option in pairs(variables) do
+		local variable = {}
+		variable.name = name
+		variable.lower_bound = option.lower_bound
+		variable.upper_bound = option.upper_bound
+		variable.initial = option.initial
+		table.insert(lib.variables, variable)
+	end
+end
+
 function lib.prepareFiles(tmpDir,sourceDir, args)
 
 	lib.prepareObjective(tmpDir,sourceDir, args)	
 
 	lib.preparePreCompute(tmpDir,sourceDir, args)
+
+	lib.prepareVariables(args.variables)
 
 	-- load dakota template for input
 	local f,err = assert(io.open(lub.path('&'):gsub('dakotaHelper.lua','')..'../templates/dakota_in.mustache'))
@@ -191,8 +205,10 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	local dakota = lustache:render(dakota_template, 
 		{method=args['method'],
 		objectives=lib.objectives_path,
-		precomputes = lib.precomputes_path,
 		objectives_size=table.getn(args['objectives']),
+		precomputes = lib.precomputes_path,
+		variables = lib.variables,
+		variables_size=table.getn(lib.variables),
 		params_in = tmpDir..'/params.in',
 		results_out = tmpDir..'/results.out',
 		})
@@ -211,7 +227,7 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	local dakota_out = tmpDir..'/dakota.out'
 	local dakota_err = tmpDir..'/dakota.err'
 
-	return 	'dakota'.. 
+	return 	(OSMOSE_ENV["DAKOTA_EXE"] or 'dakota').. 
 					' -i '..dakota_in..
 					' -o '..dakota_out..
 					' -e '..dakota_err

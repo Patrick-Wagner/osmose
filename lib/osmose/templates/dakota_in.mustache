@@ -1,14 +1,16 @@
 # Demonstrate DAKOTA script interface to Lua analysis (Rosenbrock)
 
 method,						
-	{{method}}
+	{{#method}}{{name}}{{/method}}
+	max_iterations = {{#method}}{{max_iterations}}{{/method}},                    			
+	convergence_tolerance = 1e-4   
 
 variables,					
-	continuous_design = 2			
-	  cdv_initial_point  -1.0  1.0		
-	  cdv_lower_bounds   -2.0 -2.0		
-	  cdv_upper_bounds    2.0  2.0		
-	  cdv_descriptor      'x1' 'x2'
+	continuous_design = {{variables_size}}			
+	  cdv_initial_point {{#variables}}{{initial}} {{/variables}}		
+	  cdv_lower_bounds  {{#variables}}{{lower_bound}} {{/variables}}	
+	  cdv_upper_bounds  {{#variables}}{{upper_bound}} {{/variables}}		
+	  cdv_descriptor    {{#variables}}'{{&name}}' {{/variables}}
 
 interface,							
 	fork		
