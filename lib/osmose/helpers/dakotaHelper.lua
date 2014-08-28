@@ -110,7 +110,13 @@ end
 lib.writeResult = [[
 -- store result in output file
 local f = assert(io.open(arg[2],"w"))
-f:write(tostring(result)..'/n')
+if type(result) == 'number' or type(result) == 'string' then
+	f:write(tostring(result)..'  fn_obj\n')
+elseif type(result) == 'table' then
+	for i,obj in ipairs(result) do
+		f:write(tostring(obj)..'  fn_obj'..i..'\n')
+	end
+end
 f:close()
 
 ]]
@@ -204,17 +210,19 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 	local method = args['method']
 	method.max_iterations = method.max_iterations or 50
 
+	local graphics_path = tmpDir..'/graphics.dat'
 
 	-- fill the dakota template
 	local dakota = lustache:render(dakota_template, 
 		{method=method,
 		objectives=lib.objectives_path,
-		objectives_size=table.getn(args['objectives']),
+		objectives_size=args['objectives_size'],
 		precomputes = lib.precomputes_path,
 		variables = lib.variables,
 		variables_size=table.getn(lib.variables),
 		params_in = tmpDir..'/params.in',
 		results_out = tmpDir..'/results.out',
+		graphics_path = graphics_path,
 		})
 
 	-- store the template in dakota.in file

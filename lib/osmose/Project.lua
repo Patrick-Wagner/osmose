@@ -244,7 +244,6 @@ function lib:setTag(name, value, periode, time)
   local model_name = nil
 
   local splited = lub.split(name,'%.')
-  print('split', name, splited, table.getn(splited), splited[1], splited[2])
   if (model_name==nil or m.name==model_name) and table.getn(splited) == 2 then
     model_name = splited[1]
     tag_name = splited[2]
@@ -347,7 +346,7 @@ function lib:optimize(args)
   local cmd = ''
   local tmpDire = ''
   if software == nil then
-    print('Yous must specify a software name for opimization.')
+    print('You must specify a software name for opimization.')
     return nil
   elseif software == 'dakota' then
     local dakota_helper = require 'osmose.helpers.dakotaHelper'
@@ -389,7 +388,7 @@ function lib:optimize(args)
     end
     --print('LINE',line)
     local rslt = lib.call(project,line)
-    --print('result', rslt)
+    --print('result', line, rslt)
     if rslt then 
       client:send(rslt.."\n")
       client:close()
@@ -490,7 +489,6 @@ function lib:call(str)
     result = true
     --Graph(self, {format='svg'})
   elseif fct == 'getResults' then
-    print('GET RESULTS')
     result = self.results
   else
     result =  nil
