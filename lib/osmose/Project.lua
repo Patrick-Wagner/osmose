@@ -364,7 +364,6 @@ function lib:optimize(args)
   -- prepare project with Eiampl
   local project = Eiampl(self)
 
-  print(lub.plat())
   if lub.plat() == 'macosx' or lub.plat() == 'linux' then
     os.execute "lsof -t -i  tcp:3333 | xargs kill"
   end
@@ -372,13 +371,14 @@ function lib:optimize(args)
 
 
   local dakota_output = assert(io.popen(cmd,"w"))
-  
+  print(cmd)
 
   function listen(server, tmpDir, project)
+    print('Listen to', software)
     local client = server:accept()
     client:settimeout(10)
     local line, err, partial = client:receive("*l")
-    --print('listen', line, err, partial)
+    print('listen', line, err, partial)
     if line=="stop" or partial=="stop" then
       print("Optimization finished")
       print("Result direcory is", tmpDir)

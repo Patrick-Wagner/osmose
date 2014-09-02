@@ -1,0 +1,43 @@
+strategy
+  single 
+  tabular_graphics_data
+    tabular_graphics_file = '{{&graphics_path}}'
+
+method
+  moga
+  output silent
+    seed = 10983
+    final_solutions = 3
+  initialization_type unique_random
+  crossover_type shuffle_random
+    num_offspring = 2 num_parents = 2
+    crossover_rate = 0.8
+  mutation_type replace_uniform
+    mutation_rate = 0.1
+  fitness_type domination_count
+  replacement_type below_limit = 6
+    shrinkage_percentage = 0.9
+  convergence_type metric_tracker
+    percent_change = 0.05 num_generations = 40
+  max_function_evaluations = {{#method}}{{max_iterations}}{{/method}}
+  
+variables			
+	continuous_design = {{variables_size}}			
+	  cdv_initial_point {{#variables}}{{initial}} {{/variables}}		
+	  cdv_lower_bounds  {{#variables}}{{lower_bound}} {{/variables}}	
+	  cdv_upper_bounds  {{#variables}}{{upper_bound}} {{/variables}}		
+	  cdv_descriptor    {{#variables}}'{{&name}}' {{/variables}}
+
+interface						
+	fork		
+	input_filter =  {{#precomputes}}'lua {{&.}}', {{/precomputes}}			
+	analysis_drivers = {{#objectives}}'lua {{&.}}', {{/objectives}}
+	parameters_file = '{{&params_in}}'
+	results_file = '{{&results_out}}'
+	file_tag file_save
+
+responses		
+	objective_functions = {{objectives_size}}
+	no_gradients				
+	no_hessians
+

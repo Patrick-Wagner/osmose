@@ -196,18 +196,32 @@ end
 
 function lib.prepareFiles(tmpDir,sourceDir, args)
 
+	local file_dakota_version = assert(io.popen((OSMOSE_ENV["DAKOTA_EXE"] or 'dakota')..' -v' ,"r"))
+	local dakota_version = file_dakota_version:read('*all')
+	file_dakota_version:close()
+	print(dakota_version)
+
 	lib.prepareObjective(tmpDir,sourceDir, args)	
 
 	lib.preparePreCompute(tmpDir,sourceDir, args)
 
 	lib.prepareVariables(args.variables)
 
-	-- load dakota template for input
-	local f,err = assert(io.open(lub.path('&'):gsub('dakotaHelper.lua','')..'../templates/dakota_in.mustache'))
-	local dakota_template = f:read('*a')
-	f:close()
-
 	local method = args['method']
+
+	-- load dakota template for input
+	local dakota_template
+	print('Dakota method is', method.name)
+	if method.name == 'moga' then
+		local f,err = assert(io.open(lub.path('&'):gsub('dakotaHelper.lua','')..'../templates/dakota_in_moga_v60.mustache'))
+		dakota_template = f:read('*a')
+		f:close()
+	else
+		local f,err = assert(io.open(lub.path('&'):gsub('dakotaHelper.lua','')..'../templates/dakota_in_v60.mustache'))
+		dakota_template = f:read('*a')
+		f:close()
+	end
+
 	method.max_iterations = method.max_iterations or 50
 
 	local graphics_path = tmpDir..'/graphics.dat'
