@@ -17,8 +17,8 @@ variables
 
 interface
 	fork
-		input_filter = {{#precomputes}}'lua {{&.}}', {{/precomputes}}	
-		analysis_drivers = {{#objectives}}'lua {{&.}}', {{/objectives}}
+		input_filter = {{#precomputes}}'{{&.}}', {{/precomputes}}	
+		analysis_drivers = {{#objectives}}'{{&.}}', {{/objectives}}
 		parameters_file = '{{&params_in}}'
 		results_file = '{{&results_out}}'
 		file_tag file_save

@@ -367,11 +367,8 @@ function lib:optimize(args)
   if lub.plat() == 'macosx' or lub.plat() == 'linux' then
     os.execute "lsof -t -i  tcp:3333 | xargs kill"
   end
+
   local server = assert(socket.bind("*", 3333))
-
-
-  local dakota_output = assert(io.popen(cmd,"w"))
-  print(cmd)
 
   function listen(server, tmpDir, project)
     print('Listen to', software)
@@ -386,7 +383,10 @@ function lib:optimize(args)
       server:close()
       return "stop"
     end
-    --print('LINE',line)
+    if err then
+      error(err)
+    end
+    print('LINE',line)
     local rslt = lib.call(project,line)
     --print('result', line, rslt)
     if rslt then 
@@ -396,6 +396,9 @@ function lib:optimize(args)
       client:close()
     end
   end
+
+  print('Dakota command is', cmd)
+  local file = assert(io.popen(cmd,"w"))
 
   while true do
     if listen(server,tmpDir, project) == "stop" then break end

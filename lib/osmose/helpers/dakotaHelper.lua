@@ -143,7 +143,7 @@ function lib.preparePreCompute(tmpDir, sourceDir, args)
 		lib.copyFile(obj, sourceDir, tmpDir)
 
 		-- store objective path for the dakota input file
-		table.insert(lib.precomputes_path, tmpDir..'/'..obj..'_wrapper.lua')
+		table.insert(lib.precomputes_path, (OSMOSE_ENV["LUA_EXE"] or 'lua')..' '..tmpDir..'/'..obj..'_wrapper.lua')
 
 		-- write objective wrapper
 		f = io.open(tmpDir..'/'..obj..'_wrapper.lua',"w")
@@ -167,7 +167,7 @@ function lib.prepareObjective(tmpDir,sourceDir, args)
 		lib.copyFile(obj, sourceDir, tmpDir)
 
 		-- store objective path for the dakota input file
-		table.insert(lib.objectives_path, tmpDir..'/'..obj..'_wrapper.lua')
+		table.insert(lib.objectives_path, (OSMOSE_ENV["LUA_EXE"] or 'lua')..' '.. tmpDir..'/'..obj..'_wrapper.lua')
 
 		-- write objective wrapper
 		f = io.open(tmpDir..'/'..obj..'_wrapper.lua',"w")
