@@ -50,7 +50,10 @@ cip.inputs = { -- doc
   -- Temperature of inlet cleaning agent before preheating. (CA0)
   -- [math][/math]
   cleaning_agent_temp = {default = 10, min = 10, max = 10, unit = 'C'},
- 
+
+  base_load1 = {default = 0, unit='kW'},
+
+  base_load2 = {default = 800, unit='kW'},
 }
 
 -- ## Result (isVIT = 2)
@@ -144,7 +147,8 @@ cip.outputs = { -- doc
   discharge_load = {unit = 'kW', job = "discharged_raw_water_flow() / 3.6 * water_cp * (return_temp - max_temp)"},
   
   -- To test addToProblem with a tag:
-  j1 = {job = '3-2'}
+  j1 = {job = '3-2'},
+
   }
 
 -- ## Advanced (isVIT = 3)
@@ -188,6 +192,8 @@ cip["CipUnit"]:addStreams({
   fresh_water = qt { 'source_temp', 0,'tank_temp','fresh_water_load', 3,'water_h'},
   -- test HT Stream
   discharge = ht { {'return_temp'},{'discharge_load'},{'max_temp'}, {0},{ 3}, {'water_h'}},
+  dot_cold = qt {80,'base_load1',80,'base_load2',3},
+  dot_hot = qt{80,'base_load2',80,'base_load1',3}
 })
 
 -- optional :

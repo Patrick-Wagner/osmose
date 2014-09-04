@@ -69,6 +69,56 @@
                     <pre class='prettyprint lang-lua'>project:periode(1):time(12)
 project:periode(2):time(13)
 project:periode(3):time(11)</pre>
+                                        <h4 id='getUnit' class='entry method'><span>:</span>getUnit <code>(name, periode)</code></h4>
+          
+                    <p>Return the unit corresponding to the name given and the periode, which is 1 by default.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>project:getUnit('unit_name')
+project:getUnit('unit_name',2)</pre>
+                                        <h4 id='getStream' class='entry method'><span>:</span>getStream <code>(name, periode)</code></h4>
+          
+                    <p>Return the stream corresponding to the name given and the periode, which is 1 by default.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>project:getStream('stream_name')
+project:getStream('stream_name',2)</pre>
+                                        <h4 id='getTag' class='entry method'><span>:</span>getTag <code>(name, periode, time)</code></h4>
+          
+                    <p>Return the tag value corresponding to the name, periode and time given.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>project:getTag('stream_name')
+project:getTag('stream_name',2,2)</pre>
+                                        <h4 id='setTag' class='entry method'><span>:</span>setTag <code>(name, value, periode, time)</code></h4>
+          
+                    <p>Set the tag value corresponding to the name, periode and time given.</p>
+                    <p>Exemple:</p>
+                    <pre class='prettyprint lang-lua'>project:setTag('tank_temp',85)
+project:getTag('tank_temp',85,2,2)</pre>
+                                        <h4 id='solve' class='entry method'><span>:</span>solve <code>(args)</code></h4>
+          
+                    <p>Solve the project with Glpk by default and do graphs.</p>
+                    <pre class='prettyprint lang-lua'>local p1 = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')
+p1:load({cip = "ET.Cip"})
+p1:solve()
+</pre>
+                    <p>To skip the graph generation :</p>
+                    <pre class='prettyprint lang-lua'>p1:solve({graph=false})
+</pre>
+                    <p>To specify graph format :</p>
+                    <pre class='prettyprint lang-lua'>p1:solve({graph={format='svg'}})</pre>
+                                        <h4 id='optimize' class='entry method'><span>:</span>optimize <code>(args)</code></h4>
+          
+                    <p>Launch mutlti objectives optimization.</p>
+                    <p>Exemple :</p>
+                    <p>project:optimize { software='dakota', precomputes={'S_problem_MOO_precompute'}, objectives={'S_problem_MOO_postcompute1'}, objectives_size=2, variables={x1={lower_bound='0', upper_bound='1.0', initial='0.5'}, x2={lower_bound='0', upper_bound='1.0', initial='0.5'}}, method={name = 'moga', max_iterations=100}, }</p>
+                                        <h4 id='postCompute' class='entry method'><span>:</span>postCompute <code>(name)</code></h4>
+          
+                    <p>Lauch post compute function, which must writen in a lua file  with the same name.</p>
+                    <p>Exemple: fonction:  jam_postcompute file: jam_postcomplute.lua</p>
+                    <pre class='prettyprint lang-lua'>project:postCompute('jam_postcompute') 
+</pre>
+                                        <h4 id='call' class='entry method'><span>:</span>call <code>(str)</code></h4>
+          
+                    <p>Private method.</p>
                               </section>
                   </div>
 
@@ -83,9 +133,13 @@ project:periode(3):time(11)</pre>
                         <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
                         <li class='active'><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
                         <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class=''><a href='osmose.Vali.html'>Vali</a></li>
                       </ul>
         </div>
       </div>
@@ -93,7 +147,7 @@ project:periode(3):time(11)</pre>
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

@@ -1,0 +1,31 @@
+environment
+	tabular_graphics_data
+		tabular_graphics_file = '{{&graphics_path}}'
+
+method
+	{{#method}}{{name}}{{/method}}
+	max_iterations = {{#method}}{{max_iterations}}{{/method}},
+	output verbose
+	convergence_tolerance = 1.e-8
+
+variables
+	continuous_design = {{variables_size}}	
+	cdv_initial_point {{#variables}}{{initial}} {{/variables}}	
+	cdv_lower_bounds {{#variables}}{{lower_bound}} {{/variables}}	
+	cdv_upper_bounds {{#variables}}{{upper_bound}} {{/variables}}	
+	cdv_descriptor {{#variables}}'{{&name}}' {{/variables}}
+
+interface
+	fork
+		input_filter = {{#precomputes}}'{{&.}}', {{/precomputes}}	
+		analysis_drivers = {{#objectives}}'{{&.}}', {{/objectives}}
+		parameters_file = '{{&params_in}}'
+		results_file = '{{&results_out}}'
+		file_tag file_save
+
+responses
+	objective_functions = {{objectives_size}}
+	numerical_gradients
+	method_source dakota
+	fd_gradient_step_size = .000001
+	no_hessians

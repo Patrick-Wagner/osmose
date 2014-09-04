@@ -23,12 +23,12 @@ lib.outmsg_filename='GlpkOutMsg.txt'
 lib.result_filename='eiamplAll.out'
 -- The pre solve mod files that are required for the solver.
 --lib.get_pre_solve_mod= {"eiampl.mod", "costing.mod", "heat_cascade_base_glpsol.mod", "heat_cascade_no_restrictions.mod"}
-lib.get_pre_solve_mod_p= {"eiampl_p.mod", "costing_p.mod", "heat_cascade_base_glpsol_p.mod", "heat_cascade_no_restrictions_p.mod", "mass_p.mod"}
+lib.get_pre_solve_mod_p= {"eiampl_p.mod", "costing_p.mod", "heat_cascade_base_glpsol_p.mod", "heat_cascade_no_restrictions_p.mod", "mass_p.mod", "resource_p.mod"}
 -- The post solve mod files that are required for the solver.
 --lib.get_post_solve_mod = {"eiampl_glpsol_postSolve.mod", "costing_postSolve.mod", "heat_cascade_base_postSolve.mod"}
-lib.get_post_solve_mod_p = {"costing_postSolve_p.mod", "heat_cascade_base_postSolve_p.mod", "mass_postSolve_p.mod"}
--- The default solve function used by the solver
-lib.generate_solve_function = "minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost']; solve; \n\n"
+lib.get_post_solve_mod_p = {"costing_postSolve_p.mod", "heat_cascade_base_postSolve_p.mod", "mass_postSolve_p.mod", "resource_postSolve_p.mod"}
+
+
 -- "def_location" is the default location.
 lib.locations={{name='def_location'}}
 -- Default operations costs
@@ -64,11 +64,16 @@ function lib.new(project, return_solver)
 
 		-- preparing project to store results
 		project.results.gcc[periode] = {}
+		project.results.delta_hot[periode]={}
+		project.results.delta_cold[periode]={}
 		local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
 
 		for i,tbl in ipairs(temps) do
 			project.results.gcc[periode][tbl.time] = project.results.gcc[periode][tbl.time] or {}
 			project.results.gcc[periode][tbl.time][tbl.interval] = tbl
+			
+			project.results.delta_hot[periode][tbl.time]=nil
+			project.results.delta_cold[periode][tbl.time]=nil
 		end
 
 		-- replace default name by project name
@@ -89,10 +94,18 @@ function lib.new(project, return_solver)
 				' -m '..tmp_dir..lib.run_filename..
 				' -d '..tmp_dir..lib.data_filename..
 				' -o '..tmp_dir..lib.outmsg_filename..
-				' -y '..tmp_dir..lib.result_filename)
+				' -y '..tmp_dir..lib.result_filename..
+				' --log '..tmp_dir..'logs.txt')
+      
+		 print('-------------------------------------------------------------------------------------------')
+     print('Executing Command line:')
+     print('-----------------------')
+     print(cmd)
+		 print('-------------------------------------------------------------------------------------------')
 		
-		print(cmd)
-		os.execute(cmd)
+		 local f=assert(io.popen(cmd))
+		 f:read("*a")
+		 f:close()
 					
 		if return_solver then
 			local f = io.open(tmp_dir..lib.result_filename,"r")
@@ -102,13 +115,22 @@ function lib.new(project, return_solver)
 		else
 			helper.parseResultGlpkFile(project, tmp_dir, periode)
 		end
-
+  print('-------------------------------------------------------------------------------------------')
+  print('Warning message;')
+  print(" 1-There is no FEASIBLE SOLUTION if;")
+  print("     The project has a layer with only 'in' process stream(s) or only 'out' process stream(s)") 
+  print("     Temperature of the hot utility is not high enough to close the heat cascade balance")
+  print("     Temperature of the cold utility is not low enough to close the heat cascade balance")
+  print(" 2-In and Out mass/resource streams cannot be defined simultaneously for a given unit")
+  print(" 3-To help the solver, try to avoid large value for the Fmax of units.")
 	end -- for periodes loop
+
+	project.solved = true
+	
 	return project
 end
 
 -- # Privates methodes
-
 -- This function generate the datas for a `project` on a given `periode`.
 function lib.generateDataWithTimes(project, periode)
 
@@ -120,21 +142,45 @@ function lib.generateDataWithTimes(project, periode)
 
 	-- Create Default Heatcascade Units if objective is MER.
 	if project.objective == 'MER' or project.objective == nil then
-		print('MER Objective')
-		project.units[periode] = lib.addMerUnits(project.units[periode], project.name)
+		print('-------------------------------------------------------------------------------------------')
+    print('MER Objective')
+		print('-------------------------------------------------------------------------------------------')
+    
+    local add_MER_units = require('osmose.AddMerUnits')
+		project.units[periode] = add_MER_units(project, project.units[periode])
+    
 	end
 
 	local times = {}
 	local timesValues = {}
 	for t=1,project.periodes[periode].times do
 		table.insert(timesValues, t)
-		local streams={}
+    
+		local streams = {}
+    local coststreams = {}
+    local massstreams = {}
+    local resourcestreams = {}
+    local forceUseUnits = {}
+    
 		for iu, unit in ipairs(project.units[periode]) do
+      
 			local model = unit.model
 			if model then
 				model.periode = periode 
 				model.time = t
 			end
+			
+			unit.Fmin =  unit.fFmin(model)
+			unit.Fmax =  unit.fFmax(model)
+      
+      -- recover the unit forceUse in each time step
+      -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+      local forceUse={}
+      forceUse.forceValue=unit.force_use
+      forceUse.forceUnitName=unit.name
+      table.insert(forceUseUnits, forceUse)
+      
+      -- recover the qt streams' value in each time step
 			for is,s in ipairs(unit.streams) do
 				local stream = {}
 				stream.time = t
@@ -143,28 +189,83 @@ function lib.generateDataWithTimes(project, periode)
 				stream.Tout_corr = s.Tout_corr(model)
 				stream.Hin = s.Hin(model)
 				stream.Hout = s.Hout(model)
+				-- add a heat cascade layer's name of each hot/cold stream
+				stream.layerName =s.layerName
 				table.insert(streams, stream)
 			end
+      -- recover the cost streams' value (Power, Impact, Cost, Cin) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)
+      for isc, Scoststream in ipairs(unit.costStreams) do
+        local coststream = {}
+        coststream.time=t
+        coststream.name=Scoststream.name
+        coststream.layerName =Scoststream.layerName
+        coststream.coefficient1=Scoststream.coefficient1(model, layerName, unit)
+        coststream.coefficient2=Scoststream.coefficient2(model, layerName, unit)
+        table.insert(coststreams, coststream)
+       end
+      -- recover the mass streams' value (flowrate in and flowrate out) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)
+      for ism, Smassstream in ipairs(unit.massStreams) do
+        local massstream = {}
+        massstream.time=t
+        massstream.name=Smassstream.name
+        massstream.unitName=unit.name
+        massstream.layerName ='layers_'..Smassstream.layerName
+        if Smassstream.inOut == 'in' then
+          massstream.flowrateIn=Smassstream.Flow(model)
+          massstream.flowrateOut=0
+        elseif Smassstream.inOut == 'out' then
+          massstream.flowrateIn=0
+          massstream.flowrateOut=Smassstream.Flow(model)
+        end
+        table.insert(massstreams, massstream)        
+      end
+      -- recover the resource streams' value (flowrate_r in and flowrate_r out) in each time step
+      -- (samira.fazlollahi@a3.epfl.ch)    
+      for isr, Sresourcestream in ipairs(unit.resourceStreams) do
+        local resourcestream = {}
+        resourcestream.time=t
+        resourcestream.name=Sresourcestream.name
+        resourcestream.unitName=unit.name
+        resourcestream.layerName ='layers_'..Sresourcestream.layerName
+        if Sresourcestream.inOut == 'in' then
+          resourcestream.flowrateIn_r=Sresourcestream.Flow_r(model)
+          resourcestream.flowrateOut_r=0
+        elseif Sresourcestream.inOut == 'out' then
+          resourcestream.flowrateIn_r=0
+          resourcestream.flowrateOut_r=Sresourcestream.Flow_r(model)
+        end
+        table.insert(resourcestreams, resourcestream)        
+      end
 		end
 
-		table.insert(times, {time = t, streams = streams })
+		table.insert(times, {time = t, streams = streams, coststreams = coststreams, massstreams = massstreams, resourcestreams = resourcestreams, forceUseUnits = forceUseUnits})
+    
 	end
 
-	local intervals, temps = lib.streamsTinWithTimes(project.units[periode], periode, project.periodes[periode].times)
 
-	local layers = {'DefaultHeatCascade',
-	'osmose_default_model_DefaultImpact',	
-	'osmose_default_model_DefaultMechPower',
-	'osmose_default_model_DefaultInvCost',
-	'osmose_default_model_DefaultOpCost'}
-
+ 
+	local layers = {}
+  -- Recover all heat cascade layers
+  local heatCascadeLayer = {}
 	local massBalanceLayer = {}
-
-
+  local resourceBalanceLayer = {}
+  local costingLayer={}
   local modelLayers={}
+  
+
 	for m, model in ipairs(project.models) do
 		for layerName, layer in pairs(model.layers) do
-			local fullName =  'layers_'..layerName
+      ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
+      local fullName
+      if layer ~= nil and layer.type == 'Costing' then
+			  fullName = layerName
+	  elseif layer ~= nil and layer.type == 'HeatCascade' then
+			  fullName = layerName
+      else
+        fullName =  'layers_'..layerName
+      end
 			local layerFound = 0
 			for i,l in ipairs(layers) do
 				if l==fullName then
@@ -176,9 +277,19 @@ function lib.generateDataWithTimes(project, periode)
 
 				if layer.type == 'MassBalance' then
 					table.insert(massBalanceLayer, fullName)
+          ---add ResourceBalance Layers (samira.fazlollahi@a3.epfl.ch) 
+        elseif layer.type == 'ResourceBalance' then
+					table.insert(resourceBalanceLayer, fullName)
+          ---add costing Layers (samira.fazlollahi@a3.epfl.ch) 
+        elseif layer.type == 'Costing' then
+          table.insert(costingLayer, fullName)
+          ---add HeatCascade Layers (samira.fazlollahi@a3.epfl.ch) 
+         elseif layer.type == 'HeatCascade' then
+          table.insert(heatCascadeLayer, fullName) 
+           
 				else
 					print(string.format("Layer of type '%s' is not recognized.", layer.type))
-					print("Valid layer types are : Costing, HeatCascade, MassBalance")
+					print("Valid layer types are : Costing, HeatCascade, MassBalance, ResourceBalance")
 					os.exit()
 				end
 				modelLayers[layerName] = {units={}, name=fullName, streams={}}
@@ -187,27 +298,45 @@ function lib.generateDataWithTimes(project, periode)
 			end
 		end
 	end
-
-	local streamLayers = {}
-	local flowrateIn = {}
-	local flowrateOut = {}
+	
 	for i,unit in ipairs(project.units[periode]) do
 		for layerName, layer in pairs(unit.layers) do
-			table.insert(modelLayers[layerName].units, {name = unit.name})
-			for is, stream in ipairs(unit.massStreams) do
-				if stream.layerName == layerName then 
-					table.insert(modelLayers[layerName].streams, {name = stream.name})
-					if stream.inOut == 'in' then
-						table.insert(flowrateIn, {layerName='layers_'..layerName, unitName=unit.name, value=stream.value })
-					elseif stream.inOut == 'out' then
-						table.insert(flowrateOut, {layerName='layers_'..layerName, unitName=unit.name, value=stream.value })
-					end
-				end
-			end
+     table.insert(modelLayers[layerName].units, {name = unit.name})
+      if layer ~= nil and layer.type == 'MassBalance' then
+        for is, stream in ipairs(unit.massStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+      -- recover ResourceBalance Layers' units and streams (samira.fazlollahi@a3.epfl.ch) 
+      elseif layer ~= nil and layer.type == 'ResourceBalance' then
+        for is, stream in ipairs(unit.resourceStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+       
+      -- recover HeatCascade Layers' units and streams (samira.fazlollahi@a3.epfl.ch) 
+      elseif layer ~= nil and layer.type == 'HeatCascade' then
+        for is, stream in ipairs(unit.streams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+ 
+      -- recover costing Layers' units and streams (samira.fazlollahi@a3.epfl.ch) 
+      elseif layer ~= nil and layer.type == 'Costing' then
+        for is, stream in ipairs(unit.costStreams) do
+          if stream.layerName == layerName then 
+            table.insert(modelLayers[layerName].streams, {name = stream.name})
+          end
+        end
+      end
 		end
 	end
 
-
+--- recover intervals and temps for each layer of heat cascading (samira.fazlollahi@a3.epfl.ch)
+local intervals, temps = lib.streamsTinWithTimesForHClayer(project.units[periode], periode, project.periodes[periode].times, heatCascadeLayer)
 
 	local unitLayers = {}
 	local streamLayers = {}
@@ -215,8 +344,9 @@ function lib.generateDataWithTimes(project, periode)
 		table.insert(unitLayers, {name = layer.name, units=layer.units })
 		table.insert(streamLayers, {name = layer.name, streams=layer.streams })
 	end
-
-	-- load file if type is string
+   
+  -- recover cost_elec_in, cost_elec_out and op_time
+  -- from project.operationalCosts
 	local loadedValues = {}
 	if type(project.operationalCosts) == 'string' then
 		local path = project.sourceDir .. project.operationalCosts
@@ -234,8 +364,9 @@ function lib.generateDataWithTimes(project, periode)
   	for key, val in pairs(lib.defaultOperationalCosts) do
   		loadedValues[key] = {{val}}
   	end
-  elseif project.objective == 'OperatingCost' and project.operationalCosts == nil then
-  	print("Operation costs must be defined as the project's objective is 'OperationCost'.")
+
+  elseif project.objective == 'YearlyOperatingCost' and project.operationalCosts == nil then
+  	print("Operation costs must be defined as the project's objective is 'YearlyOperatingCost'.")
   	print("Exemple in fronted : ")
   	print("  project.operationalCosts = {cost_elec_in = 17.19, cost_elec_out = 16.9, op_time=8000.0}")
   	os.exit()
@@ -244,7 +375,14 @@ function lib.generateDataWithTimes(project, periode)
 	local operationalCosts = {}
 	for costLabel,costValues in pairs(loadedValues) do
 		local timesValues = {}
-		for i,value in ipairs(costValues[periode]) do
+
+		-- Get cost values for the periode. If not found, look in precedent periode.
+		local p = periode
+		while costValues[p]==nil and p>1 do
+			p = p-1
+		end		
+
+		for i,value in ipairs(costValues[p]) do
 			table.insert(timesValues, {time=i, value=value})
 		end
 		operationalCosts[costLabel] = timesValues
@@ -253,6 +391,7 @@ function lib.generateDataWithTimes(project, periode)
 
 
 	-- Create output text with given values.
+  ---updated by adding costing Layers (samira.fazlollahi@a3.epfl.ch) 
 	return lustache:render(template, {
 		times 				= times,
 		timesValues		= timesValues,
@@ -262,94 +401,76 @@ function lib.generateDataWithTimes(project, periode)
 		cost_elec_out = operationalCosts.cost_elec_out,
 		op_time				= operationalCosts.op_time,
 		units 				= project.units[periode], 
-		attr 					= {"Cinv", "Cost", "Impact", "Power","HC"}, 
 		intervals			= intervals,
 		temps 				= temps,
-		CostGroups 	  = {"Cost1", "Cost2"},
-
 		massBalanceLayer 	= massBalanceLayer,
-
-		Layers 				= layers,
+		heatCascadeLayer = heatCascadeLayer,
+    resourceBalanceLayer = resourceBalanceLayer,
+    costingLayer = costingLayer,
+    Layers 				= layers,
 		UnitsOfLayer   = unitLayers,
 		StreamsOfLayer	= streamLayers,
-		Costing 			= {{layer='osmose_default_model_DefaultImpact',			attr='Impact'},
-										 {layer='osmose_default_model_DefaultMechPower',		attr='Power'},
-										 {layer='osmose_default_model_DefaultInvCost',			attr='Cinv'},
-										 {layer='osmose_default_model_DefaultOpCost',			attr='Cost'},
-										},
 
-		-- Layers 				= {
-		-- 	Costing 			= {	{layer='DefaultOpCost', 		cost='Cost'}, 
-		-- 										{layer='DefaultInvCost', 		cost='Cinv'},
-		-- 										{layer='DefaultMechPower', 	cost='Power'},
-		-- 										{layer='DefaultImpact', 		cost='Impact'} },
-		-- 	HeatCascade   = { {layer='DefaultHeatCascade' }}
-		-- },
 		Locations 		= {{location_name = 'def_location'}},
-		flowrateIn 		= flowrateIn,
-		flowrateOut 	= flowrateOut
 	})
 
 end
 
+function lib.streamsTinWithTimesForHClayer(units, periode, times,HClayers)
+	local streams_temp_in = {}
+	local intervals = {}
+	for time=1, times do 
+		local uniq_tin = {}
+    
+    -- Define intervals and streams_temp_in for each layer of heat cascading 
+    -- updated by adding heat cascade  Layers (samira.fazlollahi@a3.epfl.ch)
+    
+    for eachlayerName, layer in pairs(HClayers) do
+      
+      for iu, unit in pairs(units) do
+        local model = unit.model
+        if model then
+          model.periode = periode
+          model.time = time
+        end
+        for is, stream in pairs(unit.streams) do
+          if stream.layerName == layer then
+            if stream.Tin_corr then 
+              local Tin_corr = stream.Tin_corr(model)
+              local Tout_corr = stream.Tout_corr(model)
+              local tbl = {	Tin_corr = stream.Tin_corr(model), 
+                          Tout_corr = stream.Tout_corr(model), 
+                          Hin = stream.Hin(model),
+                          Hout = stream.Hout(model),
+                          isHot=stream.isHot(model),
+                        layerName=stream.layerName}
+              uniq_tin[Tin_corr] = tbl
+              uniq_tin[Tout_corr] = tbl
+            end
+          end
+        end
+      end
+		
 
+      local temps = {}
+      for t, tbl in pairs(uniq_tin) do 
+        table.insert( temps, {layerName=tbl.layerName, T=t, temp=t, time=time, Hin=tbl.Hin, Hout=tbl.Hout, Tin_corr=tbl.Tin_corr, Tout_corr = tbl.Tout_corr, isHot = tbl.isHot }) 
+      end
 
--- This function add 2 Units to solve the MER Objective : Default HeatCascade Unit Hot (DHCU_h) and
--- Default HeatCascade Unit Cold (DHCU_c). Each of them has 1 stream, hot and cold.
-function lib.addMerUnits(units, project_name)
-	table.insert(units,{ name="DHCU_h", force_use=1, 
-		Fmin=0, 
-		Fmax=10000000000, 
-		Cost1=1000,
-		Cost2=1000,
-		layers={},
-		-- cost_value1 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
-		-- cost_value2 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
-		streams={{name="DHCS_h", unitName="DHCU_h",
-					Tin				=function() return 99999 end, 
-					Tout			=function() return 99998 end, 
-					Tin_corr	=function() return 99999 end, 
-					Tout_corr	=function() return 99998 end, 
-					Hin 			=function() return 1000 end, 
-					Hout 			=function() return 0 end, 
-					isHot			=function() return true end,
-					load 			={},
-					draw			=false }}
-		})
-
-	table.insert(units,{name="DHCU_c", force_use=1, 
-		Fmin=0, 
-		Fmax=10000000000, 
-		Cost1 = 1000,
-		Cost2 = 1000,
-		layers={},
-	 --  cost_value1 = function(this) 
-	 --  	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-	 --  	return costing[this.cost]	
-	 --  end,
-	 --  cost_value2 = function(this) 
-		-- 	local costing = {Cost=1000, Cinv=0, Power=0, Impact=0}
-		-- 	return costing[this.cost]	
-		-- end,
-		streams={{name="DHCS_c", unitName="DHCU_c",  
-					Tin 			=function() return 100 end, 
-					Tout 			=function() return 105 end, 
-					Tin_corr 	=function() return 100 end, 
-					Tout_corr =function() return 105 end, 
-					Hin 			=function() return 0 end, 
-					Hout 			=function() return 1000 end, 
-					isHot			=function() return false end,
-					load 			={},
-					draw			=false }}
-		})
-
-	return units
+      table.sort(temps, function(a,b) return a.T<b.T  end)
+    
+        
+        for i,t in pairs(temps) do
+            t.interval = i
+            table.insert(streams_temp_in, t)
+        end
+      
+  
+      table.insert(intervals, {time=time, temps=temps, layerName=layer})
+    end -- times loop
+	end
+  
+	return intervals, streams_temp_in
 end
 
 
@@ -416,19 +537,10 @@ function lib.generateModWithTimes(project,return_solver, periode)
 		content = content .."\n\n".. equation
 	end
 
-	if project.objective=='MER' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		content = content .. lib.generate_solve_function
-	elseif project.objective=='OperatingCost' then
-		--content = content .. lib.generate_solve_function:gsub("osmose_default_model", project.name)
-		content = content .. lib.generate_solve_function
-  elseif project.objective=='YearlyOperatingCost' then
-		content = content .. "# Objective function\n minimize ObjectiveFunction : YearlyOperatingCost; solve;\n\n"
-  else
-    print("Project Objective is not valid: ", project.objective)
-    os.exit()
-	end
-	
+-- Add objective function to the optimisation model (samira.fazlollahi@a3.epfl.ch)
+	local Objective_function_definition = require('osmose.ObjectiveFunction')
+	content = content .. Objective_function_definition(project.objective)
+
 	if return_solver then
 		content = content..return_solver.."\n"
 	else

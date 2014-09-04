@@ -33,5 +33,21 @@ function should.accessToStreamDirectly()
 	assertEqual('QTStream', u1.stream1.type)
 end
 
+function should.initFminAndFmaxForProcess()
+	local u1 = osmose.Unit('unit1',{type='Process'})
+	assertEqual(1, u1.Fmin)
+	assertEqual(1, u1.Fmax)
+	assertEqual(1, u1.fFmin())
+	assertEqual(1, u1.fFmax())
+end
+
+function should.initFminAndFmaxForUtility()
+	local u1 = osmose.Unit('unit1',{type='Utility'})
+	assertEqual(0, u1.Fmin)
+	assertEqual(10000, u1.Fmax)
+	assertEqual(0, u1.fFmin())
+	assertEqual(10000, u1.fFmax())
+end
+
 should:test()
 

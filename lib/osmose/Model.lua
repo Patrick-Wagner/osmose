@@ -76,6 +76,9 @@
 --]]------------------------------------------------------
 local lub = require 'lub'
 local lib = lub.class 'osmose.Model'
+
+local layer = require('osmose.Layer')
+
 local private   = {}
 -- Methods on model instances.
 local model_api = {}
@@ -84,7 +87,6 @@ local cache_api = {}
 
 -- Used for Lua 5.2 compatibility
 local NO_FENV = not rawget(_G, 'setfenv')
-
 -- Creates osmose model class `type`.
 function lib.new(modelName)
   local class = lub.class(modelName)
@@ -93,8 +95,17 @@ function lib.new(modelName)
   class.processes = {}
   class.software  = {}
   class.jobs      = {}
-  class.layers    = {}
+  
+  -- Add default layers of Costing (operating cost, Investment cost, Impact and power)
+   -- Add default layers of HeatCascade (DefaultHeatCascade)
+ -- Modified by Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+  class.layers    = {DefaultOpCost = layer('DefaultOpCost',{type='Costing'}), 
+                     DefaultInvCost = layer('DefaultInvCost',{type='Costing'}),
+                     DefaultMechPower = layer('DefaultMechPower',{type='Costing'}),
+                     DefaultImpact = layer('DefaultImpact',{type='Costing'}),
+                     DefaultHeatCascade = layer('DefaultHeatCascade',{type='HeatCascade'})}
   class.equations = {}
+
 
   -- All public methods in model API are set here.
   class.__index    = model_api.__index
@@ -160,6 +171,7 @@ function lib.new(modelName)
   Add layers to model :
 
     lib:addLayers {electricity = {type='MassBalance', unit='kW'}}
+    lib:addLayers {gas = {type='ResourceBalance', unit='kW'}}
 --]]
   function class:addLayers(layers)
     local layer = require('osmose.Layer')
@@ -214,6 +226,7 @@ function lib.new(modelName)
   class.outputs = {}
   class.values = {}
   class.advanced = {}
+  class.models = {}
 
 
   class.set = model_api.set
@@ -383,6 +396,7 @@ function cache_api.__index(cache, key)
 
   local self = rawget(cache, '_self')
   local mpt = cache._mpt
+  local job
 
   if mpt[key] then
     if mpt[key][self.periode] then
@@ -410,10 +424,10 @@ function cache_api.__index(cache, key)
     return value
   end
 
-  -- Try to look in inputs params 
-  local input = class.inputs[key]
-  if input then
-    return input.value or input.default
+    -- Try to look in models
+  local model = class.models[key]
+  if model then
+    return model
   end
 
   -- Try to look in advenced params
@@ -422,7 +436,22 @@ function cache_api.__index(cache, key)
     return advanced.value or advanced.default
   end
 
-  local job = class.jobs[key]
+
+  -- Try to look in inputs params 
+  local input = class.inputs[key]
+  if input then
+    if input.inlet and type(input.inlet) == 'string' then 
+      local fct = string.format("return %s ", input.inlet)
+      job = assert(loadstring(fct))
+      return private.executeJob(self, job)
+
+    else
+      return input.value or input.default
+    end
+  end
+
+
+  job = class.jobs[key]
   if type(job) == 'number' then
     return function() return job end
   elseif type(job) == 'string' then
@@ -441,7 +470,7 @@ function cache_api.__index(cache, key)
     -- ))
   end
 
-  local job = def.job
+  job = def.job
 
   if type(job) == 'string' then
     --job = class.jobs[job]

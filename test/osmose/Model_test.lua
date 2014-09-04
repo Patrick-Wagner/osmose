@@ -148,5 +148,33 @@ function should.defineJobs()
   assertEqual(2, lib().j5())
 end
 
+function should.defineExternalModelsDirectly()
+  local lib = osmose.Model 'TEST'
+  local cip = require "ET.Cip" ()
+  lib.inputs = {
+    cip_tank_temp = {default = cip.tank_temp}
+  }
+
+  local model = lib('test')
+
+  assertEqual(85, model.cip_tank_temp)
+end
+
+function should.defineExternalModelsIndirectly()
+  local lib = osmose.Model 'TEST'
+  local cip = require "ET.Cip" ()
+  lib.models = {m1 = cip}
+  lib.outputs = {
+    cip_tank_temp = {job = 'm1.tank_temp'},
+  }
+  lib.inputs = {
+    cip_return_temp = {inlet='m1.return_temp'}
+  }
+
+  local model = lib('test')
+  assertEqual(85, model.cip_tank_temp())
+  assertEqual(40, model.cip_return_temp())
+end
+
 should:test()
 

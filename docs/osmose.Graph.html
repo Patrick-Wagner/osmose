@@ -50,7 +50,7 @@
                     <p>Exemple to create SVG files :</p>
                     <pre class='prettyprint lang-lua'>osmose.Graph(project, 'svg') 
 </pre>
-                                        <h4 id='new' class='entry function'><span>.</span>new <code>(project, format)</code></h4>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(project, format, options)</code></h4>
           
                     <p>Draws Composite Curves (CC) and Grand Composites Curves (GCC). You can specify an format output.</p>
                     <p>Exemples:</p>
@@ -63,7 +63,7 @@ osmose.Graph(project, 'svg')
                                         <h4 id='getCompositeCp' class='entry function'><span>.</span>getCompositeCp <code>(streams,t)</code></h4>
           
                     <p>If a temperature is between the Tmin and Tmax of a stream, a cumulative slope is calculated.</p>
-                                        <h4 id='splitHotAndCold' class='entry function'><span>.</span>splitHotAndCold <code>(project, periode, time)</code></h4>
+                                        <h4 id='splitHotAndCold' class='entry function'><span>.</span>splitHotAndCold <code>(project, periode, time,options)</code></h4>
           
                     <p>The hot streams and cold streams are dispatched in different arrays and are sorted by their minimal temperature. Tmin and Tmax are defined for each stream.</p>
                                         <h4 id='getCumulateHeatLoad' class='entry function'><span>.</span>getCumulateHeatLoad <code>(streams,time)</code></h4>
@@ -89,9 +89,13 @@ osmose.Graph(project, 'svg')
                         <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
                         <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class=''><a href='osmose.Vali.html'>Vali</a></li>
                       </ul>
         </div>
       </div>
@@ -99,7 +103,7 @@ osmose.Graph(project, 'svg')
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

@@ -12,7 +12,11 @@ lut.Doc.make {
     'lib/osmose/QTStream.lua',
     'lib/osmose/Unit.lua',
     'lib/osmose/MassStream.lua',
-    'lib/osmose/Layer.lua'
+    'lib/osmose/ResourceStream.lua',
+    'lib/osmose/Layer.lua',
+    'lib/osmose/ObjectiveFunction.lua',
+    'lib/osmose/PostPrint.lua',
+    'lib/osmose/Vali.lua'
   },
   target = 'docs',
   format = 'html',

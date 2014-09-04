@@ -1,0 +1,9 @@
+result/*
+results/*
+project/*
+projects/*
+ET/*
+config.lua
+dakota.rst
+*.log
+*.dat

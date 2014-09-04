@@ -31,7 +31,7 @@ local lib   = lub.class 'osmose.Graph'
     osmose.Graph(project, 'svg') 
   
 --]]
-function lib.new(project, format)
+function lib.new(project, format, options)
   
   if OSMOSE_ENV["GNUPLOT_EXE"] == nil then
     print('Gnuplot executable must be specified config.lua file with OSMOSE_ENV["GNUPLOT_EXE"] variable.')
@@ -65,27 +65,30 @@ function lib.new(project, format)
       -- ===========
 
       -- Split of hot and cold streams.
-      local hotStreams, coldStreams = lib.splitHotAndCold(project,periode,time)
-
-      if hotStreams==nil and coldStreams==nil then
-        print('Could not draw graph')
-        os.exit()
+      local hotStreams, coldStreams = lib.splitHotAndCold(project,periode,time,options)
+      
+      -- skip plotting Composite Curves (CC) and Grand Composites Curves (GCC), if there is no hot or cold stream
+      -- (samira.fazlollahi@a3.epfl.ch)
+      if hotStreams[1]==nil and coldStreams[1]==nil then
+        print('There is no hot and cold streams, Could not draw graph')
+        -- os.exit()
+        do return end
       end
 
       -- Cumulation of streams Heat Load
       local hotStreams  = lib.getCumulateHeatLoad(hotStreams,time)
       local coldStreams = lib.getCumulateHeatLoad(coldStreams,time)
 
-      -- Composite Curve creation
+      -- Composite Curve creation 
       local hotCC  = lib.getHotCC(hotStreams)
       local coldCC = lib.getColdCC(coldStreams)
+  
 
-
-      -- We translate the cold curve according the solver result (self.delta_hot)
+      -- We translate the cold curve according the solver result 
       if project.objective == 'MER' then
-        print('Delta hot =', project.delta_hot)
+        --print('Delta hot =', project.results.delta_hot[periode][time])
         local coldLoad = coldCC[table.getn(coldCC)].Q
-        local coldLoadTarget = (hotCC[1].Q) + project.delta_hot
+        local coldLoadTarget = (hotCC[1].Q) + project.results.delta_hot[periode][time]
         local deltaLoad = coldLoadTarget - coldLoad
         for i,stream in pairs(coldCC) do
           stream.Q = stream.Q + deltaLoad
@@ -179,9 +182,9 @@ end
 
 -- The hot streams and cold streams are dispatched in different arrays and are sorted by their minimal temperature.
 -- Tmin and Tmax are defined for each stream.
-function lib.splitHotAndCold(project, periode, time)
+function lib.splitHotAndCold(project, periode, time,options)
   local units = project.units[periode]
-  local delta_hot = tonumber(project.delta_hot)
+  local delta_hot = tonumber(project.results.delta_hot[periode][time])
   local hotStreams={}
   local coldStreams={}
   for i, unit in ipairs(units) do 
@@ -208,6 +211,9 @@ function lib.splitHotAndCold(project, periode, time)
           else
             graph_stream.CP   = graph_stream.Q / (graph_stream.Tin_corr - graph_stream.Tout_corr)
           end
+          if options and options.force_enthalpy then
+            graph_stream.CP = (graph_stream.Hin - graph_stream.Hout) / (graph_stream.Tin_corr - graph_stream.Tout_corr)
+          end
           --graph_stream.CP   = graph_stream.Q / (graph_stream.Tin_corr - graph_stream.Tout_corr)
           table.insert(hotStreams, graph_stream)
           --print('hot', stream.name, stream.Tin_corr-273, stream.Tout_corr-273, stream.Q, stream.CP)
@@ -216,6 +222,9 @@ function lib.splitHotAndCold(project, periode, time)
             graph_stream.CP = (graph_stream.Hin - graph_stream.Hout) / (graph_stream.Tin_corr - graph_stream.Tout_corr)
           else
             graph_stream.CP   = graph_stream.Q / (graph_stream.Tout_corr - graph_stream.Tin_corr)
+          end
+          if options and options.force_enthalpy then
+            graph_stream.CP = (graph_stream.Hin - graph_stream.Hout) / (graph_stream.Tin_corr - graph_stream.Tout_corr)
           end
           --graph_stream.CP   = graph_stream.Q / (graph_stream.Tout_corr - graph_stream.Tin_corr)
           table.insert(coldStreams, graph_stream)

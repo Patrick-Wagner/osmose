@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vali</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="css/docs.css" rel="stylesheet">
+        
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="container">
+        <div class='row'>
+          <div class='span12'>
+              <h1>Osmose documentation</h1> 
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+
+        <div class='span3 local-nav'>
+          <ul class='nav nav-tabs nav-stacked affix'>
+                        <li><a href='#Vali'><i class='icon-chevron-right'></i> osmose.Vali</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
+                      </ul>
+        </div>
+
+        <div class='main span7'>
+
+                    <section id='Vali'>
+          <h2 class='section'>Vali</h2>
+
+                    
+                    <p class='summary'>	This class is responsible for handling the Vali executable program. 	It generate the text files, execute the command and parse the results.</p>
+                    <p>	## Vali(model, dirTmp, blsFile)</p>
+                    <p>	It needs an instance of model (model), a temporary directory to store all the files (dirTmp) 	and the name of the bls file associated with the model (blsFile). This bls file 	is usually stored with the model definition on the ET library.</p>
+                    <p>	Vali Usage Example :</p>
+                    <p>	<code>local model = require "ET.Evap" ('test')</code> 	<code>local vali = Vali(model, 'test/tmp/', 'evap.bls')</code></p>
+                                        <h4 id='new' class='entry function'><span>.</span>new <code>(model, dirTmp, blsFile)</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              
+                    <h4 class='sub-title'>vali:copyBlsFile()</h4>
+                    <p>Copy the bls file on the temporary dir for Vali execution.</p>
+                                        <h4 id='copyBlsFile' class='entry method'><span>:</span>copyBlsFile <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              
+                    <h4 class='sub-title'>vali:copyBlsFile()</h4>
+                    <p>Generate the mea file from the mustache template. It needs to define the CST tags for vali, which are the model inputs tags recovered by the  vali:generateTags() function.</p>
+                                        <h4 id='generateMeaFile' class='entry method'><span>:</span>generateMeaFile <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='generateVifFile' class='entry method'><span>:</span>generateVifFile <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='execute' class='entry method'><span>:</span>execute <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='parseResult' class='entry method'><span>:</span>parseResult <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                                        <h4 id='generateTags' class='entry method'><span>:</span>generateTags <code>()</code></h4>
+          
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Vali'>Vali</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#copyBlsFile'>#copyBlsFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#generateMeaFile'>#generateMeaFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#generateVifFile'>#generateVifFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#execute'>#execute</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#parseResult'>#parseResult</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='#generateTags'>#generateTags</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                              </section>
+                  </div>
+
+        <div class='span2 global-nav'>
+          <ul class='nav nav-tabs nav-stacked'>
+                        <li class='module'><a href='osmose.html'>osmose</a></li>
+            
+                        <li class=''><a href='osmose.Eiampl.html'>Eiampl</a></li>
+                        <li class=''><a href='osmose.Glpk.html'>Glpk</a></li>
+                        <li class=''><a href='osmose.Graph.html'>Graph</a></li>
+                        <li class=''><a href='osmose.HTStream.html'>HTStream</a></li>
+                        <li class=''><a href='osmose.Layer.html'>Layer</a></li>
+                        <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
+                        <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
+                        <li class=''><a href='osmose.Project.html'>Project</a></li>
+                        <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
+                        <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class='active'><a href='osmose.Vali.html'>Vali</a></li>
+                      </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+    <div class="container">
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+    </div>
+    </footer>
+
+    <script src='https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js?lang=lua&skin=default'></script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        config: ["MMLorHTML.js"],
+        jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+        extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+        TeX: {
+          extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+        },
+        displayAlign: "left",
+        menuSettings: {
+          zoom: "Hover",
+          mpContext: true,
+          mpMouse: true
+        },
+      });
+    </script>
+    <script type="text/javascript"
+      src='https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js'></script>
+    <script src='http://code.jquery.com/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+  </body>
+</html>
+

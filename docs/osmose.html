@@ -45,26 +45,32 @@
                     <p class='summary'>The osmose directory contains the main classes of the application.</p>
                     <h4 class='sub-title'>Configuration</h4>
                     <p>A <code>config.lua</code> file must be created at the root of your working directory and must contain the path to the third parties executable.</p>
-                    <p>	Exemple of config.lua file:</p>
+                    <p>Exemple of config.lua file:</p>
                     <p>	OSMOSE_ENV["GLPSOL_EXE"] 	= 'glpsol'&lt;br/&gt; 	OSMOSE_ENV["VALI_EXE"] 		= '"C:\\path\\to\\vali.exe "'&lt;br/&gt; 	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'</p>
-                    <p>	Your working directory must contain the following directory :</p>
-                    <p>	/ET 					<em>folder to store ET models_ 	/projects     <em>folder to store frontends file</em> 	/results      _folder where osmose results will be generated</em></p>
-                    <p>	## Frontend</p>
-                    <p>	A typical frontend will stored in file such as <code>jam.lua</code>  	in the <code>projects</code> directory and will have the following elements :</p>
-                    <p>		local osmose = require 'osmose'</p>
-                    <p>		local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</p>
-                    <p>		project:load( 			{cip = "ET.Cip"}, 		  {utilities = "ET.generic_utilities"}, 			{cm1 = "ET.CookingMixing"}, 			{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} 		)</p>
-                    <p>		local oneRun = <a href='osmose.Eiampl.html'>osmose.Eiampl</a>(project)</p>
-                    <p>		osmose.Glpk(oneRun)</p>
-                    <p>		osmose.Graph(oneRun)</p>
-                    <p>	## ET Models</p>
-                    <p>	You can create you're own ET models and store then in  	a local directory such as 'ET'. Please see the Model 	documentation page.</p>
+                    <p>Your working directory must contain the following directory :</p>
+                    <p>/ET 					<em>folder to store ET models_ /projects     <em>folder to store frontends file</em> /results      _folder where osmose results will be generated</em></p>
+                    <h4 class='sub-title'>Frontend</h4>
+                    <p>A typical frontend will stored in file such as <code>jam.lua</code>  in the <code>projects</code> directory and will have the following elements :</p>
+                    <p>	local osmose = require 'osmose'</p>
+                    <p>	local project = <a href='osmose.Project.html'>osmose.Project</a>('LuaJam', 'MER')</p>
+                    <p>	project:load( 		{cip = "ET.Cip"}, 	  {utilities = "ET.generic_utilities"}, 		{cm1 = "ET.CookingMixing"}, 		{cm2 = "ET.CookingMixing", with = 'CM2_inputs.csv'} 	)</p>
+                    <p>	project:solve()</p>
+                    <p>	project:postCompute('jam_postcompute')</p>
+                    <h4 class='sub-title'>Optimisation</h4>
+                    <p>Osmose works seamlessly with <a href='http://dakota.sandia.gov/software.html'>Dakota</a>.</p>
+                    <p>	local osmose = require 'lib.osmose'</p>
+                    <p>	local project = <a href='osmose.Project.html'>osmose.Project</a>('S_Problem_MOO', 'OpCostWithImpact') 	project.operationalCosts = {cost_elec_in = 17.19, cost_elec_out = 16.9, op_time= 2000.0} 	project:load({P_MOO = "ET.S_Problem_MOO"})</p>
+                    <p>	project:optimize { 		software='dakota', 		precomputes={'S_problem_MOO_precompute'}, 		objectives={'S_problem_MOO_postcompute1'}, 		objectives_size=2, 		variables={x1={lower_bound='0', upper_bound='1.0', initial='0.5'}, 							 x2={lower_bound='0', upper_bound='1.0', initial='0.5'}}, 		method={name = 'moga', max_iterations=100}, 		}</p>
+                    <h4 class='sub-title'>ET Models</h4>
+                    <p>You can create you're own ET models and store then in  a local directory such as 'ET'. Please see the Model documentation page.</p>
                                         <h4 id='-------------' class='entry klass'><a href='osmose.Eiampl.html'>Eiampl</a></h4>
           
                     <p class='summary'>	This class is responsible to prepare the ET models 	for the solver. 	 	local eiampl = <a href='osmose.Eiampl.html'>osmose.Eiampl</a>(project)</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Eiampl.html#Class-function'>Class-function</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='-----------' class='entry klass'><a href='osmose.Glpk.html'>Glpk</a></h4>
           
                     <p class='summary'>This class interfaces with the Glpk solver. It generates the <strong>data</strong>, copy the <strong>mod</strong> files, call the solver executable and parse the results.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Glpk.html#Privates-methodes'>Privates-methodes</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='------------' class='entry klass'><a href='osmose.Graph.html'>Graph</a></h4>
           
                     <p class='summary'>Create a Gnuplot graph. Just create new instance to create plain Gnuplot graph.</p>
@@ -77,18 +83,41 @@
                                         <h4 id='-----------------' class='entry klass'><a href='osmose.MassStream.html'>MassStream</a></h4>
           
                     <p class='summary'>Use this class to create Mass Stream into your ET Model.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.MassStream.html#MassStream'>MassStream</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='------------' class='entry klass'><a href='osmose.Model.html'>Model</a></h4>
           
                     <p class='summary'>Use this class to create new models. A model stores the energy technology definitions such as <strong>inputs</strong>, <strong>outputs</strong> and <strong>processes</strong>. A model does not store actual parameter values. The "model" is like a formula. You create instances of the model with specific parameter values to create an experiment.</p>
+                                        <h4 id='------------------------' class='entry klass'><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></h4>
+          
+                    <p class='summary'>Module for defining the different EI objective functions.</p>
+                                        <h4 id='----------------' class='entry klass'><a href='osmose.PostPrint.html'>PostPrint</a></h4>
+          
+                    <p class='summary'>PostPrint output main results return by GLPK</p>
+                    <p class='todo'><span class='ref'><a href='osmose.PostPrint.html#PostPrint'>PostPrint</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='--------------' class='entry klass'><a href='osmose.Project.html'>Project</a></h4>
           
                     <p class='summary'>Create an Osmose Project that specify an objective, load the ET models and indicate the periode and time cycle.</p>
                                         <h4 id='---------------' class='entry klass'><a href='osmose.QTStream.html'>QTStream</a></h4>
           
                     <p class='summary'>Use this class to create HT Stream in your ET model.</p>
+                                        <h4 id='---------------------' class='entry klass'><a href='osmose.ResourceStream.html'>ResourceStream</a></h4>
+          
+                    <p class='summary'>Use this class to create Resource Stream for your ET Model.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.ResourceStream.html#ResourceStream'>ResourceStream</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.ResourceStream.html#initFlow'>#initFlow</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='-----------' class='entry klass'><a href='osmose.Unit.html'>Unit</a></h4>
           
                     <p class='summary'>Use this class to create Process or Utility in ET models.</p>
+                                        <h4 id='-----------' class='entry klass'><a href='osmose.Vali.html'>Vali</a></h4>
+          
+                    <p class='summary'>	This class is responsible for handling the Vali executable program. 	It generate the text files, execute the command and parse the results.</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#Vali'>Vali</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#copyBlsFile'>#copyBlsFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#generateMeaFile'>#generateMeaFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#generateVifFile'>#generateVifFile</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#execute'>#execute</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#parseResult'>#parseResult</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
+                    <p class='todo'><span class='ref'><a href='osmose.Vali.html#generateTags'>#generateTags</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
@@ -103,9 +132,13 @@
                         <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
                         <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class=''><a href='osmose.Vali.html'>Vali</a></li>
                       </ul>
         </div>
       </div>
@@ -113,7 +146,7 @@
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

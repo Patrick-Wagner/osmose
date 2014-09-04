@@ -58,6 +58,11 @@ In [ZeroBrane Studio](http://studio.zerobrane.com/) you can specify the lua path
 	-- OSX
 	path.lua = "/usr/local/bin/lua"
 
+## Dakota
+
+Install the version 6.0 of [Dakota](http://dakota.sandia.gov/distributions/dakota/6.0/download.html) following the [installation instructions](http://dakota.sandia.gov/distributions/dakota/6.0/install.html)
+
+
 ## After installation
 
 Once Osmose is installed, you need to create a repository to manage osmose project and ET. A typical working repository should the following folders and file :
@@ -72,7 +77,9 @@ config.lua 		_the osmose config file_
 You must create a config.lua file to store the executables, like this :
 
 OSMOSE_ENV["GLPSOL_EXE"] 	= '/usr/local/bin/glpsol'<br/>
-OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'
+OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'<br/>
+OSMOSE_ENV["DAKOTA_EXE"] = '/usr/local/dakota/bin/dakota'<br/>
+OSMOSE_ENV["LUA_EXE"] = '/usr/local/Cellar/lua/5.1.5/bin/lua'
 
 or on Windows :
 

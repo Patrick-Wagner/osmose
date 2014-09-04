@@ -39,8 +39,8 @@ function should.initStreams()
   	stream1 =  { 20, 0, 80,800,3,1},
   	stream2 =  { 80, 800, 20, 0,3,1},
 
-  	stream_dot1 = { 80, 0, 80,800,3,1},
-  	stream_dot2 =  { 80, 800, 80, 0,3,1},
+  	stream_dot1 = { 80, 0, 80,800,3,1}, -- cold
+  	stream_dot2 =  { 80, 800, 80, 0,3,1}, -- hot
 
   	stream_bug = { 80, 0, 20,800,3,1},
 	})
@@ -59,12 +59,76 @@ function should.initStreams()
 	assertEqual(true, 	table.find(streams, 'stream2').isHot())
 
 	-- Test when stream is a dot
-	assertEqual(false,	table.find(streams, 'stream_dot1').isHot())
-	assertEqual(true, 	table.find(streams, 'stream_dot2').isHot())
+	local dot1 = table.find(streams, 'stream_dot1')
+	assertEqual(false,	dot1.isHot())
+	assertEqual(353.0001, dot1.ftoutCorr())
+	assertEqual(353.0001, dot1.ftout())
+
+	local dot2 = table.find(streams, 'stream_dot2')
+	assertEqual(true, 	dot2.isHot())
+	assertEqual(353.0001, dot2.ftinCorr())
+	assertEqual(353.0001, dot2.ftin())
 
 	-- Test when stream is inconsistent
 	assertEqual(nil, 	table.find(streams, 'stream_bug').isHot())
 end
+
+function should.initWithMultiTime()
+
+  local p=osmose.Project('project')
+  p:load({cip = "ET.Cip", with="../fixtures/CM2_inputs_multi_times.csv"})
+  p:periode(1):time(3)
+  local eiampl = osmose.Eiampl(p)
+
+  -- first unit of periode 1
+  local unit = eiampl.units[1][1]
+  local streams = unit.streams
+  assertEqual('CipUnit', unit.shortName)
+
+  -- streams
+  local cleaning_agent = table.find(streams, 'cleaning_agent')
+  assertEqual('cleaning_agent', cleaning_agent.shortName)
+
+  -- models
+  local model = eiampl.models[1]
+  assertEqual('cip', model.name)
+  model.periode = 1
+
+  model.time = 1
+  assertEqual(293, cleaning_agent.ftin(model))
+  assertEqual(358, cleaning_agent.ftout(model))
+  assertEqual(false, cleaning_agent.isHot(model))
+  assertEqual(293, cleaning_agent.Tin(model))
+  assertEqual(3, cleaning_agent.fdtmin(model))
+  assertEqual(296, cleaning_agent.Tin_corr(model))
+  assertEqual(361, cleaning_agent.Tout_corr(model))
+
+  model.time = 3
+  assertEqual(373, cleaning_agent.ftin(model))
+  assertEqual(358, cleaning_agent.ftout(model))
+  assertEqual(true, cleaning_agent.isHot(model))
+  assertEqual(373, cleaning_agent.Tin(model))
+  assertEqual(370, cleaning_agent.Tin_corr(model))
+  assertEqual(355, cleaning_agent.Tout_corr(model))
+
+  -- dot streams
+  local dot_cold = table.find(streams, 'dot_cold')
+  local dot_hot = table.find(streams, 'dot_hot')
+
+  model.time =1
+  assertEqual(false, dot_cold.isHot(model))
+  assertEqual((80+273.0001), dot_cold.Tout(model))
+  assertEqual((80+273), dot_cold.Tin(model))
+  assertEqual(true, dot_hot.isHot(model))
+
+  model.time =3
+  assertEqual(true, dot_cold.isHot(model))
+  assertEqual((80+273.0001), dot_cold.Tin(model))
+  assertEqual((80+273), dot_cold.Tout(model))
+  assertEqual(false, dot_hot.isHot(model))
+
+end
+
 
 function should.initMassStreamsWithOneLayer()
 	local lib = osmose.Model 'TEST1LAYER'
@@ -141,6 +205,37 @@ function should.evalAddToProblem()
 	local eiampl = osmose.Eiampl(p)
 
 	assertEqual(2, table.getn(eiampl.units[1]))
+end
+
+function should.freezeStream()
+	local lib = osmose.Model 'TEST'
+	lib:addUnit("unit", {type = 'Process'})
+	lib["unit"]:addStreams({  
+  	stream1 =  { 20, 0, 80,800,3,1},
+	})
+	local p=osmose.Project('project')
+	p:load({test = lib})
+
+	local eiampl = osmose.Eiampl(p)
+	local stream1 = eiampl.units[1][1].streams[1]
+
+	assertEqual(293, stream1:freeze().tin)
+end
+
+function should.freezeUnit()
+	local lib = osmose.Model 'TEST'
+	lib:addUnit("unit", {type = 'Process'})
+	lib["unit"]:addStreams({  
+  	stream1 =  { 20, 0, 80,800,3,1},
+	})
+	local p=osmose.Project('project')
+	p:load({test = lib})
+
+	local eiampl = osmose.Eiampl(p)
+	local unit = eiampl.units[1][1]
+
+	assertEqual('unit',unit:freeze().shortName)
+	assertEqual(293,unit:freeze().streams[1].tin)
 end
 
 should:test()
