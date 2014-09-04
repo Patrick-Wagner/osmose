@@ -264,8 +264,6 @@ function lib:setTag(name, value, periode, time)
 end
 
 
-
-
 --[[
   Solve the project with Glpk by default and do graphs.
 
@@ -315,15 +313,14 @@ end
 
   Exemple :
 
-    project:optimize {
+  project:optimize {
     software='dakota',
-    precomputes={'jam_precompute'},
-    objectives={'jam_rosenbrock'},
-    -- variables={x1={model='cm1', tag='prod_2_flow', lower_bound='1800', uper_bound='2200', initial='2100'},
-    --           x2={model='cm1', tag='prod_1_flow', lower_bound='800', uper_bound='1200', initial='900'}},
-    variables={x1={lower_bound='-2', uper_bound='2', initial='-1'},
-               x2={lower_bound='-2', uper_bound='2', initial='1'}},
-    method='conmin_frcg',
+    precomputes={'S_problem_MOO_precompute'},
+    objectives={'S_problem_MOO_postcompute1'},
+    objectives_size=2,
+    variables={x1={lower_bound='0', upper_bound='1.0', initial='0.5'},
+               x2={lower_bound='0', upper_bound='1.0', initial='0.5'}},
+    method={name = 'moga', max_iterations=100},
     }
 --]]
 function lib:optimize(args)

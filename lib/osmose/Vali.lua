@@ -1,16 +1,22 @@
--- ## Vali(model, dirTmp, blsFile)
+--[[---------------------------------------
+  
+  # Vali
+  
+	This class is responsible for handling the Vali executable program.
+	It generate the text files, execute the command and parse the results.
 
--- This class is responsible for handling the Vali executable program.
--- It generate the text files, execute the command and parse the results.
+	## Vali(model, dirTmp, blsFile)
 
--- It needs an instance of model (model), a temporary directory to store all the files (dirTmp)
--- and the name of the bls file associated with the model (blsFile). This bls file
--- is usually stored with the model definition on the ET library.
+	It needs an instance of model (model), a temporary directory to store all the files (dirTmp)
+	and the name of the bls file associated with the model (blsFile). This bls file
+	is usually stored with the model definition on the ET library.
 
--- Vali Usage Example :
+	Vali Usage Example :
 
--- `local model = require "ET.Evap" ('test')`
--- `local vali = Vali(model, 'test/tmp/', 'evap.bls')`
+	`local model = require "ET.Evap" ('test')`
+	`local vali = Vali(model, 'test/tmp/', 'evap.bls')`
+--]]---------------------------------------
+
 
 
 local lustache = require "lib.osmose.eiampl.vendor.lustache"

@@ -35,6 +35,7 @@
                         <li><a href='#Glpk'><i class='icon-chevron-right'></i> osmose.Glpk</a></li>
                         <li><a href='#Class-method'><i class='icon-chevron-right'></i> Class method</a></li>
                         <li><a href='#Privates-methodes'><i class='icon-chevron-right'></i> Privates methodes</a></li>
+                        <li><a href='#TODO'><i class='icon-chevron-right'></i> TODO</a></li>
                       </ul>
         </div>
 
@@ -45,7 +46,7 @@
 
                     
                     <p class='summary'>This class interfaces with the Glpk solver. It generates the <strong>data</strong>, copy the <strong>mod</strong> files, call the solver executable and parse the results.</p>
-                                        <h4 id='mod_directory' class='entry param'><span>.</span>mod_directory <code>= lub.path('|')..'/eiampl/mod'</code></h4>
+                                        <h4 id='mod_directory' class='entry param'><span>.</span>mod_directory <code>= lub.path('&'):gsub('Glpk.lua','')..'/eiampl/mod'</code></h4>
           
                     <p>The directory where mod files are stored.</p>
                                         <h4 id='run_filename' class='entry param'><span>.</span>run_filename <code>= 'eiampl.run'</code></h4>
@@ -66,9 +67,6 @@
                                         <h4 id='get_post_solve_mod = {"eiampl_glpsol_postSolve.mod", "costing_postSolve.mod", "heat_cascade_base_postSolve.mod"}' class='entry const'>get_post_solve_mod = {"eiampl_glpsol_postSolve.mod", "costing_postSolve.mod", "heat_cascade_base_postSolve.mod"}</h4>
           
                     <p>The post solve mod files that are required for the solver.</p>
-                                        <h4 id='generate_solve_function' class='entry param'><span>.</span>generate_solve_function <code>= "minimize ObjectiveFunction : Costs_Cost['osmose_default_model_DefaultOpCost']; solve; \n\n"</code></h4>
-          
-                    <p>The default solve function used by the solver</p>
                                         <h4 id='locations' class='entry param'><span>.</span>locations <code>= {{name='def_location'}}</code></h4>
           
                     <p>"def_location" is the default location.</p>
@@ -89,19 +87,24 @@
                     <section id='Privates-methodes'>
           <h2 class='section'>Privates methodes</h2>
 
-                    
-                                        <h4 id='generateDataWithTimes' class='entry function'><span>.</span>generateDataWithTimes <code>(project, periode)</code></h4>
+                              <h4 id='generateDataWithTimes' class='entry function'><span>.</span>generateDataWithTimes <code>(project, periode)</code></h4>
           
                     <p>This function generate the datas for a <code>project</code> on a given <code>periode</code>.</p>
-                                        <h4 id='addMerUnits' class='entry function'><span>.</span>addMerUnits <code>(units, project_name)</code></h4>
+                                        <h4 id='streamsTinWithTimesForHClayer' class='entry function'><span>.</span>streamsTinWithTimesForHClayer <code>(units, periode, times,HClayers)</code></h4>
           
-                    <p>This function add 2 Units to solve the MER Objective : Default HeatCascade Unit Hot (DHCU_h) and Default HeatCascade Unit Cold (DHCU_c). Each of them has 1 stream, hot and cold.</p>
+                    <p class='todo'><span>TODO</span> MISSING DOCUMENTATION</p>
                                         <h4 id='streamsTinWithTimes' class='entry function'><span>.</span>streamsTinWithTimes <code>(units, periode, times)</code></h4>
           
                     <p>This function return all the mininum streams of the <strong>units</strong> and sort them ascendingly.</p>
                                         <h4 id='generateModWithTimes' class='entry function'><span>.</span>generateModWithTimes <code>(project,return_solver, periode)</code></h4>
           
                     <p>This function read all the mod files and concatenate them in one single content. It add the solve function depending of the objective of the project.</p>
+                              </section>
+                    <section id='TODO'>
+          <h2 class='section'>TODO</h2>
+
+                    
+                    <p class='todo'><span class='ref'><a href='#Privates-methodes'>Privates-methodes</a></span><span>TODO</span> MISSING DOCUMENTATION</p>
                               </section>
                   </div>
 
@@ -116,9 +119,13 @@
                         <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class=''><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
                         <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class=''><a href='osmose.Vali.html'>Vali</a></li>
                       </ul>
         </div>
       </div>
@@ -126,7 +133,7 @@
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

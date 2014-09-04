@@ -1,29 +1,37 @@
--- Module for defining the different EI objective functions.
+--[[---------------------------------------
+  
+  # ObjectiveFunction
+  
+  Module for defining the different EI objective functions.
 
--- @author: Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
+   @author: Samira Fazlollahi (samira.fazlollahi@a3.epfl.ch)
 
--- @copyright IPESE
+   @copyright IPESE
 
--- @param: Project.objective
+   @param: Project.objective
 
--- @release 0.1
+   @release 0.1
 
--- @return: the extended definition of objective function of mod file
+   @return: the extended definition of objective function of mod file
 
--- @status _proposed
+   @status _proposed
 
--- The general type of objective functions are; 
--- MER: Costs_Cost['DefaultOpCost'] 
--- InvestmentCost: Costs_Cost['DefaultInvCost']
--- OperatingCost: Costs_Cost['DefaultOpCost'] 
--- MechanicalPower: Costs_Cost['DefaultMechPower']
--- Impact: Costs_Cost['DefaultImpact']
--- TotalCost: InvestmentCost+OperatingCost 
--- OpCostWithImpact: OperatingCost+Impact
--- TotalCostWithPower: InvestmentCost+OperatingCost+ MechanicalPower
--- TotalCostWithImpact: InvestmentCost+OperatingCost+Impact
--- TotalCostWithImpactAndPower: InvestmentCost+OperatingCost+ MechanicalPower+Impact
--- YearlyOperatingCost
+   The general type of objective functions are; 
+   MER: Costs_Cost['DefaultOpCost'] 
+   InvestmentCost: Costs_Cost['DefaultInvCost']
+   OperatingCost: Costs_Cost['DefaultOpCost'] 
+   MechanicalPower: Costs_Cost['DefaultMechPower']
+   Impact: Costs_Cost['DefaultImpact']
+   TotalCost: InvestmentCost+OperatingCost 
+   OpCostWithImpact: OperatingCost+Impact
+   TotalCostWithPower: InvestmentCost+OperatingCost+ MechanicalPower
+   TotalCostWithImpact: InvestmentCost+OperatingCost+Impact
+   TotalCostWithImpactAndPower: InvestmentCost+OperatingCost+ MechanicalPower+Impact
+   YearlyOperatingCost  
+--]]---------------------------------------
+
+
+
 
 local lub 	= require 'lub'
 local lib 	= lub.class 'osmose.ObjectiveFunction'

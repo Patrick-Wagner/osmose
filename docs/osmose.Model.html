@@ -133,7 +133,8 @@ discharge     = { 'return_temp','discharge_load','max_temp', 0, 3, 'water_h'},
                               
                     <h4 class='sub-title'>addLayers(layers)</h4>
                     <p>Add layers to model :</p>
-                    <pre class='prettyprint lang-lua'>lib:addLayers {electricity = {type='MassBalance', unit='kW'}}</pre>
+                    <pre class='prettyprint lang-lua'>lib:addLayers {electricity = {type='MassBalance', unit='kW'}}
+lib:addLayers {gas = {type='ResourceBalance', unit='kW'}}</pre>
                               
                     <h4 class='sub-title'>addEquations(equations)</h4>
                     <p>Add equations to model : lib:addEquations {eq_1 = "-1<strong>u2 + 1</strong>u4 &lt;= 0"} or  lib:addEquations {eq_2 = { statement = "-1<strong>u2 + 1</strong>u4 &lt;= 0", addToProblem=1 } }</p>
@@ -185,9 +186,13 @@ print(heater.final_temp) -- Calls this method to solve value.</pre>
                         <li class=''><a href='osmose.Layer.html'>Layer</a></li>
                         <li class=''><a href='osmose.MassStream.html'>MassStream</a></li>
                         <li class='active'><a href='osmose.Model.html'>Model</a></li>
+                        <li class=''><a href='osmose.ObjectiveFunction.html'>ObjectiveFunction</a></li>
+                        <li class=''><a href='osmose.PostPrint.html'>PostPrint</a></li>
                         <li class=''><a href='osmose.Project.html'>Project</a></li>
                         <li class=''><a href='osmose.QTStream.html'>QTStream</a></li>
+                        <li class=''><a href='osmose.ResourceStream.html'>ResourceStream</a></li>
                         <li class=''><a href='osmose.Unit.html'>Unit</a></li>
+                        <li class=''><a href='osmose.Vali.html'>Vali</a></li>
                       </ul>
         </div>
       </div>
@@ -195,7 +200,7 @@ print(heater.final_temp) -- Calls this method to solve value.</pre>
 
     <footer class="footer">
     <div class="container">
-       Documentation on 2014-03-18 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
+       Documentation on 2014-09-04 with <a href='http://doc.lubyk.org/lut.Doc.html'>lut.Doc</a> 
     </div>
     </footer>
 

@@ -1,6 +1,10 @@
--- #Resource Stream
+--[[---------------------------------------
+  
+  # Resource Stream
+  
+  Use this class to create Resource Stream for your ET Model.
+--]]---------------------------------------
 
--- Use this class to create Resource Stream for your ET Model.
 
 -- osmose.ResourceStream() work in combinaison with osmose.Layer().
 

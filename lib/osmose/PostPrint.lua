@@ -1,8 +1,8 @@
 --[[---------------------------------------
   
-  #PostPrint
+  # PostPrint
   
-  PostPrint exemple
+  PostPrint output main results return by GLPK
 --]]---------------------------------------
 
 local lub   = require 'lub'
