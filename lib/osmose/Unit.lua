@@ -103,6 +103,8 @@ function lib:addStreams(tbl)
         self.streams[name] = values
       elseif values.type=='MassStream' then
         self.streams[name] = values
+      elseif values.type=='ResourceStream' then
+        self.streams[name] = values
       elseif values.type=='HTStream' then
         for i, stream in ipairs(values) do
           local HTname = name..i
