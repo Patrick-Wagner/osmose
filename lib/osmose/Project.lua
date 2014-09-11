@@ -124,7 +124,11 @@ function lib:load(...)
       self.sourceDir = sourceDir
       model.loadValues(sourceDir..valuesPath)
     end
-
+    if self.sourceDir == nil then
+        local sourcePath = debug.getinfo(2).source:sub(2)
+        self.sourceDir = sourcePath:match("(.*[/\\])")
+    end
+  
     table.insert(self.models, model)
   end
   return nil
@@ -370,7 +374,7 @@ function lib:optimize(args)
   function listen(server, tmpDir, project)
     print('Listen to', software)
     local client = server:accept()
-    client:settimeout(10)
+    --client:settimeout(10)
     local line, err, partial = client:receive("*l")
     print('listen', line, err, partial)
     if line=="stop" or partial=="stop" then
