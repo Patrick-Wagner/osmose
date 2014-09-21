@@ -124,7 +124,11 @@ function lib:load(...)
       self.sourceDir = sourceDir
       model.loadValues(sourceDir..valuesPath)
     end
-
+    if self.sourceDir == nil then
+        local sourcePath = debug.getinfo(2).source:sub(2)
+        self.sourceDir = sourcePath:match("(.*[/\\])")
+    end
+  
     table.insert(self.models, model)
   end
   return nil
