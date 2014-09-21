@@ -361,16 +361,12 @@ function lib:optimize(args)
   -- prepare project with Eiampl
   local project = Eiampl(self)
 
-  if lub.plat() == 'macosx' or lub.plat() == 'linux' then
-    os.execute "lsof -t -i  tcp:3333 | xargs kill"
-  end
-
   local server = assert(socket.bind("*", 3333))
 
   function listen(server, tmpDir, project)
     print('Listen to', software)
     local client = server:accept()
-    client:settimeout(10)
+    --client:settimeout(10)
     local line, err, partial = client:receive("*l")
     print('listen', line, err, partial)
     if line=="stop" or partial=="stop" then

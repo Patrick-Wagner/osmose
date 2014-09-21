@@ -103,9 +103,7 @@ function lib.new(project, return_solver)
      print(cmd)
 		 print('-------------------------------------------------------------------------------------------')
 		
-		 local f=assert(io.popen(cmd))
-		 f:read("*a")
-		 f:close()
+		 os.execute(cmd)
 					
 		if return_solver then
 			local f = io.open(tmp_dir..lib.result_filename,"r")

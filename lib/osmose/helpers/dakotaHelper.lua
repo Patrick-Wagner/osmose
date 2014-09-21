@@ -224,6 +224,8 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 
 	method.max_iterations = method.max_iterations or 50
 
+	local graphics = args['graphics']
+
 	local graphics_path = tmpDir..'/graphics.dat'
 
 	-- fill the dakota template
@@ -237,6 +239,7 @@ function lib.prepareFiles(tmpDir,sourceDir, args)
 		params_in = tmpDir..'/params.in',
 		results_out = tmpDir..'/results.out',
 		graphics_path = graphics_path,
+		graphics = graphics,
 		})
 
 	-- store the template in dakota.in file
