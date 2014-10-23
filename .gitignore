@@ -7,3 +7,4 @@ config.lua
 dakota.rst
 *.log
 *.dat
+.ruby-version
