@@ -8,9 +8,10 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 	-- Opening the result file.
 	local f = assert(io.open(tmp_dir..project.result_filename,"r"))
   
+  local lineNb=0  
 	-- Reading each line.
 	for line in f:lines() do
-    
+    lineNb = lineNb+1
 		-- Capture the param, domain, value regarding the pattern "param[domaine].val = value"
     --  HC_Rk[DefaultHeatCascade,mt_test_def_location,2,4].val = 90
 		local param, layer, tag, time,int, value = line:match("(.*)%[([%w_]+),([%w_]*),*(%d*),*(%d*)%].*=%s*(%d*.*)")
@@ -125,6 +126,11 @@ function lib.parseResultGlpkFile(project, tmp_dir, periode)
 		end
 	end
 	f:close()
+
+  -- The project has no feasible solution if the result file is empty.
+  if lineNb<=1 then
+    project.hasNoFeasibleSolution = true
+  end
 end
 
 

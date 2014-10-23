@@ -33,6 +33,10 @@ local lib   = lub.class 'osmose.Graph'
 --]]
 function lib.new(project, format, options)
   
+  if project.hasNoFeasibleSolution then
+    return nil
+  end
+
   if OSMOSE_ENV["GNUPLOT_EXE"] == nil then
     print('Gnuplot executable must be specified config.lua file with OSMOSE_ENV["GNUPLOT_EXE"] variable.')
     os.exit()
