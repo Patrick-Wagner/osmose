@@ -158,7 +158,7 @@ function lib.freezeUnit(self, periode, time)
   freeze.shortName = self.shortName
   freeze.name = self.name
   freeze.type = self.type
-  freeze.model = self.model
+  -- freeze.model = self.model
   freeze.streams = {}
   for i,s in ipairs(self.streams) do
   	table.insert(freeze.streams, s:freeze(periode, time) )
