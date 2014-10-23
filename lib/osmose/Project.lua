@@ -312,6 +312,11 @@ function lib:solve(args)
   return self
 end
 
+
+
+
+
+
 --[[
   Launch mutlti objectives optimization.
 
@@ -345,7 +350,7 @@ function lib:optimize(args)
 
   local software = args['software']
   local cmd = ''
-  local tmpDire = ''
+  local tmpDir = ''
   if software == nil then
     print('You must specify a software name for opimization.')
     return nil
@@ -367,41 +372,32 @@ function lib:optimize(args)
 
   local server = assert(socket.bind("*", 3333))
 
-  function listen(server, tmpDir, project)
-    print('Listen to', software)
-    local client = server:accept()
-    --client:settimeout(10)
-    local line, err, partial = client:receive("*l")
-    print('listen', line, err, partial)
-    if line=="stop" or partial=="stop" then
-      print("Optimization finished")
-      print("Result direcory is", tmpDir)
-      client:close()
-      server:close()
-      return "stop"
-    end
-    if err then
-      error(err)
-    end
-    print('LINE',line)
-    local rslt = lib.call(project,line)
-    --print('result', line, rslt)
-    if rslt then 
-      client:send(rslt.."\n")
-      client:close()
-    else
-      client:close()
-    end
-  end
-
   print('Dakota command is', cmd)
   local file = assert(io.popen(cmd,"w"))
 
-  while true do
-    if listen(server,tmpDir, project) == "stop" then break end
-  end
+  lib.privateListen(project,server)
+
+  print("Optimization finished")
+  print("Result direcory is", tmpDir)
 
 end
+
+
+
+function lib:listen()
+  local ok, socket = pcall(require,"socket")
+  if ok==false then
+    print('Lua socket is not installed. Please install with this command :')
+    print('luarocks install socket')
+    os.exit()
+  end
+
+  local server = assert(socket.bind("*", 3333))
+
+  lib.privateListen(self, server,'json')
+
+end
+
 
 --[[
   Lauch post compute function, which must writen in a lua file 
@@ -411,38 +407,79 @@ end
     fonction:  jam_postcompute
     file: jam_postcomplute.lua
 
-    project:postCompute('jam_postcompute') 
+    project:compute('jam_postcompute') 
 
 --]]
-function lib:postCompute(name)
+function lib:compute(name)
   if self.sourceDir == nil then
     local sourcePath = debug.getinfo(2).source:sub(2)
     self.sourceDir = sourcePath:match("(.*[/\\])")
   end
 
-  local full_path = (self.sourceDir or "")..name..".lua"
-  if  io.open(full_path) == nil then  
-    return nil
+  local baseName, ext = name:match("([%w_]+)%.?([%w_]*)")
+
+  ext = ext or 'lua'
+
+  if ext=='lua' and baseName ~= nil then 
+    local full_path = (self.sourceDir or "")..baseName.."."..ext
+    if  io.open(full_path) == nil then  
+      return nil
+    end
+
+    local fct = loadfile(full_path)()
+
+    return _G[baseName](self)
+
+  elseif ext=="rb" then
+    print("Call ruby file")
+    local ruby_helper = require 'osmose.helpers.rubyHelper'
+
+    local ok, socket = pcall(require,"socket")
+    if ok==false then
+      print('Lua socket is not installed. Please install with this command :')
+      print('luarocks install socket')
+      os.exit()
+    end
+
+    local server = assert(socket.bind("*", 3333))
+
+    local cmd = ruby_helper.prepareCompute(self.dirRun,self.sourceDir,baseName)
+    print("ruby command is",cmd)
+
+    local file = assert(io.popen(cmd,"w"))
+
+    lib.privateListen(self, server,'json')
+
   end
-
-  local fct = loadfile(full_path)()
-
-  return _G[name](self)
 end
 
 -- Private method.
-function lib:call(str)
-  --print('CALL',str)
-  -- Serpent is used for serializing results
-  local ok, serpent = pcall(require ,'serpent')
-  if ok==false then 
-    print('serpent is not installed. Please install it :')
-    print('luarocks install serpent')
-    os.exit()
+function lib:call(str,encoding)
+
+  local _encode
+
+  if encoding == 'serpent' or encoding == nil then 
+    -- Serpent is used for serializing results
+    local ok, serpent = pcall(require ,'serpent')
+    if ok==false then 
+      print('serpent is not installed. Please install it :')
+      print('luarocks install serpent')
+      os.exit()
+    end
+    print('Encoding with Serpent.')
+    _encode = function(value) return serpent.dump(value) end
+
+  elseif encoding == 'json' then
+    local json = (loadfile "./lib/osmose/helpers/json.lua")()
+    print('Encoding with JSON.')
+
+    _encode = function(value) 
+      --print(serpent.dump(value))
+      return json:encode(value) 
+    end
   end
 
-  if str==nil or str=='' then return serpent.dump(nil) end
-
+  if str==nil or str=='' then return _encode(nil) end
 
   -- Split arguments between comma (',')
   local str = lub.strip(str)
@@ -485,16 +522,52 @@ function lib:call(str)
       result = unit:freeze(periode,time)
     end
   elseif fct == 'solve' then
+    local self = Eiampl(self)
     Glpk(self)
+    setmetatable(self, lib)
     result = true
-    --Graph(self, {format='svg'})
   elseif fct == 'getResults' then
     result = self.results
   else
     result =  nil
   end
 
-  return serpent.dump(result)
+  return _encode(result)
+end
+
+-- Private method.
+function lib.privateListen(project,server,encoding)
+  -- if lub.plat() == 'macosx' or lub.plat() == 'linux' then
+  -- os.execute "lsof -t -i tcp:3333 | xargs kill"
+  -- end
+  --print('Startin listening...')
+  while true do
+    print('Listen to port 3333')
+
+    local client = server:accept()
+    local line, err, partial = client:receive("*l")
+    --print('receive', line, err, partial)
+    if line=="stop" or partial=="stop" then
+      print("Closing port 3333")
+      client:close()
+      server:close()
+      return "stop"
+    end
+    if err then
+      client:close()
+      error(err)
+    end
+    --print('LINE',line)
+    local rslt = lib.call(project,line,encoding)
+    --print('result', line, rslt)
+    if rslt then 
+      client:send(rslt.."\n")
+      client:close()
+    else
+      client:send("nil\n")
+      client:close()
+    end
+  end
 end
 
 

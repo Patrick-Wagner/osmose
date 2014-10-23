@@ -3,7 +3,7 @@ local osmose = require 'osmose'
 local lut    = require 'lut'
 
 
-local should = lut.Test 'osmose.Project'
+local should = lut.Test( 'osmose.Project', {coverage=false})
 
 function initProject()
 	local p1 = osmose.Project('LuaJam', 'MER')
@@ -180,10 +180,12 @@ function should.optimize()
 	assertNil(p1:optimize({}))
 end
 
-function should.postCompute()
+function should.compute()
 	local p1 = initProject()
 
-	assertNil(p1:postCompute(""))
+	assertNil(p1:compute(""))
 end
+
+
 
 should:test()

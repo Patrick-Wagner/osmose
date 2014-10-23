@@ -39,7 +39,7 @@ in the `projects` directory and will have the following elements :
 
 	project:solve()
 
-	project:postCompute('jam_postcompute')
+	project:compute('jam_postcompute')
 
 ## Optimisation
 
