@@ -1,6 +1,4 @@
 local lib={}
-local lustache = require "osmose.eiampl.vendor.lustache"
-local lub = require 'lub'
 
 lib.connectOsmose = [[
 require 'socket'
