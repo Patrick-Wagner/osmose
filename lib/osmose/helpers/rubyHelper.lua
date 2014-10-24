@@ -1,5 +1,6 @@
 local lib={}
 
+-- ruby code to connect to Osmose via socket
 lib.connectOsmose = [[
 require 'socket'
 require 'json'

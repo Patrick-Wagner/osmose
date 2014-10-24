@@ -334,12 +334,7 @@ end
 --]]
 function lib:optimize(args)
 
-  local ok, socket = pcall(require,"socket")
-  if ok==false then
-    print('Lua socket is not installed. Please install with this command :')
-    print('luarocks install socket')
-    os.exit()
-  end
+  local socket = lib.requireSocket()
 
   if self.sourceDir == nil then
     local sourcePath = debug.getinfo(2).source:sub(2)
@@ -385,12 +380,7 @@ end
 
 
 function lib:listen()
-  local ok, socket = pcall(require,"socket")
-  if ok==false then
-    print('Lua socket is not installed. Please install with this command :')
-    print('luarocks install socket')
-    os.exit()
-  end
+  local socket = lib.requireSocket()
 
   local server = assert(socket.bind("*", 3333))
 
@@ -434,17 +424,30 @@ function lib:compute(name)
     print("Call ruby file")
     local ruby_helper = require 'osmose.helpers.rubyHelper'
 
-    local ok, socket = pcall(require,"socket")
-    if ok==false then
-      print('Lua socket is not installed. Please install with this command :')
-      print('luarocks install socket')
-      os.exit()
-    end
+    local socket = lib.requireSocket()
 
     local server = assert(socket.bind("*", 3333))
 
     local cmd = ruby_helper.prepareCompute(self.dirRun,self.sourceDir,baseName)
     print("ruby command is",cmd)
+
+    local file = assert(io.popen(cmd,"w"))
+
+    lib.privateListen(self, server,'json')
+
+  elseif ext=='m' then
+    print("Call matlab file")
+
+    local socket = lib.requireSocket()
+
+    local matlab_helper = require 'osmose.helpers.matlabHelper'
+
+    local socket = lib.requireSocket()
+
+    local server = assert(socket.bind("*", 3333))
+
+    local cmd = matlab_helper.prepareCompute(self.dirRun,self.sourceDir,baseName)
+    print("matlab command is",cmd)
 
     local file = assert(io.popen(cmd,"w"))
 
@@ -466,12 +469,12 @@ function lib:call(str,encoding)
       print('luarocks install serpent')
       os.exit()
     end
-    print('Encoding with Serpent.')
+    --print('Encoding with Serpent.')
     _encode = function(value) return serpent.dump(value) end
 
   elseif encoding == 'json' then
     local json = (loadfile "./lib/osmose/helpers/json.lua")()
-    print('Encoding with JSON.')
+    --print('Encoding with JSON.')
 
     _encode = function(value) 
       --print(serpent.dump(value))
@@ -555,7 +558,7 @@ function lib.privateListen(project,server,encoding)
     end
     if err then
       client:close()
-      error(err)
+      print(err)
     end
     --print('LINE',line)
     local rslt = lib.call(project,line,encoding)
@@ -568,6 +571,18 @@ function lib.privateListen(project,server,encoding)
       client:close()
     end
   end
+end
+
+-- private method
+function lib.requireSocket() 
+ local ok, socket = pcall(require,"socket")
+  if ok==false then
+    print('Lua socket is not installed. Please install with this command :')
+    print('luarocks install socket')
+    os.exit()
+  end
+
+  return socket
 end
 
 
