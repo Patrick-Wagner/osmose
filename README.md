@@ -85,14 +85,14 @@ Once Osmose is installed, you need to create a repository to manage osmose proje
 
 You must create a config.lua file to store the executables, like this :
 
-	OSMOSE_ENV["GLPSOL_EXE"] 	= '/usr/local/bin/glpsol'<br/>
-	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'<br/>
-	OSMOSE_ENV["DAKOTA_EXE"] = '/usr/local/dakota/bin/dakota'<br/>
+	OSMOSE_ENV["GLPSOL_EXE"] 	= '/usr/local/bin/glpsol'
+	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'
+	OSMOSE_ENV["DAKOTA_EXE"] = '/usr/local/dakota/bin/dakota'
 	OSMOSE_ENV["LUA_EXE"] = '/usr/local/Cellar/lua/5.1.5/bin/lua'
 
 or on Windows :
 
-	OSMOSE_ENV["GLPSOL_EXE"] = '"C:\\Program Files (x86)\\Osmose\\GnuWin32\\bin\\glpsol.exe"'<br/>
+	OSMOSE_ENV["GLPSOL_EXE"] = '"C:\\Program Files (x86)\\Osmose\\GnuWin32\\bin\\glpsol.exe"'
 	OSMOSE_ENV["GNUPLOT_EXE"]= '"C:\\Program Files (x86)\\Osmose\\gnuplot\\bin\\wgnuplot.exe"'
 
 ### execute
