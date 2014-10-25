@@ -44,7 +44,7 @@ or on Windows :
 
 ### Gnuplot
 
-Note that on a mac, you have to install [X11](http://xquartz.macosforge.org)  or  [Aquaterm] (http://http://aquaterm.sourceforge.net). It is recommended that you install first the terminal, since gnuplot will add it in the list of terminals. In this case, the default terminal will become aqua instead of X11. If you want to use another therminal, this can be defined in your .profile by adding the line export GNUTERM='X11'
+Note that on a mac, you have to install [X11](http://xquartz.macosforge.org)  or  [Aquaterm] (http://aquaterm.sourceforge.net). It is recommended that you install first the terminal, since gnuplot will add it in the list of terminals. In this case, the default terminal will become aqua instead of X11. If you want to use another therminal, this can be defined in your .profile by adding the line export GNUTERM='X11'
 
 ## IDE/Text editor
 
