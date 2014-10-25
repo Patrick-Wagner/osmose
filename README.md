@@ -76,24 +76,24 @@ Install the version 6.0 of [Dakota](http://dakota.sandia.gov/distributions/dakot
 
 Once Osmose is installed, you need to create a repository to manage osmose project and ET. A typical working repository should the following folders and file :
 
-config.lua 		_the osmose config file_
-/ET 					_folder to store ET models_
-/projects      _folder to store frontends_
-/results      _folder where osmose results will be generated_
+	config.lua 		_the osmose config file_
+	/ET 					_folder to store ET models_
+	/projects      _folder to store frontends_
+	/results      _folder where osmose results will be generated_
 
 ### config.lua
 
 You must create a config.lua file to store the executables, like this :
 
-OSMOSE_ENV["GLPSOL_EXE"] 	= '/usr/local/bin/glpsol'<br/>
-OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'<br/>
-OSMOSE_ENV["DAKOTA_EXE"] = '/usr/local/dakota/bin/dakota'<br/>
-OSMOSE_ENV["LUA_EXE"] = '/usr/local/Cellar/lua/5.1.5/bin/lua'
+	OSMOSE_ENV["GLPSOL_EXE"] 	= '/usr/local/bin/glpsol'<br/>
+	OSMOSE_ENV["GNUPLOT_EXE"] = '/usr/local/bin/gnuplot'<br/>
+	OSMOSE_ENV["DAKOTA_EXE"] = '/usr/local/dakota/bin/dakota'<br/>
+	OSMOSE_ENV["LUA_EXE"] = '/usr/local/Cellar/lua/5.1.5/bin/lua'
 
 or on Windows :
 
-OSMOSE_ENV["GLPSOL_EXE"] = '"C:\\Program Files (x86)\\Osmose\\GnuWin32\\bin\\glpsol.exe"'<br/>
-OSMOSE_ENV["GNUPLOT_EXE"]= '"C:\\Program Files (x86)\\Osmose\\gnuplot\\bin\\wgnuplot.exe"'
+	OSMOSE_ENV["GLPSOL_EXE"] = '"C:\\Program Files (x86)\\Osmose\\GnuWin32\\bin\\glpsol.exe"'<br/>
+	OSMOSE_ENV["GNUPLOT_EXE"]= '"C:\\Program Files (x86)\\Osmose\\gnuplot\\bin\\wgnuplot.exe"'
 
 ### execute
 
