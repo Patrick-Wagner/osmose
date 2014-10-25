@@ -34,7 +34,7 @@ After that you will install Osmose as a rock. Open a command Windows (cmd.exe) a
 
 ### Luarocks
 
-Osmose can alse be installed as a rock (OSX and Linux):
+Osmose can also be installed as a luarock (OSX and Linux):
 
 	luarocks install --server=http://ipese.github.io/osmose-install osmose
 
@@ -97,4 +97,4 @@ Results will be stored in results folder.
 
 ## License
 
-The Osmose code is proprietary of [LENI, EPFL, Lausanne](http://leni.epfl.ch/)
+The Osmose code is proprietary of [IPESE, EPFL, Lausanne](http://ipese.epfl.ch/)
