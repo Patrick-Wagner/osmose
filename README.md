@@ -49,7 +49,7 @@ Note that on a mac, you have to install [X11](http://xquartz.macosforge.org)  or
 if you do not see the terminal aqua (by the command set terminal in gnuplot), then do the following :
 
 	$ brew remove gnuplot
-	$ brew install gnuplot
+	$ brew install gnuplot --with-aquaterm --qt --pdf
 	
 if gnuplot is issuing the error : "dyld: Library not loaded: /usr/local/lib/libfreetype.6.dylib" then do the following
 
