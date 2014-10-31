@@ -469,12 +469,12 @@ function lib:call(str,encoding)
       print('luarocks install serpent')
       os.exit()
     end
-    --print('Encoding with Serpent.')
+    -- print('Encoding with Serpent.')
     _encode = function(value) return serpent.dump(value) end
 
   elseif encoding == 'json' then
     local json = (loadfile "./lib/osmose/helpers/json.lua")()
-    --print('Encoding with JSON.')
+    -- print('Encoding with JSON.')
 
     _encode = function(value) 
       --print(serpent.dump(value))
