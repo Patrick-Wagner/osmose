@@ -267,6 +267,34 @@ function lib:setTag(name, value, periode, time)
   if found then return value end
 end
 
+--[[
+  Parse, check and prepare ET models.
+
+    p1:eiampl()
+--]]
+function lib:eiampl()
+  return Eiampl(self)
+end
+
+--[[
+  Call GLPK solver. See osmose.Glpk class for details
+
+    p1:glpk()
+--]]
+function lib:glpk()
+  local self = Glpk(self)
+  setmetatable(self, lib)
+  return self
+end
+
+--[[
+  Call graph with format and options. See osmose.Graph class for details.
+    
+    project:graph('png')
+--]]
+function lib:graph(format,options)
+  return Graph(self,format,options)
+end
 
 --[[
   Solve the project with Glpk by default and do graphs.
@@ -311,8 +339,6 @@ function lib:solve(args)
   
   return self
 end
-
-
 
 
 
