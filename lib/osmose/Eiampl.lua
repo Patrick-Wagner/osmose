@@ -59,7 +59,7 @@ function lib.new(project)
 				end
 	
 				-- Generate files for VALI, execute it and recover the results.
-				local vali = require 'lib.osmose.Vali' (model, dirTmp, blsFile)
+				local vali = require 'osmose.Vali' (model, dirTmp, blsFile)
 				vali:copyBlsFile()
 	    	vali:generateMeaFile()
 	    	vali:generateVifFile(d)
