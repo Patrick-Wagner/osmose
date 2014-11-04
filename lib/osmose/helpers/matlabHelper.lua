@@ -107,6 +107,18 @@ end
 	return tmpDir.."setTag.m"
 end
 
+function lib.copyGetResults(tmpDir)
+	local content = [[
+function [r] = getResults()
+	r = getOsmose('Results','');
+end
+	]]
+	f = io.open(tmpDir..'/'..'getResults.m',"w")
+	f:write(content)
+	f:close()
+	return tmpDir.."getResults.m"
+end
+
 function lib.copyStop(tmpDir)
 	local content = [[
 disp('Matlab sending stop.');
@@ -146,7 +158,7 @@ function lib.prepareCompute(tmpDir, sourceDir, obj)
 	lib.copyGetStream(tmpDir)
 	lib.copyGetTag(tmpDir)
 	lib.copySetTag(tmpDir)
-
+	lib.copyGetResults(tmpDir)
 
 	return (OSMOSE_ENV["MATLAB_EXE"] or 'matlab')..' -nosplash -nodesktop'.." -r "..
 				  string.format('"run(\'%s\');run(\'%s\');quit force;"',wrapper, stop) 
