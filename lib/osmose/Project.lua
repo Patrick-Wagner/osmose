@@ -454,6 +454,8 @@ function lib:compute(name)
     lib.privateListen(self, server,'json')
 
   end
+
+  return self
 end
 
 -- Private method.

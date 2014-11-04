@@ -183,7 +183,7 @@ end
 function should.compute()
 	local p1 = initProject()
 
-	assertNil(p1:compute(""))
+	assertEqual(p1, p1:compute(""))
 end
 
 
