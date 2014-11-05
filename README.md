@@ -121,6 +121,7 @@ Results will be stored in results folder.
 
 * From now require osmose with "lib.osmose" in your frontend :
 
+
 ```	
 local osmose = require 'lib.osmose'
 ```
