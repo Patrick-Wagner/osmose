@@ -114,10 +114,12 @@ Results will be stored in results folder.
 
 * Your working directory will be like this :
 
+```
 /ET
 /lib
 /projects
 /results
+```
 
 * From now require osmose with "lib.osmose" in your frontend :
 
@@ -134,7 +136,7 @@ local osmose = require 'lib.osmose'
 
 ```
 git clone https://github.com/ipese/osmose.git
-``
+```
 
 * Develop in _lib_ folder and create test in _test_ folder
 
