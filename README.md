@@ -104,6 +104,50 @@ To run a project, you simply run the following in a terminal window :
 Results will be stored in results folder.
 
 
+## How to install Edge version (latest version on Github)
+
+# Download the latest version in github : https://github.com/ipese/osmose/archive/master.zip
+
+# Unzip the folder 
+
+# Copy the _lib_ folder in your working directory
+
+# Your working directory will be like this :
+
+/ET
+/lib
+/projects
+/results
+
+# From now require osmose with "lib.osmose" in your frontend :
+
+```	
+local osmose = require 'lib.osmose'
+```
+
+## How to develop on Github
+
+# Get a version of git source control management : http://git-scm.com/
+
+# Clone osmose on your computer
+
+```
+git clone https://github.com/ipese/osmose.git
+```
+
+# Develop in _lib_ folder and create test in _test_ folder
+
+# You can create frontends in _projects_ folder and models in _ET_ folder to test your development. All files in these folders will be ignored by git.
+
+# Run test suite with the  command 
+
+```
+lua test/all.lua
+```
+
+# Commit and push to Github
+
+
 ## License
 
 The Osmose code is proprietary of [IPESE, EPFL, Lausanne](http://ipese.epfl.ch/)
