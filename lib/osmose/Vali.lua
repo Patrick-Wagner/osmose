@@ -110,6 +110,7 @@ end
 -- It parses the Vali output text file which is 'vali_output_tags.txt'. It stores all the
 -- tags result as numeric value in the model.
 
+-- PW: Updated pattern match
 function lib:parseResult()
 	local outputFile
 	if OSMOSE_ENV["VALI_MOCK_FILE"] then
@@ -123,7 +124,7 @@ function lib:parseResult()
 		if line:match("!") then
 		else
 			local tag, value, deviation, reconciledValue, accurancy, unit = 
-						line:match("([%w_]+) %s+([%-%d%.]+) %s+([%-%d%.E%+]+) %s+([%-%d%.]+)")
+						line:match("%s+([%w_]+)%s+(%-*%d+%.%d*[E%+%-]*%d?%d*)%s+(%-*%d+%.%d*[E%+%-]*%d?%d*)%s+(%-*%d+%.%d*[E%+%-]*%d?%d*)%s+(%-*%d+%.%d*[E%+%-]*%d?%d*)%s+([%a%/%-]*)")
 			self.model[tag] = tonumber(reconciledValue)
 			--print('VALI:', tag, value, deviation, reconciledValue )
 		end
